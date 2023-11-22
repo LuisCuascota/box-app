@@ -1,0 +1,15 @@
+export enum EntryLabels {
+  TITLE = "CEPO DE ORO",
+  SUBTITLE = "Comprobante de Ingreso",
+  IS_CASH = "Efectivo",
+  IS_TRANSFER = "Transferencia",
+  PARTNER_INPUT = "Recibí de:",
+  TOTAL = "Total:",
+  CANCEL = "Cancelar",
+  SUCCESS_SAVE_MODAL_TITLE = "Comprobante guardado correctamente",
+  SUCCESS_SAVE_MODAL_MESSAGE = "Desea Imprimir el comprobante?",
+  CLOSE = "Cerrar",
+  PRINT = "Imprimir",
+  SAVE = "Guardar",
+  DATE = "Fecha:",
+}

@@ -1,0 +1,15 @@
+export enum EgressLabels {
+  TITLE = "CEPO DE ORO",
+  SUBTITLE = "Comprobante de Egreso",
+  INPUT_BENEFICIARY = "Entregado a:",
+  INPUT_REASON = "Por motivo de:",
+  INPUT_VALUE = "VALOR",
+  SUCCESS_SAVE_MODAL_TITLE = "Egreso guardado correctamente",
+  SUCCESS_SAVE_MODAL_MESSAGE = "Desea Imprimir el comprobante?",
+  PRINT = "Imprimir",
+  CLOSE = "Cerrar",
+  DATE = "Fecha:",
+  TOTAL = "Total:",
+  CANCEL = "Cancelar",
+  SAVE = "Guardar",
+}

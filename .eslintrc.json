@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "env": { "browser": true, "es2020": true },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended",
+    "eslint-config-prettier",
+    "prettier"
+  ],
+  "ignorePatterns": ["dist"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["react-refresh", "prettier"],
+  "rules": {
+    "react-refresh/only-export-components": [
+      "warn",
+      { "allowConstantExport": true }
+    ],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "no-var": "error",
+    "newline-after-var": "error",
+    "newline-before-return": "error",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "prettier/prettier": "error",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-explicit-any": "warn"
+  }
+}

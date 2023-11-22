@@ -1,0 +1,6 @@
+export enum ColorsEnum {
+  SUCCESS_LIGHT = "#CAFFD0",
+  PRIMARY_LIGHT = "#CAECFF",
+  ERROR_LIGHT = "#FFCACA",
+  TRANSFER_LIGHT = "#FFF6CA",
+}
