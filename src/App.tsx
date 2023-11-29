@@ -7,6 +7,7 @@ import { EntryHistory } from "./containers/EntryHistory/EntryHistory.tsx";
 import { LoanHistory } from "./containers/LoanHistory/LoanHistory.tsx";
 import { EgressContainer } from "./containers/Egress/Egress.tsx";
 import { EgressHistory } from "./containers/EgressHistory/EgressHistory.tsx";
+import { PartnerList } from "./containers/PartnerList/PartnerList.tsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path={RoutesEnum.ENTRY_HISTORY} element={<EntryHistory />} />
         <Route path={RoutesEnum.LOAN_HISTORY} element={<LoanHistory />} />
         <Route path={RoutesEnum.EGRESS_HISTORY} element={<EgressHistory />} />
+        <Route path={RoutesEnum.PARTNER_LIST} element={<PartnerList />} />
       </Routes>
     </>
   );

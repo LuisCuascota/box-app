@@ -15,10 +15,15 @@ import { getEgressCountEpic } from "./EgressEpics/getEgressCount.epic.ts";
 import { postEgressEpic } from "./EgressEpics/postEgress.epic.ts";
 import { getEgressPaginatedEpic } from "./EgressEpics/getEgressPaginated.epic.ts";
 import { getEgressDetailEpic } from "./EgressEpics/getEgressDetail.epic.ts";
+import { getPartnersCountEpic } from "./PartnerEpics/getPartnersCount.epic.ts";
+import { postPartnerEpic } from "./PartnerEpics/postPartner.epic.ts";
+import { putPartnerEpic } from "./PartnerEpics/putPartner.epic.ts";
+import { deletePartnerEpic } from "./PartnerEpics/deletePartner.epic.ts";
 
 export default combineEpics(
   // @ts-ignore
   getPartnersEpic,
+  getPartnersCountEpic,
   getEntryCountEpic,
   getEntryTypesEpic,
   getEntryAmountsEpic,
@@ -32,5 +37,8 @@ export default combineEpics(
   getEgressCountEpic,
   postEgressEpic,
   getEgressPaginatedEpic,
-  getEgressDetailEpic
+  getEgressDetailEpic,
+  postPartnerEpic,
+  putPartnerEpic,
+  deletePartnerEpic
 ) as unknown as EpicCustom;

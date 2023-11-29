@@ -87,6 +87,17 @@ const pages: navPages[] = [
       },
     ],
   },
+  {
+    icon: <CreditScoreIcon fontSize="small" />,
+    title: ModulesEnum.PARTNERS,
+    child: [
+      {
+        icon: <FormatListNumberedIcon fontSize="small" />,
+        link: RoutesEnum.PARTNER_LIST,
+        title: "Listado",
+      },
+    ],
+  },
 ];
 
 export const NavigationBar = () => {
@@ -97,6 +108,9 @@ export const NavigationBar = () => {
   const [anchorElEntry, setAnchorElEntry] = useState<null | HTMLElement>(null);
   const [anchorElLoan, setAnchorElLoan] = useState<null | HTMLElement>(null);
   const [anchorElEgress, setAnchorElEgress] = useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElPartner, setAnchorElPartner] = useState<null | HTMLElement>(
     null
   );
 
@@ -125,6 +139,12 @@ export const NavigationBar = () => {
         );
 
         return;
+      case ModulesEnum.PARTNERS:
+        setAnchorElPartner((prevState) =>
+          prevState ? null : event!.currentTarget
+        );
+
+        return;
     }
   };
 
@@ -136,6 +156,8 @@ export const NavigationBar = () => {
         return anchorElLoan;
       case ModulesEnum.EGRESS:
         return anchorElEgress;
+      case ModulesEnum.PARTNERS:
+        return anchorElPartner;
     }
   };
 
