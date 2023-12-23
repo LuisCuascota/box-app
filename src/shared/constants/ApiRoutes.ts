@@ -18,4 +18,6 @@ export const ApiRoutes = {
   POST_PARTNER: "/api/v1/person",
   PUT_PARTNER: "/api/v1/person",
   DELETE_PARTNER: "/api/v1/person",
+  GET_METRICS: "/api/v1/metrics",
+  GET_TYPES_METRICS: "/api/v1/metrics/types",
 };

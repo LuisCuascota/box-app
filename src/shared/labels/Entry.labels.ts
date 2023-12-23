@@ -1,5 +1,5 @@
 export enum EntryLabels {
-  TITLE = "CEPO DE ORO",
+  TITLE = "APORTE",
   SUBTITLE = "Comprobante de Ingreso",
   IS_CASH = "Efectivo",
   IS_TRANSFER = "Transferencia",

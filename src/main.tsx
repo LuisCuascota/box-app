@@ -9,6 +9,46 @@ const theme = createTheme({
   typography: {
     fontFamily: "Libre Franklin, sans-serif",
   },
+  palette: {
+    primary: {
+      light: "#7089a4",
+      main: "#1f3c55",
+      dark: "#112a40",
+      contrastText: "#fff",
+    },
+    secondary: {
+      light: "#ffed75",
+      main: "#eac030",
+      dark: "#d5a92b",
+      contrastText: "#000",
+    },
+  },
+  components: {
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          padding: "4px",
+        },
+      },
+    },
+    // @ts-ignore
+    MuiPieArcLabel: {
+      styleOverrides: {
+        root: {
+          fill: "#FFF",
+          fontFamily: "Libre Franklin, sans-serif",
+        },
+      },
+    },
+    MuiChartsTooltip: {
+      styleOverrides: {
+        root: {
+          fill: "#FFF",
+          fontFamily: "Libre Franklin, sans-serif",
+        },
+      },
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

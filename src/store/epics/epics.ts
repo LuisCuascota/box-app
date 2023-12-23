@@ -19,6 +19,8 @@ import { getPartnersCountEpic } from "./PartnerEpics/getPartnersCount.epic.ts";
 import { postPartnerEpic } from "./PartnerEpics/postPartner.epic.ts";
 import { putPartnerEpic } from "./PartnerEpics/putPartner.epic.ts";
 import { deletePartnerEpic } from "./PartnerEpics/deletePartner.epic.ts";
+import { getMetricsEpic } from "./MetricsEpics/getMetrics.epic.ts";
+import { getTypesMetricsEpic } from "./MetricsEpics/getTypesMetrics.epic.ts";
 
 export default combineEpics(
   // @ts-ignore
@@ -40,5 +42,7 @@ export default combineEpics(
   getEgressDetailEpic,
   postPartnerEpic,
   putPartnerEpic,
-  deletePartnerEpic
+  deletePartnerEpic,
+  getMetricsEpic,
+  getTypesMetricsEpic
 ) as unknown as EpicCustom;

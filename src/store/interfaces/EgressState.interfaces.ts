@@ -22,6 +22,7 @@ export interface EgressHeader {
   beneficiary: string;
   amount: number;
   is_transfer: boolean;
+  type_id: number;
 }
 
 export interface EgressDetail {

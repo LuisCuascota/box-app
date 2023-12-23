@@ -35,12 +35,18 @@ export const EntryModal = (props: EntryModalProps) => {
 
   return (
     <Dialog maxWidth={"md"} open={props.open} onClose={props.handleClose}>
-      <DialogTitle textAlign={"center"}>
+      <DialogTitle
+        textAlign={"center"}
+        sx={{
+          backgroundColor: (theme) => theme.palette.primary.main,
+          color: (theme) => theme.palette.primary.contrastText,
+        }}
+      >
         {ComponentsLabels.ENTRY_MODAL_TITLE}
       </DialogTitle>
       <DialogContent>
         {props.entryData && (
-          <Grid container>
+          <Grid container pt={2}>
             <Grid item md={7}>
               <Typography>
                 <b>{ComponentsLabels.PARTNER}</b>

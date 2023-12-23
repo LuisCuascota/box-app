@@ -15,6 +15,8 @@ import { postEgress } from "../../store/epics/EgressEpics/postEgress.epic.ts";
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import { setPostEgressStatus } from "../../store/actions/egress.actions.ts";
 import { buildEgressPDFDoc } from "../../shared/utils/BuildEgressPdf.utils.ts";
+import { getTypesMetrics } from "../../store/epics/MetricsEpics/getTypesMetrics.epic.ts";
+import { TypesSelector } from "../../components/input/TypesSearch/TypesSearch.tsx";
 
 export interface IEgressDetail {
   description: string;
@@ -29,6 +31,7 @@ export interface IEgressContext {
   totalDischarge: number;
   onChangeBeneficiary: (event: ChangeEvent<HTMLInputElement>) => void;
   onChangePaymentMethod: (paymentMethod: PaymentMethodEnum) => void;
+  onChangeCategorySelector: (categorySelected: TypesSelector) => void;
   onAddDetail: () => void;
   onDeleteDetail: (index: number) => void;
   onUpdateDetail: (index: number, description: string, value: number) => void;
@@ -38,6 +41,7 @@ export interface IEgressContext {
   onCloseSaveDialog: () => void;
   onPrintEgress: () => void;
   paymentMethod?: PaymentMethodEnum | null;
+  categorySelected?: TypesSelector | null;
 }
 
 const initialEgressContext: IEgressContext = {
@@ -49,6 +53,7 @@ const initialEgressContext: IEgressContext = {
   totalDischarge: 0,
   onChangeBeneficiary: () => {},
   onChangePaymentMethod: () => {},
+  onChangeCategorySelector: () => {},
   onAddDetail: () => {},
   onDeleteDetail: () => {},
   onUpdateDetail: () => {},
@@ -80,6 +85,8 @@ const EgressContestProvider = ({ children }: any) => {
   );
   const [totalDischarge, setTotalDischarge] = useState<number>(0);
   const [egressDate, setEgressDate] = useState<string>("");
+  const [categorySelected, setCategorySelected] =
+    useState<TypesSelector | null>(null);
 
   const onChangeEgressDate = (date: string) => setEgressDate(date);
 
@@ -117,6 +124,10 @@ const EgressContestProvider = ({ children }: any) => {
     setBeneficiary(event.target.value.toUpperCase());
   };
 
+  const onChangeCategorySelector = (categorySelected: TypesSelector) => {
+    setCategorySelected(categorySelected);
+  };
+
   const onCancelEgress = () => {
     clearStateForNew();
   };
@@ -129,6 +140,7 @@ const EgressContestProvider = ({ children }: any) => {
         place: BoxConfig.defaultPlace,
         beneficiary: beneficiary,
         amount: totalDischarge,
+        type_id: categorySelected!.id,
         is_transfer:
           paymentMethod === PaymentMethodEnum.TRANSFER ? true : false,
       },
@@ -152,6 +164,7 @@ const EgressContestProvider = ({ children }: any) => {
     setIsOpenSaveDialog(false);
     clearStateForNew();
     dispatch(getEgressCount());
+    dispatch(getTypesMetrics());
   };
   const onPrintEgress = () => {
     buildEgressPDFDoc(buildNewEgress());
@@ -172,6 +185,7 @@ const EgressContestProvider = ({ children }: any) => {
     setIsLoading(false);
     setBeneficiary("");
     setPaymentMethod(null);
+    setCategorySelected(null);
     setEgressDetail([{ description: "", value: 0 }]);
   };
 
@@ -185,12 +199,20 @@ const EgressContestProvider = ({ children }: any) => {
       paymentMethod &&
       beneficiary &&
       egressDate &&
+      categorySelected &&
       totalDischarge > 0 &&
       isValidDetail()
     )
       setDisableSave(false);
     else setDisableSave(true);
-  }, [paymentMethod, beneficiary, egressDate, totalDischarge, egressDetail]);
+  }, [
+    paymentMethod,
+    beneficiary,
+    egressDate,
+    totalDischarge,
+    egressDetail,
+    categorySelected,
+  ]);
 
   useEffect(() => {
     setTotalDischarge(
@@ -203,6 +225,7 @@ const EgressContestProvider = ({ children }: any) => {
 
   useEffect(() => {
     dispatch(getEgressCount());
+    dispatch(getTypesMetrics());
   }, []);
 
   return (
@@ -214,9 +237,11 @@ const EgressContestProvider = ({ children }: any) => {
         beneficiary,
         egressDetail,
         paymentMethod,
+        categorySelected,
         totalDischarge,
         onChangeBeneficiary,
         onChangePaymentMethod,
+        onChangeCategorySelector,
         onAddDetail,
         onDeleteDetail,
         onUpdateDetail,

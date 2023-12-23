@@ -41,12 +41,18 @@ export const LoanModal = (props: LoanModalProps) => {
 
   return (
     <Dialog maxWidth={"xl"} open={props.open} onClose={props.handleClose}>
-      <DialogTitle textAlign={"center"}>
+      <DialogTitle
+        textAlign={"center"}
+        sx={{
+          backgroundColor: (theme) => theme.palette.primary.main,
+          color: (theme) => theme.palette.primary.contrastText,
+        }}
+      >
         {ComponentsLabels.LOAN_MODAL_TITLE}
       </DialogTitle>
       <DialogContent>
         {props.loan && (
-          <Grid container spacing={0} pb={2}>
+          <Grid container spacing={0} pb={2} pt={2}>
             <Grid item md={4} xs={12}>
               <Typography color={"red"}>
                 <b>{`Nº${props.loan.number}`}</b>

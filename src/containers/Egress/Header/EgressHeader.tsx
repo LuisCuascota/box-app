@@ -16,6 +16,7 @@ import {
   selectEgressCount,
   selectEgressCountStatus,
 } from "../../../store/selectors/selectors.ts";
+import { TypesSearch } from "../../../components/input/TypesSearch/TypesSearch.tsx";
 
 export const EgressHeader = () => {
   const {
@@ -24,6 +25,8 @@ export const EgressHeader = () => {
     paymentMethod,
     onChangePaymentMethod,
     isLoading,
+    onChangeCategorySelector,
+    categorySelected,
   } = useContext(EgressContext);
 
   const count = useAppSelector(selectEgressCount);
@@ -67,6 +70,13 @@ export const EgressHeader = () => {
           size={"small"}
           value={beneficiary}
           onChange={onChangeBeneficiary}
+        />
+      </Grid>
+      <Grid item md={12} xs={12} pt={2}>
+        <TypesSearch
+          disableSearch={false}
+          onChangeSelector={onChangeCategorySelector}
+          value={categorySelected}
         />
       </Grid>
     </Grid>

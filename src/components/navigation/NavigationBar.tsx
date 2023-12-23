@@ -8,7 +8,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router-dom";
 import { ModulesEnum, RoutesEnum } from "../../shared/enums/Routes.enum.ts";
 import React, { useState } from "react";
@@ -28,6 +27,9 @@ import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import CreditScoreIcon from "@mui/icons-material/CreditScore";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import Logo from "../../assets/caja_logo_2.png";
+
 interface navPages {
   icon: any;
   title: ModulesEnum;
@@ -98,6 +100,17 @@ const pages: navPages[] = [
       },
     ],
   },
+  {
+    icon: <BarChartIcon fontSize="small" />,
+    title: ModulesEnum.METRICS,
+    child: [
+      {
+        icon: <BarChartIcon fontSize="small" />,
+        link: RoutesEnum.METRICS,
+        title: "Datos",
+      },
+    ],
+  },
 ];
 
 export const NavigationBar = () => {
@@ -111,6 +124,9 @@ export const NavigationBar = () => {
     null
   );
   const [anchorElPartner, setAnchorElPartner] = useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElMetrics, setAnchorElMetrics] = useState<null | HTMLElement>(
     null
   );
 
@@ -145,6 +161,13 @@ export const NavigationBar = () => {
         );
 
         return;
+
+      case ModulesEnum.METRICS:
+        setAnchorElMetrics((prevState) =>
+          prevState ? null : event!.currentTarget
+        );
+
+        return;
     }
   };
 
@@ -158,6 +181,8 @@ export const NavigationBar = () => {
         return anchorElEgress;
       case ModulesEnum.PARTNERS:
         return anchorElPartner;
+      case ModulesEnum.METRICS:
+        return anchorElMetrics;
     }
   };
 
@@ -225,7 +250,7 @@ export const NavigationBar = () => {
               </SwipeableDrawer>
             </Box>
           )}
-          <AdbIcon sx={{ display: "flex" }} />
+          <img src={Logo} style={{ display: "flex", width: "60px" }} />
           <Typography
             variant="h6"
             sx={{

@@ -1,7 +1,7 @@
 export enum LoanLabels {
-  TITLE = "CEPO DE ORO",
+  TITLE = "CRÉDITO",
   SUB_TITLE = "Creación de Crédito",
-  SUCCESS_SAVE_MODAL_TITLE = "Credito guardado correctamente",
+  SUCCESS_SAVE_MODAL_TITLE = "Crédito guardado correctamente",
   SUCCESS_SAVE_MODAL_MESSAGE = "Desea Imprimir la tabla?",
   CLOSE = "Cerrar",
   PRINT = "Imprimir",

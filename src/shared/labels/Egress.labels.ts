@@ -1,5 +1,5 @@
 export enum EgressLabels {
-  TITLE = "CEPO DE ORO",
+  TITLE = "EGRESO",
   SUBTITLE = "Comprobante de Egreso",
   INPUT_BENEFICIARY = "Entregado a:",
   INPUT_REASON = "Por motivo de:",

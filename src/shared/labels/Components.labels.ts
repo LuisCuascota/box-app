@@ -1,6 +1,7 @@
 export enum ComponentsLabels {
   LOAN_MODAL_TITLE = "DETALLE DE CRÉDITO",
   PARTNER = "Socio:",
+  CATEGORY = "Rubro:",
   PAY = "Pagar",
   TH_LOAN_FEE = "Cuota",
   TH_LOAN_DATE = "Fecha de Pago",

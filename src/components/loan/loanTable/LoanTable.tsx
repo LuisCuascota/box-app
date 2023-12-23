@@ -1,5 +1,4 @@
 import {
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -37,7 +36,7 @@ export const LoanTable = (props: LoanTableProps) => {
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table>
         <TableHead>
           <TableRow>

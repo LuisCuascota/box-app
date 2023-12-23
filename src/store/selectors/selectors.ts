@@ -56,3 +56,5 @@ export const selectEgressDetailStatus = (state: RootState) =>
   state.egress.getEgressDetailStatus;
 export const selectEgressDetail = (state: RootState) =>
   state.egress.egressDetail;
+
+export const selectMetrics = (state: RootState) => state.metrics;
