@@ -5,6 +5,7 @@ const instance = Axios.create({
   baseURL: environment.apiBoxUrl,
   headers: {
     "Content-type": "application/json",
+    Authorization: "",
   },
 });
 

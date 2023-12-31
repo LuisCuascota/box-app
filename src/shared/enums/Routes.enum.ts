@@ -16,4 +16,5 @@ export enum ModulesEnum {
   EGRESS = "Egresos",
   PARTNERS = "Socios",
   METRICS = "Métricas",
+  LOGIN = "Login",
 }

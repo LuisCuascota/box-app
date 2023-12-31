@@ -2,7 +2,6 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
@@ -13,6 +12,7 @@ import { ModulesEnum, RoutesEnum } from "../../shared/enums/Routes.enum.ts";
 import React, { useState } from "react";
 import {
   Collapse,
+  Link,
   List,
   ListItem,
   ListItemButton,
@@ -26,9 +26,10 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import CreditScoreIcon from "@mui/icons-material/CreditScore";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { AccountCircle, ExpandLess, ExpandMore } from "@mui/icons-material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import Logo from "../../assets/caja_logo_2.png";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
 interface navPages {
   icon: any;
@@ -117,6 +118,9 @@ export const NavigationBar = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const { authStatus, signOut } = useAuthenticator((context) => [
+    context.authStatus,
+  ]);
 
   const [anchorElEntry, setAnchorElEntry] = useState<null | HTMLElement>(null);
   const [anchorElLoan, setAnchorElLoan] = useState<null | HTMLElement>(null);
@@ -129,6 +133,7 @@ export const NavigationBar = () => {
   const [anchorElMetrics, setAnchorElMetrics] = useState<null | HTMLElement>(
     null
   );
+  const [anchorElLogin, setAnchorElLogin] = useState<null | HTMLElement>(null);
 
   const [openSideBar, setOpenSidebar] = useState<boolean>(false);
 
@@ -168,6 +173,12 @@ export const NavigationBar = () => {
         );
 
         return;
+      case ModulesEnum.LOGIN:
+        setAnchorElLogin((prevState) =>
+          prevState ? null : event!.currentTarget
+        );
+
+        return;
     }
   };
 
@@ -183,6 +194,8 @@ export const NavigationBar = () => {
         return anchorElPartner;
       case ModulesEnum.METRICS:
         return anchorElMetrics;
+      case ModulesEnum.LOGIN:
+        return anchorElLogin;
     }
   };
 
@@ -190,7 +203,7 @@ export const NavigationBar = () => {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {!isMdScreen && (
+          {!isMdScreen && authStatus === "authenticated" && (
             <Box sx={{ display: "flex", flexGrow: 1 }}>
               <IconButton
                 size="large"
@@ -251,18 +264,19 @@ export const NavigationBar = () => {
             </Box>
           )}
           <img src={Logo} style={{ display: "flex", width: "60px" }} />
-          <Typography
+          <Link
             variant="h6"
-            sx={{
-              display: "flex",
-              fontWeight: 600,
-              flexGrow: 1,
-              m: 2,
-            }}
+            href="/"
+            underline={"none"}
+            color={"white"}
+            display={"flex"}
+            flexGrow={1}
+            fontWeight={600}
+            m={2}
           >
             {"Kaja TFM"}
-          </Typography>
-          {isMdScreen && (
+          </Link>
+          {isMdScreen && authStatus === "authenticated" && (
             <Box sx={{ display: "flex" }}>
               {pages.map((page) => (
                 <Box key={page.title}>
@@ -293,6 +307,26 @@ export const NavigationBar = () => {
                 </Box>
               ))}
             </Box>
+          )}
+          {authStatus === "authenticated" && (
+            <div>
+              <IconButton
+                size="large"
+                onClick={(event) => {
+                  handleActionMenu(ModulesEnum.LOGIN, event);
+                }}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                anchorEl={getAnchorEl(ModulesEnum.LOGIN)}
+                open={Boolean(getAnchorEl(ModulesEnum.LOGIN))}
+                onClose={() => handleActionMenu(ModulesEnum.LOGIN)}
+              >
+                <MenuItem onClick={signOut}>Cerrar Sesión</MenuItem>
+              </Menu>
+            </div>
           )}
         </Toolbar>
       </Container>

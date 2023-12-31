@@ -4,6 +4,7 @@ import { store } from "./store/store.ts";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { Authenticator } from "@aws-amplify/ui-react";
 
 const theme = createTheme({
   typography: {
@@ -53,10 +54,12 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ThemeProvider theme={theme}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
+    <Authenticator.Provider>
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </Authenticator.Provider>
   </ThemeProvider>
 );

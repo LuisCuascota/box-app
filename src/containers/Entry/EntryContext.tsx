@@ -31,7 +31,7 @@ import {
 import { EntryTypesIdEnum } from "../../shared/enums/EntryTypes.enum.ts";
 import { PartnerSelector } from "../../components/input/PersonSearch/PartnerSearch.tsx";
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
-import { BoxConfig } from "../../environment/BoxConfig.env.ts";
+import { KajaConfig } from "../../shared/constants/KajaConfig.ts";
 import { postEntry } from "../../store/epics/EntryEpics/postEntry.epic.ts";
 import { buildEntryPDFDoc } from "../../shared/utils/BuildEntryPdf.utils.ts";
 import { setPostEntryStatus } from "../../store/actions/entry.actions.ts";
@@ -195,7 +195,7 @@ const EntryContextProvider = ({ children }: any) => {
       account_number: partnerSelected!.id,
       amount: totalToPay,
       date: entryDate!,
-      place: BoxConfig.defaultPlace,
+      place: KajaConfig.defaultPlace,
       is_transfer: paymentMethod === PaymentMethodEnum.TRANSFER ? true : false,
       ...(isPrint ? { names: partnerSelected!.label.split("-")[1] } : {}),
     };

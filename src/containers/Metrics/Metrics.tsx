@@ -1,12 +1,4 @@
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
-import { useEffect, useState } from "react";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "../../shared/hooks/Store.hook.ts";
-import { getMetrics } from "../../store/epics/MetricsEpics/getMetrics.epic.ts";
-import { selectMetrics } from "../../store/selectors/selectors.ts";
-import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import {
   Backdrop,
   CircularProgress,
@@ -21,29 +13,11 @@ import {
 } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { ComponentsLabels } from "../../shared/labels/Components.labels.ts";
-import { getTypesMetrics } from "../../store/epics/MetricsEpics/getTypesMetrics.epic.ts";
 import { TypeMetric } from "../../store/interfaces/MetricsState.interfaces.ts";
+import { useMetricsState } from "./useMetricsState.tsx";
 
 export const MetricsContainer = () => {
-  const dispatch = useAppDispatch();
-
-  const { metrics, getMetricsStatus, getTypesMetricsStatus, typesMetrics } =
-    useAppSelector(selectMetrics);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsLoading(true);
-    dispatch(getMetrics());
-    dispatch(getTypesMetrics());
-  }, []);
-
-  useEffect(() => {
-    if (
-      getMetricsStatus === RequestStatusEnum.SUCCESS &&
-      getTypesMetricsStatus === RequestStatusEnum.SUCCESS
-    )
-      setIsLoading(false);
-  }, [getMetricsStatus, getTypesMetricsStatus]);
+  const { isLoading, metrics, typesMetrics, utilsMetrics } = useMetricsState();
 
   return (
     <PaperBase>
@@ -99,17 +73,43 @@ export const MetricsContainer = () => {
               </Typography>
             </Grid>
             <Grid item md={12} xs={12}>
+              <Typography variant={"h6"}>{"RUBROS"}</Typography>
+            </Grid>
+            <Grid item md={12} xs={12}>
               <TableContainer>
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell align="left">{"Rubro"}</TableCell>
+                      <TableCell align="left">{"Descripción"}</TableCell>
                       <TableCell align="left">{"Valor"}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {typesMetrics.map((row: TypeMetric) => (
                       <TableRow key={row.id}>
+                        <TableCell>{row.description}</TableCell>
+                        <TableCell>{`$${row.sum}`}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+            <Grid item md={12} xs={12}>
+              <Typography variant={"h6"}>{"VALORES DE UTILIDAD"}</Typography>
+            </Grid>
+            <Grid item md={12} xs={12}>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="left">{"Descripción"}</TableCell>
+                      <TableCell align="left">{"Valor"}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {utilsMetrics.map((row: TypeMetric, index: number) => (
+                      <TableRow key={index}>
                         <TableCell>{row.description}</TableCell>
                         <TableCell>{`$${row.sum}`}</TableCell>
                       </TableRow>

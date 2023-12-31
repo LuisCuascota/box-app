@@ -6,7 +6,7 @@ import {
 } from "../../shared/hooks/Store.hook.ts";
 import { getEgressCount } from "../../store/epics/EgressEpics/getEgressCount.epic.ts";
 import { NewEgress } from "../../store/interfaces/EgressState.interfaces.ts";
-import { BoxConfig } from "../../environment/BoxConfig.env.ts";
+import { KajaConfig } from "../../shared/constants/KajaConfig.ts";
 import {
   selectEgressCount,
   selectPostEgressStatus,
@@ -137,7 +137,7 @@ const EgressContestProvider = ({ children }: any) => {
       header: {
         number: count,
         date: egressDate,
-        place: BoxConfig.defaultPlace,
+        place: KajaConfig.defaultPlace,
         beneficiary: beneficiary,
         amount: totalDischarge,
         type_id: categorySelected!.id,
