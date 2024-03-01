@@ -8,8 +8,7 @@ export const environment: {
   cognitoPoolClientId: string;
 } = {
   apiBoxUrl: "http://localhost:3000/dev",
-  // apiBoxUrl:
-  //   "https://2x53pbctei.execute-api.us-east-1.amazonaws.com/dev",
+  //apiBoxUrl: "https://q04h6hckwg.execute-api.us-east-1.amazonaws.com/dev",
   defaultPlace: "Loreto",
   projectRegion: "us-east-1",
   cognitoPoolId: "us-east-1_ikjEs7iIA",

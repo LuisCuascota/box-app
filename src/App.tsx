@@ -9,13 +9,13 @@ import { EgressContainer } from "./containers/Egress/Egress.tsx";
 import { EgressHistory } from "./containers/EgressHistory/EgressHistory.tsx";
 import { PartnerList } from "./containers/PartnerList/PartnerList.tsx";
 import { MetricsContainer } from "./containers/Metrics/Metrics.tsx";
-import { Amplify } from "aws-amplify";
-import { AwsConfig } from "./shared/constants/KajaConfig.ts";
 import { Login } from "./containers/Login/Login.tsx";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEffect } from "react";
 import { fetchAuthSession } from "aws-amplify/auth";
 import instance from "./shared/utils/Axios.util.ts";
+import { Amplify } from "aws-amplify";
+import { AwsConfig } from "./shared/constants/KajaConfig.ts";
 
 Amplify.configure(AwsConfig);
 
