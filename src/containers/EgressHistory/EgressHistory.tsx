@@ -14,7 +14,6 @@ import {
 import { getFormattedDate } from "../../shared/utils/Date.utils.ts";
 import { useEgressHistoryState } from "./state/useEgressHistoryState.tsx";
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
-import { ColorsEnum } from "../../shared/enums/Colors.enum.ts";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { EgressHeader } from "../../store/interfaces/EgressState.interfaces.ts";
 import { EgressHistoryLabels } from "../../shared/labels/EgressHistory.labels.ts";
@@ -23,10 +22,6 @@ import { EgressModal } from "../../components/modals/Egress/EgressModal.tsx";
 export const EgressHistory = () => {
   const { egressPaginated, pagination, isLoading, modal } =
     useEgressHistoryState();
-
-  const getRowStyle = (isTransfer: boolean) => {
-    if (isTransfer) return { backgroundColor: ColorsEnum.TRANSFER_LIGHT };
-  };
 
   return (
     <PaperBase>
@@ -75,10 +70,7 @@ export const EgressHistory = () => {
                     </TableRow>
                   ))
               : egressPaginated.map((row: EgressHeader) => (
-                  <TableRow
-                    key={row.number}
-                    style={getRowStyle(row.is_transfer)}
-                  >
+                  <TableRow key={row.number}>
                     <TableCell>
                       <b>{row.number}</b>
                     </TableCell>

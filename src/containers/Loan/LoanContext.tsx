@@ -119,7 +119,7 @@ const LoanContextProvider = ({ children }: any) => {
         is_end: false,
         guarantor1_account: guarantor1?.id,
         guarantor2_account: guarantor2?.id,
-        ...(isPrint ? { name: partner!.label.split("-")[1] } : {}),
+        ...(isPrint ? { names: partner!.label.split("-")[1] } : {}),
       },
       loanDetails: loanFees,
     };
@@ -128,7 +128,7 @@ const LoanContextProvider = ({ children }: any) => {
 
   const onCalculate = () => {
     const loanFeesCalc: LoanDetail[] = [];
-    const paymentDate = moment(date);
+    const paymentDate = moment.utc(date);
     let feeValue = +(amount! / months!).toFixed(2);
     const interestValue = interest! / 100;
     let balance = amount!;

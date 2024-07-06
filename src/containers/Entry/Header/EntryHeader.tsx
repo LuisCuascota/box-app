@@ -15,17 +15,10 @@ import {
 } from "../../../store/selectors/selectors.ts";
 import { EntryLabels } from "../../../shared/labels/Entry.labels.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
-import { SelectPaymentMethod } from "../../../components/input/SelectPaymentMethod/SelectPaymentMethod.tsx";
 
 export const EntryHeader = () => {
-  const {
-    disableSearch,
-    onChangePaymentMethod,
-    onChangePartnerSelector,
-    paymentMethod,
-    partnerSelected,
-    isLoading,
-  } = useContext(EntryContext);
+  const { disableSearch, onChangePartnerSelector, partnerSelected, isLoading } =
+    useContext(EntryContext);
   const count = useAppSelector(selectEntryCount);
   const countStatus = useAppSelector(selectEntryCountStatus);
 
@@ -42,14 +35,8 @@ export const EntryHeader = () => {
           {EntryLabels.TITLE}
         </Typography>
       </Grid>
-      <Grid item md={5} xs={12}>
+      <Grid item md={10} xs={12}>
         <Typography>{EntryLabels.SUBTITLE}</Typography>
-      </Grid>
-      <Grid item md={5} xs={8}>
-        <SelectPaymentMethod
-          onChangePaymentMethod={onChangePaymentMethod}
-          value={paymentMethod}
-        />
       </Grid>
       <Grid item md={2} xs={4}>
         <Typography textAlign={"right"} color={"red"}>

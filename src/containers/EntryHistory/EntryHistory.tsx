@@ -17,17 +17,12 @@ import { PartnerSearch } from "../../components/input/PersonSearch/PartnerSearch
 import { EntryModal } from "../../components/modals/Entry/EntryModal.tsx";
 import { EntryHeader } from "../../store/interfaces/EntryState.interfaces.ts";
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
-import { ColorsEnum } from "../../shared/enums/Colors.enum.ts";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { EntryHistoryLabels } from "../../shared/labels/EntryHistory.labels.ts";
 
 export const EntryHistory = () => {
   const { entriesPaginated, pagination, isLoading, modal, search } =
     useEntryHistoryState();
-
-  const getRowStyle = (isTransfer: boolean) => {
-    if (isTransfer) return { backgroundColor: ColorsEnum.TRANSFER_LIGHT };
-  };
 
   return (
     <PaperBase>
@@ -80,10 +75,7 @@ export const EntryHistory = () => {
                     </TableRow>
                   ))
               : entriesPaginated.map((row: EntryHeader) => (
-                  <TableRow
-                    key={row.number}
-                    style={getRowStyle(row.is_transfer)}
-                  >
+                  <TableRow key={row.number}>
                     <TableCell>
                       <b>{row.number}</b>
                     </TableCell>

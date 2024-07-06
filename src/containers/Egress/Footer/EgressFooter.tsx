@@ -15,6 +15,7 @@ import { DatePikerInput } from "../../../components/input/DatePikerInput/DatePik
 import { useContext } from "react";
 import { EgressContext } from "../EgressContext.tsx";
 import { EgressLabels } from "../../../shared/labels/Egress.labels.ts";
+import { BillDetailModal } from "../../../components/modals/BillDetail/BillDetailModal.tsx";
 
 export const EgressFooter = () => {
   const {
@@ -26,6 +27,8 @@ export const EgressFooter = () => {
     onSaveEgress,
     onCloseSaveDialog,
     onPrintEgress,
+    isOpenBillDetailModal,
+    onOpenBillDetailModal,
   } = useContext(EgressContext);
 
   return (
@@ -42,6 +45,11 @@ export const EgressFooter = () => {
           <Button onClick={onCloseSaveDialog}> {EgressLabels.CLOSE}</Button>
         </DialogActions>
       </Dialog>
+      <BillDetailModal
+        open={isOpenBillDetailModal}
+        onDispatchBillDetail={onSaveEgress}
+        totalAmount={totalDischarge}
+      />
       <Box display={"flex"} justifyContent={"space-between"} pb={2}>
         <Box display={"flex"}>
           <Typography pr={2}>{EgressLabels.DATE}</Typography>
@@ -70,7 +78,7 @@ export const EgressFooter = () => {
           endIcon={<SaveIcon />}
           variant="contained"
           disabled={disableSave}
-          onClick={onSaveEgress}
+          onClick={onOpenBillDetailModal}
         >
           {EgressLabels.SAVE}
         </Button>

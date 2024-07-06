@@ -18,19 +18,17 @@ export const getEgressDetailEpic: EpicCustom = ({ action$, dispatch }) =>
     filter(getEgressDetail.match),
     tap(() => dispatch(setGetEgressDetailStatus(RequestStatusEnum.PENDING))),
     switchMap(({ payload }) =>
-      axios
-        .get<EgressDetail[]>(`${ApiRoutes.GET_EGRESS_DETAIL}/${payload}`)
-        .pipe(
-          tap(({ data }: { data: EgressDetail[] }) => {
-            dispatch(setEgressDetail(data));
-            dispatch(setGetEgressDetailStatus(RequestStatusEnum.SUCCESS));
-          }),
-          catchError(() => {
-            dispatch(setGetEgressDetailStatus(RequestStatusEnum.ERROR));
+      axios.get<EgressDetail>(`${ApiRoutes.GET_EGRESS_DETAIL}/${payload}`).pipe(
+        tap(({ data }: { data: EgressDetail }) => {
+          dispatch(setEgressDetail(data));
+          dispatch(setGetEgressDetailStatus(RequestStatusEnum.SUCCESS));
+        }),
+        catchError(() => {
+          dispatch(setGetEgressDetailStatus(RequestStatusEnum.ERROR));
 
-            return EMPTY;
-          })
-        )
+          return EMPTY;
+        })
+      )
     ),
     ignoreElements()
   );

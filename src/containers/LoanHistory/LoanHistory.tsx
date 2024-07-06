@@ -25,8 +25,8 @@ export const LoanHistory = () => {
   const { loansPaginated, pagination, isLoading, modal, search } =
     useLoanHistoryState();
 
-  const getRowStyle = (isTransfer: boolean) => {
-    if (isTransfer) return { backgroundColor: ColorsEnum.TRANSFER_LIGHT };
+  const getRowStyle = (isEnd: boolean) => {
+    if (isEnd) return { backgroundColor: ColorsEnum.TRANSFER_LIGHT };
   };
 
   return (

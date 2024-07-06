@@ -20,4 +20,5 @@ export const ApiRoutes = {
   DELETE_PARTNER: "/api/v1/person",
   GET_METRICS: "/api/v1/metrics",
   GET_TYPES_METRICS: "/api/v1/metrics/types",
+  GET_CONTRIBUTIONS: "/api/v1/entry/contribution",
 };

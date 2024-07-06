@@ -8,11 +8,13 @@ export interface IEntryState {
   postEntryStatus: RequestStatusEnum;
   getEntriesPaginatedStatus: RequestStatusEnum;
   getEntryDetailStatus: RequestStatusEnum;
+  getContributionListStatus: RequestStatusEnum;
   count: number;
   types: EntryType[];
   entryAmounts: EntryAmount[];
   entries: EntryHeader[];
-  entryDetail: EntryDetail[];
+  entryDetail: EntryDetail;
+  contributionList: Contribution[];
 }
 
 export interface EntryType {
@@ -29,7 +31,8 @@ export interface EntryAmount {
 
 export interface NewEntry {
   header: EntryHeader;
-  detail: EntryDetail[];
+  detail: EntryAmountDetail[];
+  billDetail: EntryBillDetail;
   entryLoanData?: EntryLoanData;
 }
 
@@ -39,12 +42,11 @@ export interface EntryHeader {
   amount: number;
   date: string;
   place: string;
-  is_transfer: boolean;
   names?: string;
   surnames?: string;
 }
 
-export interface EntryDetail {
+export interface EntryAmountDetail {
   entry_number: number;
   type_id: number;
   value: number;
@@ -55,4 +57,20 @@ export interface EntryPagination {
   limit: number;
   offset: number;
   account?: number;
+}
+
+export interface Contribution {
+  date: string;
+  number: number;
+  value: number;
+}
+
+export interface EntryBillDetail {
+  cash: number;
+  transfer: number;
+}
+
+export interface EntryDetail {
+  billDetail: EntryBillDetail;
+  amountDetail: EntryAmountDetail[];
 }

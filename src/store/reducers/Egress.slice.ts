@@ -13,7 +13,13 @@ export const egressInitialState: IEgressState = {
   getEgressDetailStatus: RequestStatusEnum.PENDING,
   egressCount: 0,
   egressList: [],
-  egressDetail: [],
+  egressDetail: {
+    amountDetail: [],
+    billDetail: {
+      cash: 0,
+      transfer: 0,
+    },
+  },
 };
 
 export const egressSlice = createSlice({
@@ -47,7 +53,7 @@ export const egressSlice = createSlice({
     ) => {
       state.getEgressDetailStatus = action.payload;
     },
-    setEgressDetail: (state, action: PayloadAction<EgressDetail[]>) => {
+    setEgressDetail: (state, action: PayloadAction<EgressDetail>) => {
       state.egressDetail = action.payload;
     },
   },

@@ -15,6 +15,7 @@ import { DatePikerInput } from "../../../components/input/DatePikerInput/DatePik
 import { useContext } from "react";
 import { EntryContext } from "../EntryContext.tsx";
 import { EntryLabels } from "../../../shared/labels/Entry.labels.ts";
+import { BillDetailModal } from "../../../components/modals/BillDetail/BillDetailModal.tsx";
 
 export const EntryFooter = () => {
   const {
@@ -26,6 +27,8 @@ export const EntryFooter = () => {
     onSaveEntry,
     onCloseSaveDialog,
     onPrintEntry,
+    onOpenBillDetailModal,
+    isOpenBillDetailModal,
   } = useContext(EntryContext);
 
   return (
@@ -42,6 +45,11 @@ export const EntryFooter = () => {
           <Button onClick={onCloseSaveDialog}> {EntryLabels.CLOSE}</Button>
         </DialogActions>
       </Dialog>
+      <BillDetailModal
+        open={isOpenBillDetailModal}
+        onDispatchBillDetail={onSaveEntry}
+        totalAmount={totalToPay}
+      />
       <Box display={"flex"} justifyContent={"space-between"} pb={2}>
         <Box display={"flex"}>
           <Typography pr={2}>{EntryLabels.DATE}</Typography>
@@ -70,7 +78,7 @@ export const EntryFooter = () => {
           endIcon={<SaveIcon />}
           variant="contained"
           disabled={disableSave}
-          onClick={onSaveEntry}
+          onClick={onOpenBillDetailModal}
         >
           {EntryLabels.SAVE}
         </Button>

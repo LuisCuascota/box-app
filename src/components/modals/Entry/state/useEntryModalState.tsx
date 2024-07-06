@@ -20,7 +20,11 @@ export const useEntryModalState = (props: EntryModalProps) => {
 
   const handleBuildDoc = () => {
     if (props.entryData)
-      buildEntryPDFDoc({ header: props.entryData, detail: entryDetail });
+      buildEntryPDFDoc({
+        header: props.entryData,
+        detail: entryDetail.amountDetail,
+        billDetail: entryDetail.billDetail,
+      });
   };
 
   useEffect(() => {

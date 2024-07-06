@@ -4,13 +4,13 @@ import {
   useAppSelector,
 } from "../../shared/hooks/Store.hook.ts";
 import { getPartners } from "../../store/epics/PartnerEpics/getPartners.epic.ts";
-import { PaymentMethodEnum } from "../../shared/enums/PaymentMethod.enum.ts";
 import { getEntryCount } from "../../store/epics/EntryEpics/getEntryCount.epic.ts";
 import { getEntryTypes } from "../../store/epics/EntryEpics/getEntryTypes.epic.ts";
 import { getEntryAmounts } from "../../store/epics/EntryEpics/getEntryAmounts.epic.ts";
 import {
   EntryAmount,
-  EntryDetail,
+  EntryAmountDetail,
+  EntryBillDetail,
   EntryHeader,
   EntryType,
   NewEntry,
@@ -34,7 +34,10 @@ import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import { KajaConfig } from "../../shared/constants/KajaConfig.ts";
 import { postEntry } from "../../store/epics/EntryEpics/postEntry.epic.ts";
 import { buildEntryPDFDoc } from "../../shared/utils/BuildEntryPdf.utils.ts";
-import { setPostEntryStatus } from "../../store/actions/entry.actions.ts";
+import {
+  setEntryAmounts,
+  setPostEntryStatus,
+} from "../../store/actions/entry.actions.ts";
 
 export interface IEntryContext {
   disableSearch: boolean;
@@ -42,19 +45,19 @@ export interface IEntryContext {
   isLoading: boolean;
   isOpenLoanModal: boolean;
   isOpenSaveDialog: boolean;
+  isOpenBillDetailModal: boolean;
   amountsToPay: EntryAmount[];
   totalToPay: number;
-  onChangePaymentMethod: (paymentMethod: PaymentMethodEnum) => void;
   onChangePartnerSelector: (partnerSelected: PartnerSelector) => void;
   onChangeEntryDate: (date: string) => void;
   onUpdateAmounts: (id: number, value: number) => void;
   onUpdateLoanDetailsToPay: (detailsToPay: LoanDetailToPay[]) => void;
-  onSaveEntry: () => void;
+  onSaveEntry: (billDetail: EntryBillDetail) => void;
   onCancelEntry: () => void;
   onPrintEntry: () => void;
   onActionLoanModal: (value: boolean) => void;
   onCloseSaveDialog: () => void;
-  paymentMethod?: PaymentMethodEnum | null;
+  onOpenBillDetailModal: () => void;
   partnerSelected?: PartnerSelector | null;
 }
 
@@ -64,9 +67,9 @@ const initialEntryContext: IEntryContext = {
   isLoading: false,
   isOpenLoanModal: false,
   isOpenSaveDialog: false,
+  isOpenBillDetailModal: false,
   amountsToPay: [],
   totalToPay: 0,
-  onChangePaymentMethod: () => {},
   onChangePartnerSelector: () => {},
   onChangeEntryDate: () => {},
   onUpdateAmounts: () => {},
@@ -76,6 +79,7 @@ const initialEntryContext: IEntryContext = {
   onPrintEntry: () => {},
   onActionLoanModal: () => {},
   onCloseSaveDialog: () => {},
+  onOpenBillDetailModal: () => {},
 };
 const EntryContext = createContext<IEntryContext>(initialEntryContext);
 
@@ -90,24 +94,23 @@ const EntryContextProvider = ({ children }: any) => {
   const postEntryStatus = useAppSelector(selectPostEntryStatus);
 
   const [disableSearch, setDisableSearch] = useState<boolean>(false);
-  const [disableSave, setDisabeSave] = useState<boolean>(true);
+  const [disableSave, setDisableSave] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenLoanModal, setIsOpenLoanModal] = useState<boolean>(false);
   const [isOpenSaveDialog, setIsOpenSaveDialog] = useState<boolean>(false);
   const [loanDefinition, setloanDefinition] = useState<LoanDefinition>();
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodEnum | null>(
-    null
-  );
   const [partnerSelected, setPartnerSelected] =
     useState<PartnerSelector | null>(null);
   const [entryDate, setEntryDate] = useState<string>();
   const [amountsToPay, setAmountsToPay] = useState<EntryAmount[]>([]);
   const [loanDetailToPay, setLoanDetailToPay] = useState<LoanDetailToPay[]>();
   const [totalToPay, setTotalToPay] = useState<number>(0);
+  const [isOpenBillDetailModal, setOpenBillDetailModal] = useState(false);
+  const [billDetail, setBillDetail] = useState<EntryBillDetail>();
 
-  const onChangePaymentMethod = (paymentMethod: PaymentMethodEnum) => {
-    setPaymentMethod(paymentMethod);
+  const onOpenBillDetailModal = () => {
+    setOpenBillDetailModal(true);
   };
 
   const onChangePartnerSelector = (partnerSelected: PartnerSelector) => {
@@ -189,17 +192,19 @@ const EntryContextProvider = ({ children }: any) => {
     return {};
   };
 
-  const buildNewEntry = (isPrint?: boolean): NewEntry => {
+  const buildNewEntry = (
+    billDetail: EntryBillDetail,
+    isPrint?: boolean
+  ): NewEntry => {
     const header: EntryHeader = {
       number: entryNumber,
       account_number: partnerSelected!.id,
       amount: totalToPay,
       date: entryDate!,
       place: KajaConfig.defaultPlace,
-      is_transfer: paymentMethod === PaymentMethodEnum.TRANSFER ? true : false,
       ...(isPrint ? { names: partnerSelected!.label.split("-")[1] } : {}),
     };
-    const detail: EntryDetail[] = (
+    const detail: EntryAmountDetail[] = (
       isPrint ? amountsToPay : amountsToPay.filter((amount) => amount.value > 0)
     ).map((amount) => ({
       entry_number: entryNumber,
@@ -211,32 +216,35 @@ const EntryContextProvider = ({ children }: any) => {
     return {
       header,
       detail,
+      billDetail,
       ...(isPrint ? {} : buildLoanToPay()),
     };
   };
 
   const clearStateForNew = () => {
     dispatch(setPostEntryStatus(RequestStatusEnum.PENDING));
+    dispatch(setEntryAmounts([]));
     setIsLoading(false);
     setDisableSearch(false);
-    setDisabeSave(true);
+    setDisableSave(true);
     setloanDefinition(undefined);
     setLoanDetailToPay(undefined);
-    setPaymentMethod(null);
     setPartnerSelected(null);
     cleanEntryAmounts();
   };
 
   const onPrintEntry = () => {
-    buildEntryPDFDoc(buildNewEntry(true));
+    buildEntryPDFDoc(buildNewEntry(billDetail!, true));
     onCloseSaveDialog();
   };
 
-  const onSaveEntry = () => {
+  const onSaveEntry = (billDetail: EntryBillDetail) => {
     setIsLoading(true);
-    const newEntry = buildNewEntry();
+    setOpenBillDetailModal(false);
+    setBillDetail(billDetail);
 
-    console.log(newEntry);
+    const newEntry = buildNewEntry(billDetail);
+
     dispatch(postEntry(newEntry));
   };
 
@@ -290,21 +298,13 @@ const EntryContextProvider = ({ children }: any) => {
     if (
       partnerSelected &&
       entryDate &&
-      paymentMethod &&
       entryNumber > 0 &&
       totalToPay > 0 &&
       validationWhenAmountDefinitionExist()
     )
-      setDisabeSave(false);
-    else setDisabeSave(true);
-  }, [
-    paymentMethod,
-    partnerSelected,
-    entryDate,
-    loanDetailToPay,
-    entryNumber,
-    totalToPay,
-  ]);
+      setDisableSave(false);
+    else setDisableSave(true);
+  }, [partnerSelected, entryDate, loanDetailToPay, entryNumber, totalToPay]);
 
   useEffect(() => {
     setTotalToPay(
@@ -323,9 +323,9 @@ const EntryContextProvider = ({ children }: any) => {
         isLoading,
         isOpenLoanModal,
         isOpenSaveDialog,
+        isOpenBillDetailModal,
         amountsToPay,
         totalToPay,
-        onChangePaymentMethod,
         onChangePartnerSelector,
         onChangeEntryDate,
         onUpdateAmounts,
@@ -335,7 +335,7 @@ const EntryContextProvider = ({ children }: any) => {
         onPrintEntry,
         onActionLoanModal,
         onCloseSaveDialog,
-        paymentMethod,
+        onOpenBillDetailModal,
         partnerSelected,
       }}
     >

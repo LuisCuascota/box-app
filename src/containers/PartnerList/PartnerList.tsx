@@ -25,6 +25,8 @@ import { usePartnerListState } from "./state/usePartnerListState.tsx";
 import { PartnerModal } from "../../components/modals/Partner/PartnerModal.tsx";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import { PartnerAccountModal } from "../../components/modals/ParnerAccount/PartnerAccountModal.tsx";
 
 export const PartnerList = () => {
   const { partners, pagination, isLoading, modal, alert } =
@@ -41,6 +43,11 @@ export const PartnerList = () => {
         <PartnerModal
           partnerData={modal.rowSelected}
           open={modal.isModalOpen}
+          handleClose={modal.onCloseModal}
+        />
+        <PartnerAccountModal
+          partnerData={modal.rowSelected}
+          open={modal.isModalAccountOpen}
           handleClose={modal.onCloseModal}
         />
         <Dialog open={alert.isAlertOpen} onClose={alert.onCloseAlert}>
@@ -133,6 +140,12 @@ export const PartnerList = () => {
                         <OpenInNewIcon />
                       </IconButton>
                       <IconButton
+                        color="secondary"
+                        onClick={() => modal.onOpenAccountModal(row)}
+                      >
+                        <AccountBalanceWalletIcon />
+                      </IconButton>
+                      <IconButton
                         color="error"
                         onClick={() => alert.onOpenAlert(row)}
                       >
@@ -143,7 +156,7 @@ export const PartnerList = () => {
                 ))}
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, 100]}
+                rowsPerPageOptions={[5, 10, 30, 50]}
                 count={pagination.partnersCount - 1}
                 rowsPerPage={pagination.rowsPerPage}
                 page={pagination.page}

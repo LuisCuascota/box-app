@@ -20,12 +20,13 @@ export const usePartnerListState = () => {
     deletePartnerStatus,
   } = useAppSelector(selectPartners);
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(30);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<PartnerData>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [rowToDelete, setRowToDelete] = useState<PartnerData>();
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [isModalAccountOpen, setIsModalAccountOpen] = useState<boolean>(false);
 
   const onPageChange = (_: any, newPage: number) => {
     setPage(newPage);
@@ -56,6 +57,11 @@ export const usePartnerListState = () => {
     setIsModalOpen(true);
   };
 
+  const onOpenAccountModal = (row: PartnerData) => {
+    setRowSelected(row);
+    setIsModalAccountOpen(true);
+  };
+
   const searchPartners = () => {
     dispatch(
       getPartners({
@@ -68,6 +74,7 @@ export const usePartnerListState = () => {
   const onCloseModal = () => {
     setRowSelected(undefined);
     setIsModalOpen(false);
+    setIsModalAccountOpen(false);
     setIsLoading(true);
     searchPartners();
   };
@@ -111,8 +118,10 @@ export const usePartnerListState = () => {
     },
     modal: {
       isModalOpen,
+      isModalAccountOpen,
       onCloseModal,
       onOpenModal,
+      onOpenAccountModal,
       rowSelected,
     },
     pagination: {

@@ -6,6 +6,7 @@ export const environment: {
   projectRegion: string;
   cognitoPoolId: string;
   cognitoPoolClientId: string;
+  contributionAmount: number;
 } = {
   apiBoxUrl: "http://localhost:3000/dev",
   //apiBoxUrl: "https://q04h6hckwg.execute-api.us-east-1.amazonaws.com/dev",
@@ -13,4 +14,5 @@ export const environment: {
   projectRegion: "us-east-1",
   cognitoPoolId: "us-east-1_ikjEs7iIA",
   cognitoPoolClientId: "3mvj4vkukmiu27i8e1smp3eauc",
+  contributionAmount: 20,
 };

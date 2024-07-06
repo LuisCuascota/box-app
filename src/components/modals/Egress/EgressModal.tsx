@@ -1,6 +1,5 @@
 import {
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,7 +19,7 @@ import { getFormattedDate } from "../../../shared/utils/Date.utils.ts";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
 import {
-  EgressDetail,
+  EgressAmountDetail,
   EgressHeader,
 } from "../../../store/interfaces/EgressState.interfaces.ts";
 
@@ -42,42 +41,21 @@ export const EgressModal = (props: EgressModalProps) => {
       <DialogContent>
         {props.egressData && (
           <Grid container>
-            <Grid item md={7}>
+            <Grid item md={10} xs={10}>
               <Typography>
                 <b>{ComponentsLabels.PARTNER}</b>
                 {` ${props.egressData.beneficiary}`}
               </Typography>
             </Grid>
-            <Grid item md={3}>
-              <Typography>
-                <b>{ComponentsLabels.DATE}</b>
-                {` ${getFormattedDate(props.egressData.date)}`}
-              </Typography>
-            </Grid>
-            <Grid item md={2}>
+            <Grid item md={2} xs={2}>
               <Typography color={"red"} textAlign={"right"}>
                 <b>{`Nº${props.egressData.number}`}</b>
               </Typography>
             </Grid>
-            <Grid item md={7} display={"flex"}>
+            <Grid item md={12} xs={12}>
               <Typography>
-                <b>{ComponentsLabels.TYPE}</b>
-              </Typography>
-              <Chip
-                sx={{ marginLeft: 1 }}
-                size="small"
-                label={
-                  props.egressData.is_transfer
-                    ? ComponentsLabels.TYPE_TRANSFER
-                    : ComponentsLabels.TYPE_CASH
-                }
-                color={props.egressData.is_transfer ? "warning" : "success"}
-              />
-            </Grid>
-            <Grid item md={5}>
-              <Typography>
-                <b>{ComponentsLabels.AMOUNT}</b>
-                {` $${props.egressData.amount}`}
+                <b>{ComponentsLabels.DATE}</b>
+                {` ${getFormattedDate(props.egressData.date)}`}
               </Typography>
             </Grid>
           </Grid>
@@ -109,15 +87,56 @@ export const EgressModal = (props: EgressModalProps) => {
                           ))}
                       </TableRow>
                     ))
-                : egressDetail.map((row: EgressDetail, index: number) => (
-                    <TableRow key={index}>
-                      <TableCell>{row.description}</TableCell>
-                      <TableCell>{row.value ? row.value : 0}</TableCell>
-                    </TableRow>
-                  ))}
+                : egressDetail.amountDetail.map(
+                    (row: EgressAmountDetail, index: number) => (
+                      <TableRow key={index}>
+                        <TableCell>{row.description}</TableCell>
+                        <TableCell>{row.value ? row.value : 0}</TableCell>
+                      </TableRow>
+                    )
+                  )}
             </TableBody>
           </Table>
         </TableContainer>
+        {props.egressData && (
+          <Grid border={"1px solid grey"} borderRadius={1} container p={1}>
+            <Grid item md={7}>
+              <Typography>
+                <b>Detalles del Pago</b>
+              </Typography>
+            </Grid>
+            <Grid item md={2} xs={9}>
+              <Typography textAlign={"right"}>
+                {ComponentsLabels.TYPE_CASH}:
+              </Typography>
+            </Grid>
+            <Grid item md={3} xs={3}>
+              <Typography textAlign={"right"}>
+                ${egressDetail.billDetail.cash.toFixed(2)}
+              </Typography>
+            </Grid>
+            <Grid item md={9} xs={9}>
+              <Typography textAlign={"right"}>
+                {ComponentsLabels.TYPE_TRANSFER}:
+              </Typography>
+            </Grid>
+            <Grid item md={3} xs={3}>
+              <Typography textAlign={"right"}>
+                ${egressDetail.billDetail.transfer.toFixed(2)}
+              </Typography>
+            </Grid>
+            <Grid item md={9} xs={9}>
+              <Typography textAlign={"right"}>
+                <b>{ComponentsLabels.TOTAL}</b>
+              </Typography>
+            </Grid>
+            <Grid item md={3} xs={3}>
+              <Typography textAlign={"right"}>
+                ${props.egressData.amount.toFixed(2)}
+              </Typography>
+            </Grid>
+          </Grid>
+        )}
       </DialogContent>
       <DialogActions>
         <Grid container pl={2} pr={2} justifyContent={"space-between"}>

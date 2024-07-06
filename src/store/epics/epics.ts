@@ -21,6 +21,7 @@ import { putPartnerEpic } from "./PartnerEpics/putPartner.epic.ts";
 import { deletePartnerEpic } from "./PartnerEpics/deletePartner.epic.ts";
 import { getMetricsEpic } from "./MetricsEpics/getMetrics.epic.ts";
 import { getTypesMetricsEpic } from "./MetricsEpics/getTypesMetrics.epic.ts";
+import { getContributionListEpic } from "./EntryEpics/getContributionList.epic.ts";
 
 export default combineEpics(
   // @ts-ignore
@@ -44,5 +45,6 @@ export default combineEpics(
   putPartnerEpic,
   deletePartnerEpic,
   getMetricsEpic,
-  getTypesMetricsEpic
+  getTypesMetricsEpic,
+  getContributionListEpic
 ) as unknown as EpicCustom;

@@ -18,8 +18,8 @@ export const getEntryDetailEpic: EpicCustom = ({ action$, dispatch }) =>
     filter(getEntryDetail.match),
     tap(() => dispatch(setGetEntryDetailStatus(RequestStatusEnum.PENDING))),
     switchMap(({ payload }) =>
-      axios.get<EntryDetail[]>(`${ApiRoutes.GET_ENTRY_DETAIL}/${payload}`).pipe(
-        tap(({ data }: { data: EntryDetail[] }) => {
+      axios.get<EntryDetail>(`${ApiRoutes.GET_ENTRY_DETAIL}/${payload}`).pipe(
+        tap(({ data }: { data: EntryDetail }) => {
           dispatch(setEntryDetail(data));
           dispatch(setGetEntryDetailStatus(RequestStatusEnum.SUCCESS));
         }),

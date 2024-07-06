@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import { EgressLabels } from "../../../shared/labels/Egress.labels.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
-import { SelectPaymentMethod } from "../../../components/input/SelectPaymentMethod/SelectPaymentMethod.tsx";
 import { useContext } from "react";
 import { EgressContext } from "../EgressContext.tsx";
 import { useAppSelector } from "../../../shared/hooks/Store.hook.ts";
@@ -22,8 +21,6 @@ export const EgressHeader = () => {
   const {
     beneficiary,
     onChangeBeneficiary,
-    paymentMethod,
-    onChangePaymentMethod,
     isLoading,
     onChangeCategorySelector,
     categorySelected,
@@ -47,12 +44,6 @@ export const EgressHeader = () => {
       </Grid>
       <Grid item md={6} xs={12}>
         <Typography>{EgressLabels.SUBTITLE}</Typography>
-      </Grid>
-      <Grid item md={4} xs={8}>
-        <SelectPaymentMethod
-          onChangePaymentMethod={onChangePaymentMethod}
-          value={paymentMethod}
-        />
       </Grid>
       <Grid item md={2} xs={4}>
         <Typography textAlign={"right"} color={"red"}>

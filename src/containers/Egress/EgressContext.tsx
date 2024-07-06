@@ -1,11 +1,13 @@
 import { ChangeEvent, createContext, useEffect, useState } from "react";
-import { PaymentMethodEnum } from "../../shared/enums/PaymentMethod.enum.ts";
 import {
   useAppDispatch,
   useAppSelector,
 } from "../../shared/hooks/Store.hook.ts";
 import { getEgressCount } from "../../store/epics/EgressEpics/getEgressCount.epic.ts";
-import { NewEgress } from "../../store/interfaces/EgressState.interfaces.ts";
+import {
+  EgressBillDetail,
+  NewEgress,
+} from "../../store/interfaces/EgressState.interfaces.ts";
 import { KajaConfig } from "../../shared/constants/KajaConfig.ts";
 import {
   selectEgressCount,
@@ -17,6 +19,7 @@ import { setPostEgressStatus } from "../../store/actions/egress.actions.ts";
 import { buildEgressPDFDoc } from "../../shared/utils/BuildEgressPdf.utils.ts";
 import { getTypesMetrics } from "../../store/epics/MetricsEpics/getTypesMetrics.epic.ts";
 import { TypesSelector } from "../../components/input/TypesSearch/TypesSearch.tsx";
+import { EntryBillDetail } from "../../store/interfaces/EntryState.interfaces.ts";
 
 export interface IEgressDetail {
   description: string;
@@ -29,18 +32,18 @@ export interface IEgressContext {
   beneficiary: string;
   egressDetail: IEgressDetail[];
   totalDischarge: number;
+  isOpenBillDetailModal: boolean;
   onChangeBeneficiary: (event: ChangeEvent<HTMLInputElement>) => void;
-  onChangePaymentMethod: (paymentMethod: PaymentMethodEnum) => void;
   onChangeCategorySelector: (categorySelected: TypesSelector) => void;
   onAddDetail: () => void;
   onDeleteDetail: (index: number) => void;
   onUpdateDetail: (index: number, description: string, value: number) => void;
   onChangeEgressDate: (date: string) => void;
   onCancelEgress: () => void;
-  onSaveEgress: () => void;
+  onSaveEgress: (billDetail: EgressBillDetail) => void;
   onCloseSaveDialog: () => void;
   onPrintEgress: () => void;
-  paymentMethod?: PaymentMethodEnum | null;
+  onOpenBillDetailModal: () => void;
   categorySelected?: TypesSelector | null;
 }
 
@@ -51,8 +54,8 @@ const initialEgressContext: IEgressContext = {
   beneficiary: "",
   egressDetail: [],
   totalDischarge: 0,
+  isOpenBillDetailModal: false,
   onChangeBeneficiary: () => {},
-  onChangePaymentMethod: () => {},
   onChangeCategorySelector: () => {},
   onAddDetail: () => {},
   onDeleteDetail: () => {},
@@ -62,6 +65,7 @@ const initialEgressContext: IEgressContext = {
   onSaveEgress: () => {},
   onCloseSaveDialog: () => {},
   onPrintEgress: () => {},
+  onOpenBillDetailModal: () => {},
 };
 
 const EgressContext = createContext<IEgressContext>(initialEgressContext);
@@ -80,19 +84,19 @@ const EgressContestProvider = ({ children }: any) => {
   const [egressDetail, setEgressDetail] = useState<IEgressDetail[]>([
     { description: "", value: 0 },
   ]);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodEnum | null>(
-    null
-  );
   const [totalDischarge, setTotalDischarge] = useState<number>(0);
   const [egressDate, setEgressDate] = useState<string>("");
   const [categorySelected, setCategorySelected] =
     useState<TypesSelector | null>(null);
+  const [isOpenBillDetailModal, setOpenBillDetailModal] = useState(false);
+  const [billDetail, setBillDetail] = useState<EgressBillDetail>();
+
+  const onOpenBillDetailModal = () => {
+    setOpenBillDetailModal(true);
+  };
 
   const onChangeEgressDate = (date: string) => setEgressDate(date);
 
-  const onChangePaymentMethod = (paymentMethod: PaymentMethodEnum) => {
-    setPaymentMethod(paymentMethod);
-  };
   const onAddDetail = () => {
     const details = [...egressDetail];
 
@@ -132,7 +136,7 @@ const EgressContestProvider = ({ children }: any) => {
     clearStateForNew();
   };
 
-  const buildNewEgress = (): NewEgress => {
+  const buildNewEgress = (billDetail: EntryBillDetail): NewEgress => {
     return {
       header: {
         number: count,
@@ -141,23 +145,23 @@ const EgressContestProvider = ({ children }: any) => {
         beneficiary: beneficiary,
         amount: totalDischarge,
         type_id: categorySelected!.id,
-        is_transfer:
-          paymentMethod === PaymentMethodEnum.TRANSFER ? true : false,
       },
       detail: egressDetail.map((detail) => ({
         discharge_number: count,
         description: detail.description,
         value: detail.value,
       })),
+      billDetail,
     };
   };
 
-  const onSaveEgress = () => {
+  const onSaveEgress = (billDetail: EgressBillDetail) => {
     setIsLoading(true);
+    setOpenBillDetailModal(false);
+    setBillDetail(billDetail);
 
-    const newEgress: NewEgress = buildNewEgress();
+    const newEgress: NewEgress = buildNewEgress(billDetail);
 
-    console.log(newEgress);
     dispatch(postEgress(newEgress));
   };
   const onCloseSaveDialog = () => {
@@ -167,7 +171,7 @@ const EgressContestProvider = ({ children }: any) => {
     dispatch(getTypesMetrics());
   };
   const onPrintEgress = () => {
-    buildEgressPDFDoc(buildNewEgress());
+    buildEgressPDFDoc(buildNewEgress(billDetail!));
     onCloseSaveDialog();
   };
 
@@ -184,7 +188,6 @@ const EgressContestProvider = ({ children }: any) => {
     dispatch(setPostEgressStatus(RequestStatusEnum.PENDING));
     setIsLoading(false);
     setBeneficiary("");
-    setPaymentMethod(null);
     setCategorySelected(null);
     setEgressDetail([{ description: "", value: 0 }]);
   };
@@ -196,7 +199,6 @@ const EgressContestProvider = ({ children }: any) => {
 
   useEffect(() => {
     if (
-      paymentMethod &&
       beneficiary &&
       egressDate &&
       categorySelected &&
@@ -205,14 +207,7 @@ const EgressContestProvider = ({ children }: any) => {
     )
       setDisableSave(false);
     else setDisableSave(true);
-  }, [
-    paymentMethod,
-    beneficiary,
-    egressDate,
-    totalDischarge,
-    egressDetail,
-    categorySelected,
-  ]);
+  }, [beneficiary, egressDate, totalDischarge, egressDetail, categorySelected]);
 
   useEffect(() => {
     setTotalDischarge(
@@ -236,11 +231,10 @@ const EgressContestProvider = ({ children }: any) => {
         disableSave,
         beneficiary,
         egressDetail,
-        paymentMethod,
         categorySelected,
         totalDischarge,
+        isOpenBillDetailModal,
         onChangeBeneficiary,
-        onChangePaymentMethod,
         onChangeCategorySelector,
         onAddDetail,
         onDeleteDetail,
@@ -250,6 +244,7 @@ const EgressContestProvider = ({ children }: any) => {
         onSaveEgress,
         onCloseSaveDialog,
         onPrintEgress,
+        onOpenBillDetailModal,
       }}
     >
       {children}

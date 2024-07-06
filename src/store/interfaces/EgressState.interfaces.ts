@@ -7,12 +7,13 @@ export interface IEgressState {
   getEgressDetailStatus: RequestStatusEnum;
   egressCount: number;
   egressList: EgressHeader[];
-  egressDetail: EgressDetail[];
+  egressDetail: EgressDetail;
 }
 
 export interface NewEgress {
   header: EgressHeader;
-  detail: EgressDetail[];
+  detail: EgressAmountDetail[];
+  billDetail: EgressBillDetail;
 }
 
 export interface EgressHeader {
@@ -21,11 +22,10 @@ export interface EgressHeader {
   place: string;
   beneficiary: string;
   amount: number;
-  is_transfer: boolean;
   type_id: number;
 }
 
-export interface EgressDetail {
+export interface EgressAmountDetail {
   discharge_number: number;
   description: string;
   value: number;
@@ -34,4 +34,14 @@ export interface EgressDetail {
 export interface EgressPagination {
   limit: number;
   offset: number;
+}
+
+export interface EgressBillDetail {
+  cash: number;
+  transfer: number;
+}
+
+export interface EgressDetail {
+  billDetail: EgressBillDetail;
+  amountDetail: EgressAmountDetail[];
 }

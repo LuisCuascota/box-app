@@ -21,18 +21,21 @@ export interface LoanTableProps {
 
 export const LoanTable = (props: LoanTableProps) => {
   const getRowStyle = (loanDetail: LoanDetail) => {
-    if (
-      !loanDetail.is_paid &&
-      moment().isAfter(loanDetail.payment_date, "month")
-    )
-      return { backgroundColor: ColorsEnum.ERROR_LIGHT };
-    if (
-      !loanDetail.is_paid &&
-      moment().isSame(loanDetail.payment_date, "month")
-    )
-      return { backgroundColor: ColorsEnum.PRIMARY_LIGHT };
     if (loanDetail.is_paid)
       return { backgroundColor: ColorsEnum.SUCCESS_LIGHT };
+
+    if (
+      !loanDetail.is_paid &&
+      moment.utc().isSameOrAfter(loanDetail.payment_date, "month") &&
+      moment.utc().isAfter(loanDetail.payment_date, "day")
+    ) {
+      return { backgroundColor: ColorsEnum.ERROR_LIGHT };
+    }
+    if (
+      !loanDetail.is_paid &&
+      moment.utc().isSame(loanDetail.payment_date, "month")
+    )
+      return { backgroundColor: ColorsEnum.PRIMARY_LIGHT };
   };
 
   return (

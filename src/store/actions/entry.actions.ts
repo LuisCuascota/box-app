@@ -7,9 +7,11 @@ export const {
   setPostEntryStatus,
   setGetEntriesPaginatedStatus,
   setGetEntryDetailStatus,
+  setGetContributionListStatus,
   setCount,
   setTypes,
   setEntryAmounts,
   setEntries,
   setEntryDetail,
+  setContributionList,
 } = entrySlice.actions;

@@ -5,6 +5,7 @@ import {
   IEntryState,
   EntryAmount,
   EntryHeader,
+  Contribution,
   EntryDetail,
 } from "../interfaces/EntryState.interfaces.ts";
 
@@ -15,11 +16,19 @@ export const entryInitialState: IEntryState = {
   postEntryStatus: RequestStatusEnum.PENDING,
   getEntriesPaginatedStatus: RequestStatusEnum.PENDING,
   getEntryDetailStatus: RequestStatusEnum.PENDING,
+  getContributionListStatus: RequestStatusEnum.PENDING,
   count: 0,
   types: [],
   entryAmounts: [],
   entries: [],
-  entryDetail: [],
+  entryDetail: {
+    amountDetail: [],
+    billDetail: {
+      cash: 0,
+      transfer: 0,
+    },
+  },
+  contributionList: [],
 };
 
 export const entrySlice = createSlice({
@@ -71,8 +80,17 @@ export const entrySlice = createSlice({
     ) => {
       state.getEntryDetailStatus = action.payload;
     },
-    setEntryDetail: (state, action: PayloadAction<EntryDetail[]>) => {
+    setEntryDetail: (state, action: PayloadAction<EntryDetail>) => {
       state.entryDetail = action.payload;
+    },
+    setGetContributionListStatus: (
+      state,
+      action: PayloadAction<RequestStatusEnum>
+    ) => {
+      state.getContributionListStatus = action.payload;
+    },
+    setContributionList: (state, action: PayloadAction<Contribution[]>) => {
+      state.contributionList = action.payload;
     },
   },
 });

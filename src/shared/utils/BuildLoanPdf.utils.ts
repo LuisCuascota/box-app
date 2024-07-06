@@ -39,7 +39,7 @@ const buildHead = (doc: jsPDF, loan: Loan) => {
   setText(doc, FontEnum.HELVETICA, FontStyleEnum.BOLD, 14, FontColorEnum.RED);
   doc.text(`Nº${loan.number}`, 185, 30);
   setText(doc);
-  doc.text(`Nombre: ${loan.names} ${loan.surnames}`, 10, 37);
+  doc.text(`Nombre: ${loan.names} ${loan.surnames ?? ""}`, 10, 37);
   doc.text(`Fecha: ${loan.date}`, 160, 37);
   doc.text(`Monto: $${loan.value}`, 10, 44);
   doc.text(`Plazo Meses: ${loan.term}`, 90, 44);

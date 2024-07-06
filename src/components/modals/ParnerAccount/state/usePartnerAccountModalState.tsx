@@ -1,0 +1,100 @@
+import { PartnerData } from "../../../../store/interfaces/PartnerState.interfaces.ts";
+import { useEffect, useMemo, useState } from "react";
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "../../../../shared/hooks/Store.hook.ts";
+import { getContributionList } from "../../../../store/epics/EntryEpics/getContributionList.epic.ts";
+import {
+  selectContributionList,
+  selectContributionListStatus,
+} from "../../../../store/selectors/selectors.ts";
+import { RequestStatusEnum } from "../../../../shared/enums/RequestStatus.enum.ts";
+import { Contribution } from "../../../../store/interfaces/EntryState.interfaces.ts";
+// @ts-ignore
+import moment from "moment/min/moment-with-locales";
+import { environment } from "../../../../environments/environment.ts";
+import { setContributionList } from "../../../../store/actions/entry.actions.ts";
+export interface ContributionProcessed {
+  date: string;
+  description: string;
+  entryNumber: number;
+  value: number;
+  accumulate: number;
+}
+
+export interface UsePartnerAccountModalStateProps {
+  handleClose: () => void;
+  partnerData?: PartnerData;
+}
+
+export const UsePartnerAccountModalState = (
+  props: UsePartnerAccountModalStateProps
+) => {
+  const dispatch = useAppDispatch();
+
+  const contributionListStatus = useAppSelector(selectContributionListStatus);
+  const contributionList = useAppSelector(selectContributionList);
+
+  const [contributions, setContributions] = useState<ContributionProcessed[]>(
+    []
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const buildContributions = () => {
+    let accumulate = 0;
+
+    const contributionsTransformed: ContributionProcessed[] =
+      contributionList.map((contribution: Contribution) => {
+        moment.locale("es-us");
+
+        const formattedDate = moment
+          .utc(contribution.date)
+          .format("YYYY-MM-DD");
+        const monthName = moment.utc(contribution.date).format("MMMM");
+        const monthDetailMessage =
+          contribution.value > environment.contributionAmount
+            ? " + Regularización"
+            : "";
+        const description = `Pago del mes (${monthName} ${monthDetailMessage})`;
+
+        accumulate += contribution.value;
+
+        return {
+          date: formattedDate,
+          description: description,
+          entryNumber: contribution.number,
+          value: contribution.value,
+          accumulate: accumulate,
+        };
+      });
+
+    setContributions(contributionsTransformed);
+  };
+
+  const onCloseModal = () => {
+    props.handleClose();
+    setContributions([]);
+    dispatch(setContributionList([]));
+  };
+
+  useMemo(() => {
+    if (props.partnerData && props.partnerData.number) {
+      dispatch(getContributionList(props.partnerData.number));
+      setIsLoading(true);
+    }
+  }, [props.partnerData?.number]);
+
+  useEffect(() => {
+    if (contributionListStatus === RequestStatusEnum.SUCCESS) {
+      buildContributions();
+      setIsLoading(false);
+    }
+  }, [contributionListStatus]);
+
+  return {
+    contributions,
+    isLoading,
+    onCloseModal,
+  };
+};

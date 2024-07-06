@@ -103,7 +103,7 @@ export const useLoanModalState = (
         .filter(
           (detail) =>
             !detail.is_paid &&
-            moment().isSameOrAfter(detail.payment_date, "month")
+            moment.utc().isSameOrAfter(detail.payment_date, "month")
         )
         .reduce((acc, detail) => acc + detail.interest, 0);
 

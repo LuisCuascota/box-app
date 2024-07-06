@@ -11,7 +11,6 @@ import {
 import { getFormattedDate } from "./Date.utils.ts";
 import {
   NewEntry,
-  EntryDetail,
   EntryHeader,
 } from "../../store/interfaces/EntryState.interfaces.ts";
 
@@ -35,28 +34,16 @@ const buildDocHeader = (doc: jsPDF, entryHead: EntryHeader, stX: number) => {
     "center"
   );
   setText(doc, FontEnum.HELVETICA, FontStyleEnum.BOLD, 12, FontColorEnum.RED);
-  doc.text(`Nº${entryHead.number}`, stX + 115, 33);
-  if (entryHead.is_transfer) doc.text("X", stX + 126, 40);
-  else doc.text("X", stX + 89, 40);
+  doc.text(`Nº${entryHead.number}`, stX + 115, 30);
 
   setText(doc);
-  doc.text("COMPROBANTE DE INGRESO", stX, 33);
-  doc.text(`Nº Cuenta: ${entryHead.account_number}`, stX, 40);
-  doc.text("Efectivo", stX + 72, 40);
-  doc.text("Transferencia", stX + 98, 40);
-  doc.text(`Socio: ${entryHead.names} ${entryHead.surnames}`, stX, 46);
-
-  doc.rect(stX + 88, 36, 5, 5);
-  doc.rect(stX + 125, 36, 5, 5);
+  doc.text("COMPROBANTE DE INGRESO", stX, 30);
+  doc.text(`Nº Cuenta: ${entryHead.account_number}`, stX, 36);
+  doc.text(`Socio: ${entryHead.names} ${entryHead.surnames ?? ""}`, stX, 42);
 };
 
-const buildDocTable = (
-  doc: jsPDF,
-  entryHead: EntryHeader,
-  entryDetail: EntryDetail[],
-  stX: number
-) => {
-  let stY = 60;
+const buildDocTable = (doc: jsPDF, entry: NewEntry, stX: number) => {
+  let stY = 52;
   const cellDescW = 105;
   const cellValueW = 25;
   const cellH = 7;
@@ -68,7 +55,7 @@ const buildDocTable = (
   doc.text("Se recibe por concepto de:", stX, stY - 4);
   doc.text("VALOR", stX + cellDescW + mx + 3, stY - 2);
 
-  entryDetail.forEach((option) => {
+  entry.detail.forEach((option) => {
     doc.rect(stX, stY, cellDescW, cellH);
     doc.rect(stX + cellDescW, stY, cellValueW, cellH);
     doc.text(option.description!, stX + mx, stY + my);
@@ -81,15 +68,29 @@ const buildDocTable = (
   });
 
   doc.rect(stX + cellDescW, stY, cellValueW, cellH);
-  doc.text(entryHead.amount.toString(), stX + cellDescW + mx, stY + my);
   setText(doc, FontEnum.HELVETICA, FontStyleEnum.BOLD);
-  doc.text("TOTAL $=", stX + 84, stY + my);
+  doc.text(`$${entry.header.amount}`, stX + cellDescW + mx, stY + my);
+  doc.text("TOTAL: ", stX + 88, stY + my);
+  stY += cellH;
+  doc.rect(stX + cellDescW, stY, cellValueW, cellH);
+  setText(doc);
+  doc.text(`$${entry.billDetail.cash}`, stX + cellDescW + mx, stY + my);
+  setText(doc, FontEnum.HELVETICA, FontStyleEnum.BOLD);
+  doc.text("Efectivo: ", stX + 86, stY + my);
+  stY += cellH;
+  doc.rect(stX + cellDescW, stY, cellValueW, cellH);
+  setText(doc);
+  doc.text(`$${entry.billDetail.transfer}`, stX + cellDescW + mx, stY + my);
+  setText(doc, FontEnum.HELVETICA, FontStyleEnum.BOLD);
+  doc.text("Transferencia: ", stX + 75, stY + my);
   setText(doc);
 
   doc.text(
-    `Lugar: ${entryHead.place}, Fecha: ${getFormattedDate(entryHead.date)}`,
+    `Lugar: ${entry.header.place}, Fecha: ${getFormattedDate(
+      entry.header.date
+    )}`,
     stX,
-    150
+    135
   );
 };
 
@@ -116,8 +117,8 @@ export const buildEntryPDFDoc = (newEntry: NewEntry) => {
 
   buildDocHeader(doc, newEntry.header, stX);
   buildDocHeader(doc, newEntry.header, getCenter(2, "H") + stX);
-  buildDocTable(doc, newEntry.header, newEntry.detail, stX);
-  buildDocTable(doc, newEntry.header, newEntry.detail, getCenter(2, "H") + stX);
+  buildDocTable(doc, newEntry, stX);
+  buildDocTable(doc, newEntry, getCenter(2, "H") + stX);
   buildDocFooter(doc);
   buildDocComplements(doc);
 

@@ -12,7 +12,7 @@ export const getFistSaturday = (date: Moment): string => {
 export const getFormattedDate = (date?: string): string => {
   if (date) {
     return moment(date).isValid()
-      ? moment(date).format(DATE_FORMAT).toString()
+      ? moment.utc(date).format(DATE_FORMAT).toString()
       : date;
-  } else return moment().format(DATE_FORMAT).toString();
+  } else return moment.utc().format(DATE_FORMAT).toString();
 };

@@ -20,7 +20,11 @@ export const useEgressModalState = (props: EgressModalProps) => {
 
   const handleBuildDoc = () => {
     if (props.egressData)
-      buildEgressPDFDoc({ header: props.egressData, detail: egressDetail });
+      buildEgressPDFDoc({
+        header: props.egressData,
+        detail: egressDetail.amountDetail,
+        billDetail: egressDetail.billDetail,
+      });
   };
 
   useEffect(() => {
