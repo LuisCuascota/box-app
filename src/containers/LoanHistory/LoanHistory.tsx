@@ -15,19 +15,15 @@ import { getFormattedDate } from "../../shared/utils/Date.utils.ts";
 import { useLoanHistoryState } from "./state/useLoanHistoryState.tsx";
 import { PartnerSearch } from "../../components/input/PersonSearch/PartnerSearch.tsx";
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
-import { ColorsEnum } from "../../shared/enums/Colors.enum.ts";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { LoanHistoryLabels } from "../../shared/labels/LoanHistory.labels.ts";
 import { LoanModal } from "../../components/modals/Loan/LoanModal.tsx";
 import { Loan } from "../../store/interfaces/LoanState.interfaces.ts";
+import { getStatusTypeIcon } from "../../shared/utils/Components.util.tsx";
 
 export const LoanHistory = () => {
   const { loansPaginated, pagination, isLoading, modal, search } =
     useLoanHistoryState();
-
-  const getRowStyle = (isEnd: boolean) => {
-    if (isEnd) return { backgroundColor: ColorsEnum.TRANSFER_LIGHT };
-  };
 
   return (
     <PaperBase>
@@ -60,6 +56,10 @@ export const LoanHistory = () => {
               <TableCell align="left">{LoanHistoryLabels.TH_PARTNER}</TableCell>
               <TableCell align="left">{LoanHistoryLabels.TH_DATE}</TableCell>
               <TableCell align="left">{LoanHistoryLabels.TH_AMOUNT}</TableCell>
+              <TableCell align="left">{LoanHistoryLabels.TH_DEBT}</TableCell>
+              <TableCell align="center">
+                {LoanHistoryLabels.TH_STATUS}
+              </TableCell>
               <TableCell>{}</TableCell>
             </TableRow>
           </TableHead>
@@ -69,7 +69,7 @@ export const LoanHistory = () => {
                   .fill(0)
                   .map((_, rowIndex) => (
                     <TableRow key={rowIndex}>
-                      {Array(5)
+                      {Array(7)
                         .fill(0)
                         .map((_, colIndex) => (
                           <TableCell key={colIndex}>
@@ -79,7 +79,7 @@ export const LoanHistory = () => {
                     </TableRow>
                   ))
               : loansPaginated.map((row: Loan) => (
-                  <TableRow key={row.number} style={getRowStyle(row.is_end)}>
+                  <TableRow key={row.number}>
                     <TableCell>
                       <b>{row.number}</b>
                     </TableCell>
@@ -88,6 +88,10 @@ export const LoanHistory = () => {
                     </TableCell>
                     <TableCell>{getFormattedDate(row.date)}</TableCell>
                     <TableCell>{`$${row.value}`}</TableCell>
+                    <TableCell>{`$${row.debt}`}</TableCell>
+                    <TableCell align="center">
+                      {getStatusTypeIcon(row.status)}
+                    </TableCell>
                     <TableCell>
                       <IconButton
                         color="primary"

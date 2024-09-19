@@ -173,6 +173,7 @@ const EntryContextProvider = ({ children }: any) => {
       ).length;
 
       const entryLoanData: EntryLoanData = {
+        currentDebt: loanDefinition.loan.debt,
         loanNumber: loanDefinition.loan.number!,
         isFinishLoan: false,
         loanDetailToPay,
@@ -210,6 +211,9 @@ const EntryContextProvider = ({ children }: any) => {
       entry_number: entryNumber,
       type_id: amount.id,
       value: amount.value,
+      ...(amount.id === EntryTypesIdEnum.CONTRIBUTION
+        ? { currentSaving: partnerSelected?.currentSaving }
+        : {}),
       ...(isPrint ? { description: amount.description } : {}),
     }));
 

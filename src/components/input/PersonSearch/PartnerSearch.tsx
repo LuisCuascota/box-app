@@ -9,6 +9,7 @@ import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
 export interface PartnerSelector {
   label: string;
   id: number;
+  currentSaving: number;
 }
 
 export interface PartnerSearchParams {
@@ -29,6 +30,7 @@ export const PartnerSearch = (props: PartnerSearchParams) => {
         label: `${person.number ? person.number : 0}-${person.names} ${
           person.surnames
         }`,
+        currentSaving: person.current_saving!,
       }))
     );
   };

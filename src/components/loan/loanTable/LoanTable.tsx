@@ -1,4 +1,5 @@
 import {
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -14,6 +15,7 @@ import { ColorsEnum } from "../../../shared/enums/Colors.enum.ts";
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
 
 export interface LoanTableProps {
+  isLoading: boolean;
   loanDetail: LoanDetail[];
   onPayButton?: (loanDetail: LoanDetail) => void;
   withActions?: boolean;
@@ -62,7 +64,21 @@ export const LoanTable = (props: LoanTableProps) => {
             )}
           </TableRow>
         </TableHead>
-        {props.loanDetail && (
+        {props.isLoading ? (
+          Array(5)
+            .fill(0)
+            .map((_, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {Array(7)
+                  .fill(0)
+                  .map((_, colIndex) => (
+                    <TableCell key={colIndex}>
+                      <Skeleton animation="wave" />
+                    </TableCell>
+                  ))}
+              </TableRow>
+            ))
+        ) : (
           <TableBody>
             {props.loanDetail.map((loanDetail: LoanDetail) => (
               <TableRow

@@ -21,7 +21,7 @@ export const useEgressHistoryState = () => {
   const egressCount = useAppSelector(selectEgressCount);
   const egressCountStatus = useAppSelector(selectEgressCountStatus);
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(25);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<EgressHeader>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

@@ -3,4 +3,5 @@ export enum EntryHistoryLabels {
   TH_PARTNER = "Socio",
   TH_DATE = "Fecha",
   TH_AMOUNT = "Monto",
+  TH_TYPE = "Tipo",
 }

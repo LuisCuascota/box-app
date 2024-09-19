@@ -18,6 +18,8 @@ export interface PartnerData {
   phone: string;
   birth_day: string;
   address: string;
+  current_saving?: number;
+  status?: string;
 }
 
 export interface PartnerPagination {

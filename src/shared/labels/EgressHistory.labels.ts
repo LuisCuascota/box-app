@@ -3,4 +3,5 @@ export enum EgressHistoryLabels {
   TH_BENEFICIARY = "Beneficiario",
   TH_DATE = "Fecha",
   TH_AMOUNT = "Monto",
+  TH_TYPE = "Tipo",
 }

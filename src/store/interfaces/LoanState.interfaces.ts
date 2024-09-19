@@ -18,6 +18,8 @@ export interface Loan {
   term: number;
   rate: number;
   is_end: boolean;
+  debt: number;
+  status?: string;
   guarantor1_account?: number;
   guarantor2_account?: number;
   names?: string;
@@ -44,12 +46,14 @@ export interface LoanDefinition {
 export interface LoanDetailToPay {
   id: number;
   entry: number;
+  feeValue: number;
 }
 
 export interface EntryLoanData {
   loanDetailToPay: LoanDetailToPay[];
   loanNumber: number;
   isFinishLoan: boolean;
+  currentDebt: number;
 }
 
 export interface LoanPagination {

@@ -23,7 +23,7 @@ export const useLoanHistoryState = () => {
   const loanCount = useAppSelector(selectLoanCount);
   const loanCountStatus = useAppSelector(selectLoanCountStatus);
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(25);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<Loan>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

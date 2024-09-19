@@ -10,6 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import { EntryBillDetail } from "../../../store/interfaces/EntryState.interfaces.ts";
+import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
 
 interface PaymentModalProps {
   open: boolean;
@@ -100,16 +101,20 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
           value={paymentMethod}
           onChange={handlePaymentMethodChange}
         >
-          <FormControlLabel value="cash" control={<Radio />} label="Efectivo" />
+          <FormControlLabel
+            value="cash"
+            control={<Radio />}
+            label={ComponentsLabels.TYPE_CASH}
+          />
           <FormControlLabel
             value="transfer"
             control={<Radio />}
-            label="Transferencia"
+            label={ComponentsLabels.TYPE_TRANSFER}
           />
           <FormControlLabel
             value="combined"
             control={<Radio />}
-            label="Combinado"
+            label={ComponentsLabels.TYPE_MIX}
           />
         </RadioGroup>
         {paymentMethod === "combined" && (

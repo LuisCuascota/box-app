@@ -44,6 +44,7 @@ export interface EntryHeader {
   place: string;
   names?: string;
   surnames?: string;
+  status?: string;
 }
 
 export interface EntryAmountDetail {
@@ -51,6 +52,7 @@ export interface EntryAmountDetail {
   type_id: number;
   value: number;
   description?: string;
+  currentSaving?: number;
 }
 
 export interface EntryPagination {

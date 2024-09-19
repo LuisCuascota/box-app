@@ -4,5 +4,6 @@ export enum PartnerListLabels {
   TH_ACCOUNT = "Cuenta Nº",
   TH_NAMES = "Nombres",
   TH_DOCUMENT = "Cédula",
-  TH_PHONE = "Teléfono",
+  TH_SAVING = "Ahorro",
+  TH_STATUS = "Status",
 }

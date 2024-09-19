@@ -15,6 +15,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
@@ -25,8 +26,9 @@ import { usePartnerListState } from "./state/usePartnerListState.tsx";
 import { PartnerModal } from "../../components/modals/Partner/PartnerModal.tsx";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { PartnerAccountModal } from "../../components/modals/ParnerAccount/PartnerAccountModal.tsx";
+import { geAccountStatusIcon } from "../../shared/utils/Components.util.tsx";
+import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 
 export const PartnerList = () => {
   const { partners, pagination, isLoading, modal, alert } =
@@ -99,11 +101,12 @@ export const PartnerList = () => {
                   {PartnerListLabels.TH_ACCOUNT}
                 </Typography>
               </TableCell>
+              <TableCell align="left">{PartnerListLabels.TH_STATUS}</TableCell>
               <TableCell align="left">{PartnerListLabels.TH_NAMES}</TableCell>
               <TableCell align="left">
                 {PartnerListLabels.TH_DOCUMENT}
               </TableCell>
-              <TableCell align="left">{PartnerListLabels.TH_PHONE}</TableCell>
+              <TableCell align="left">{PartnerListLabels.TH_SAVING}</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -127,30 +130,40 @@ export const PartnerList = () => {
                     <TableCell align={"center"}>
                       <b>{row.number}</b>
                     </TableCell>
+                    <TableCell align={"center"}>
+                      <b>{geAccountStatusIcon(row.status)}</b>
+                    </TableCell>
                     <TableCell>
                       <i>{`${row.names} ${row.surnames}`}</i>
                     </TableCell>
                     <TableCell>{row.dni}</TableCell>
-                    <TableCell>{`${row.phone}`}</TableCell>
+                    <TableCell>{`$${row.current_saving}`}</TableCell>
                     <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => modal.onOpenModal(row)}
-                      >
-                        <OpenInNewIcon />
-                      </IconButton>
-                      <IconButton
-                        color="secondary"
-                        onClick={() => modal.onOpenAccountModal(row)}
-                      >
-                        <AccountBalanceWalletIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => alert.onOpenAlert(row)}
-                      >
-                        <DeleteOutlineIcon />
-                      </IconButton>
+                      <Tooltip title="Lista de Aportes">
+                        <IconButton
+                          aria-label={"eee"}
+                          color="primary"
+                          onClick={() => modal.onOpenAccountModal(row)}
+                        >
+                          <ChecklistRoundedIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Editar Información">
+                        <IconButton
+                          color="primary"
+                          onClick={() => modal.onOpenModal(row)}
+                        >
+                          <OpenInNewIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Desactivar Socio">
+                        <IconButton
+                          color="error"
+                          onClick={() => alert.onOpenAlert(row)}
+                        >
+                          <DeleteOutlineIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}

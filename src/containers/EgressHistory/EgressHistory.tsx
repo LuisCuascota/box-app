@@ -18,6 +18,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { EgressHeader } from "../../store/interfaces/EgressState.interfaces.ts";
 import { EgressHistoryLabels } from "../../shared/labels/EgressHistory.labels.ts";
 import { EgressModal } from "../../components/modals/Egress/EgressModal.tsx";
+import { getPaymentTypeIcon } from "../../shared/utils/Components.util.tsx";
 
 export const EgressHistory = () => {
   const { egressPaginated, pagination, isLoading, modal } =
@@ -51,6 +52,7 @@ export const EgressHistory = () => {
               <TableCell align="left">
                 {EgressHistoryLabels.TH_AMOUNT}
               </TableCell>
+              <TableCell align="left">{EgressHistoryLabels.TH_TYPE}</TableCell>
               <TableCell>{}</TableCell>
             </TableRow>
           </TableHead>
@@ -60,7 +62,7 @@ export const EgressHistory = () => {
                   .fill(0)
                   .map((_, rowIndex) => (
                     <TableRow key={rowIndex}>
-                      {Array(5)
+                      {Array(6)
                         .fill(0)
                         .map((_, colIndex) => (
                           <TableCell key={colIndex}>
@@ -79,6 +81,9 @@ export const EgressHistory = () => {
                     </TableCell>
                     <TableCell>{getFormattedDate(row.date)}</TableCell>
                     <TableCell>{`$${row.amount}`}</TableCell>
+                    <TableCell align="center">
+                      {getPaymentTypeIcon(row.status)}
+                    </TableCell>
                     <TableCell>
                       <IconButton
                         color="primary"

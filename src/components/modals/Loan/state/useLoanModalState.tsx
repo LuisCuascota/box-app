@@ -19,10 +19,13 @@ import moment from "moment";
 import { getLoanDetail } from "../../../../store/epics/LoanEpics/getLoanDetail.epic.ts";
 import { RequestStatusEnum } from "../../../../shared/enums/RequestStatus.enum.ts";
 import { buildLoanPDFDoc } from "../../../../shared/utils/BuildLoanPdf.utils.ts";
+import {
+  setGetLoanDetailStatus,
+  setLoanDetail,
+} from "../../../../store/actions/loan.actions.ts";
 
 export interface useLoanModalStateProps {
   finalLoanDetail: LoanDetail[];
-  currentCapital: number;
   onClose: () => void;
   onPayButton: (loanDetail: LoanDetail) => void;
   onSave: () => void;
@@ -41,21 +44,6 @@ export const useLoanModalState = (
   const loanDetailFromDB = useAppSelector(selectLoanDetail);
   const loanDetailStatus = useAppSelector(selectLoanDetailStatus);
 
-  const getCurrentCapital = (detail: LoanDetail[]): number => {
-    return +detail
-      .filter((detail) => !detail.is_paid)
-      .reduce((acc, detail) => acc + detail.fee_value, 0)
-      .toFixed(2);
-  };
-
-  const currentCapital = useMemo(() => {
-    return props.loanDetail
-      ? getCurrentCapital(props.loanDetail)
-      : loanDetailFromDB
-      ? getCurrentCapital(loanDetailFromDB)
-      : 0;
-  }, [props.loanDetail, loanDetailFromDB]);
-
   useMemo(() => {
     if (props.loanDetail) setFinalLoanDetail(props.loanDetail);
     else if (props.loan) dispatch(getLoanDetail(props.loan!.number!));
@@ -71,6 +59,9 @@ export const useLoanModalState = (
   };
 
   const onClose = () => {
+    if (!props.loanDetail) setFinalLoanDetail([]);
+    dispatch(setLoanDetail([]));
+    dispatch(setGetLoanDetailStatus(RequestStatusEnum.PENDING));
     setDetailSelected([]);
     props.handleClose();
   };
@@ -86,6 +77,7 @@ export const useLoanModalState = (
       detailToPay.push({
         entry: entryNumber,
         id: loanDetail.id!,
+        feeValue: loanDetail.fee_value,
       });
     });
 
@@ -112,11 +104,12 @@ export const useLoanModalState = (
         .map((loanDetail: LoanDetail) => ({
           entry: entryNumber,
           id: loanDetail.id!,
+          feeValue: loanDetail.fee_value,
         }));
 
       onUpdateAmounts(
         EntryTypesIdEnum.LOAN_CONTRIBUTION,
-        +currentCapital.toFixed(2)
+        +props.loan!.debt.toFixed(2)
       );
       onUpdateAmounts(
         EntryTypesIdEnum.LOAN_INTEREST,
@@ -138,7 +131,6 @@ export const useLoanModalState = (
   }, [loanDetailStatus]);
 
   return {
-    currentCapital,
     finalLoanDetail,
     onClose,
     onPayButton,

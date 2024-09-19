@@ -23,7 +23,7 @@ export const useEntryHistoryState = () => {
   const entryCount = useAppSelector(selectEntryCount);
   const entryCountStatus = useAppSelector(selectEntryCountStatus);
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(25);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<EntryHeader>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

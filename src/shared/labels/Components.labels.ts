@@ -19,6 +19,7 @@ export enum ComponentsLabels {
   TYPE = "Medio:",
   TYPE_TRANSFER = "Transferencia",
   TYPE_CASH = "Efectivo",
+  TYPE_MIX = "Combinado",
   AMOUNT = "Monto:",
   TOTAL = "TOTAL:",
   TH_ENTRY_TYPE = "Por concepto de",
@@ -41,4 +42,9 @@ export enum ComponentsLabels {
   BIRTHDAY = "Fecha de Nacimiento",
   PHONE = "Teléfono",
   ADDRESS = "Dirección",
+  PAID = "Pagado",
+  CURRENT = "Vigente",
+  LATE = "Mora",
+  ACCOUNT_OK = "Al Día",
+  ACCOUNT_LATE = "Aportes Atrasados",
 }

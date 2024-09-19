@@ -36,11 +36,10 @@ export const LoanModal = (props: LoanModalProps) => {
     onSave,
     onPreCancel,
     onPrintLoan,
-    currentCapital,
   } = useLoanModalState(props);
 
   return (
-    <Dialog maxWidth={"xl"} open={props.open} onClose={props.handleClose}>
+    <Dialog maxWidth={"xl"} open={props.open} onClose={onClose}>
       <DialogTitle
         textAlign={"center"}
         sx={{
@@ -79,7 +78,7 @@ export const LoanModal = (props: LoanModalProps) => {
             <Grid item md={4} xs={6}>
               <Typography>
                 <b>{ComponentsLabels.DEBT}</b>
-                {` $${currentCapital}`}
+                {` $${props.loan.debt}`}
               </Typography>
             </Grid>
             <Grid item md={4} xs={6}>
@@ -90,13 +89,12 @@ export const LoanModal = (props: LoanModalProps) => {
             </Grid>
           </Grid>
         )}
-        {finalLoanDetail && (
-          <LoanTable
-            loanDetail={finalLoanDetail}
-            onPayButton={onPayButton}
-            withActions={props.viewMode ? false : true}
-          />
-        )}
+        <LoanTable
+          isLoading={finalLoanDetail.length == 0}
+          loanDetail={finalLoanDetail}
+          onPayButton={onPayButton}
+          withActions={!props.viewMode}
+        />
       </DialogContent>
       <DialogActions>
         <Grid container spacing={0} pl={2} pr={2}>

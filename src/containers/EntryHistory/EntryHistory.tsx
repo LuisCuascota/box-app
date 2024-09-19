@@ -19,6 +19,7 @@ import { EntryHeader } from "../../store/interfaces/EntryState.interfaces.ts";
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { EntryHistoryLabels } from "../../shared/labels/EntryHistory.labels.ts";
+import { getPaymentTypeIcon } from "../../shared/utils/Components.util.tsx";
 
 export const EntryHistory = () => {
   const { entriesPaginated, pagination, isLoading, modal, search } =
@@ -56,6 +57,7 @@ export const EntryHistory = () => {
               </TableCell>
               <TableCell align="left">{EntryHistoryLabels.TH_DATE}</TableCell>
               <TableCell align="left">{EntryHistoryLabels.TH_AMOUNT}</TableCell>
+              <TableCell align="center">{EntryHistoryLabels.TH_TYPE}</TableCell>
               <TableCell>{}</TableCell>
             </TableRow>
           </TableHead>
@@ -65,7 +67,7 @@ export const EntryHistory = () => {
                   .fill(0)
                   .map((_, rowIndex) => (
                     <TableRow key={rowIndex}>
-                      {Array(5)
+                      {Array(6)
                         .fill(0)
                         .map((_, colIndex) => (
                           <TableCell key={colIndex}>
@@ -84,6 +86,9 @@ export const EntryHistory = () => {
                     </TableCell>
                     <TableCell>{getFormattedDate(row.date)}</TableCell>
                     <TableCell>{`$${row.amount}`}</TableCell>
+                    <TableCell align="center">
+                      {getPaymentTypeIcon(row.status)}
+                    </TableCell>
                     <TableCell>
                       <IconButton
                         color="primary"
