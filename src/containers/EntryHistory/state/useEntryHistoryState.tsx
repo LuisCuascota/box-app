@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -15,6 +15,11 @@ import {
   selectEntryCount,
   selectEntryCountStatus,
 } from "../../../store/selectors/selectors.ts";
+import { ModePagination } from "../../../store/interfaces/PartnerState.interfaces.ts";
+import { DefaultPagination } from "../../../shared/constants/KajaConfig.ts";
+import { environment } from "../../../environments/environment.ts";
+import moment from "moment";
+import { DATE_FORMAT } from "../../../shared/utils/Date.utils.ts";
 
 export const useEntryHistoryState = () => {
   const dispatch = useAppDispatch();
@@ -22,14 +27,25 @@ export const useEntryHistoryState = () => {
   const entriesPaginatedStatus = useAppSelector(selectEntriesPaginatedStatus);
   const entryCount = useAppSelector(selectEntryCount);
   const entryCountStatus = useAppSelector(selectEntryCountStatus);
-  const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(25);
+  const [page, setPage] = useState<number>(DefaultPagination.page);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(
+    DefaultPagination.rowsPerPage
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<EntryHeader>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [accountSelector, setAccountSelector] = useState<
     PartnerSelector | undefined
   >();
+  const [dateRange, setDateRange] = useState<string[]>([
+    environment.startDate,
+    moment().format(DATE_FORMAT),
+  ]);
+  const accountSelectorRef = useRef(accountSelector);
+
+  const onChangeDateRange = (from: string, to: string) => {
+    setDateRange([from, to]);
+  };
 
   const onPageChange = (_: any, newPage: number) => {
     setPage(newPage);
@@ -59,20 +75,47 @@ export const useEntryHistoryState = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(getEntryCount());
-    dispatch(getPartners());
+    dispatch(getPartners({ mode: ModePagination.SIMPLE }));
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
+
+    const isGetRequest = () => {
+      return (
+        accountSelectorRef.current === accountSelector ||
+        (accountSelectorRef.current != accountSelector &&
+          page === DefaultPagination.page &&
+          rowsPerPage === DefaultPagination.rowsPerPage)
+      );
+    };
+
+    if (isGetRequest())
+      dispatch(
+        getEntriesPaginated({
+          account: accountSelector?.id,
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+          startDate: dateRange[0],
+          endDate: dateRange[1],
+        })
+      );
+
+    accountSelectorRef.current = accountSelector;
+  }, [page, rowsPerPage, accountSelector, dateRange]);
+
+  useEffect(() => {
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
+
     dispatch(
-      getEntriesPaginated({
+      getEntryCount({
         account: accountSelector?.id,
-        limit: rowsPerPage,
-        offset: page * rowsPerPage,
+        startDate: dateRange[0],
+        endDate: dateRange[1],
       })
     );
-  }, [page, rowsPerPage, accountSelector]);
+  }, [accountSelector, dateRange]);
 
   useEffect(() => {
     if (
@@ -102,6 +145,8 @@ export const useEntryHistoryState = () => {
       onClearPartner,
       onSelectPartner,
       accountSelector,
+      onChangeDateRange,
+      dateRange,
     },
   };
 };

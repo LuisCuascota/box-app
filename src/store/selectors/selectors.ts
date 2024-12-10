@@ -63,3 +63,5 @@ export const selectContributionListStatus = (state: RootState) =>
   state.entry.getContributionListStatus;
 export const selectContributionList = (state: RootState) =>
   state.entry.contributionList;
+
+export const selectBalance = (state: RootState) => state.balance;

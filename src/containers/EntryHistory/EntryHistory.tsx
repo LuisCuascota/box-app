@@ -1,5 +1,5 @@
 import {
-  Box,
+  Grid,
   IconButton,
   Skeleton,
   Table,
@@ -20,6 +20,8 @@ import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { EntryHistoryLabels } from "../../shared/labels/EntryHistory.labels.ts";
 import { getPaymentTypeIcon } from "../../shared/utils/Components.util.tsx";
+import { DateRangePikerInput } from "../../components/input/DateRangePikerInput/DateRangePikerInput.tsx";
+import { environment } from "../../environments/environment.ts";
 
 export const EntryHistory = () => {
   const { entriesPaginated, pagination, isLoading, modal, search } =
@@ -27,17 +29,28 @@ export const EntryHistory = () => {
 
   return (
     <PaperBase>
-      <Box p={2}>
-        <Typography textAlign={"center"} variant={"h6"}>
-          {EntryHistoryLabels.TITLE}
-        </Typography>
-        <PartnerSearch
-          value={search.accountSelector}
-          disableSearch={false}
-          onChangeSelector={search.onSelectPartner}
-          onCleanSelector={search.onClearPartner}
-        />
-      </Box>
+      <Grid container p={1}>
+        <Grid item md={12} xs={12}>
+          <Typography textAlign={"center"} variant={"h6"}>
+            {EntryHistoryLabels.TITLE}
+          </Typography>
+        </Grid>
+        <Grid item md={8} xs={12} pr={1}>
+          <PartnerSearch
+            value={search.accountSelector}
+            disableSearch={false}
+            onChangeSelector={search.onSelectPartner}
+            onCleanSelector={search.onClearPartner}
+          />
+        </Grid>
+        <Grid item md={4} xs={12}>
+          <DateRangePikerInput
+            from={search.dateRange[0]}
+            to={search.dateRange[1]}
+            onChangeDate={search.onChangeDateRange}
+          />
+        </Grid>
+      </Grid>
       <TableContainer>
         <EntryModal
           entryData={modal.rowSelected}
@@ -102,7 +115,7 @@ export const EntryHistory = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 100]}
-                count={pagination.entryCount - 1}
+                count={pagination.entryCount}
                 rowsPerPage={pagination.rowsPerPage}
                 page={pagination.page}
                 onPageChange={pagination.onPageChange}

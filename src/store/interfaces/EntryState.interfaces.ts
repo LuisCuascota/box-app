@@ -59,6 +59,8 @@ export interface EntryPagination {
   limit: number;
   offset: number;
   account?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface Contribution {
@@ -75,4 +77,10 @@ export interface EntryBillDetail {
 export interface EntryDetail {
   billDetail: EntryBillDetail;
   amountDetail: EntryAmountDetail[];
+}
+
+export interface CountFilter {
+  account?: number;
+  startDate?: string;
+  endDate?: string;
 }

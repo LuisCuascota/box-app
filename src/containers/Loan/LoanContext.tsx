@@ -21,6 +21,7 @@ import { postLoan } from "../../store/epics/LoanEpics/postLoan.epic.ts";
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import { buildLoanPDFDoc } from "../../shared/utils/BuildLoanPdf.utils.ts";
 import { setPostLoanStatus } from "../../store/actions/loan.actions.ts";
+import { ModePagination } from "../../store/interfaces/PartnerState.interfaces.ts";
 
 export interface ILoanContext {
   disableCalculate: boolean;
@@ -198,7 +199,7 @@ const LoanContextProvider = ({ children }: any) => {
   };
 
   useEffect(() => {
-    dispatch(getPartners());
+    dispatch(getPartners({ mode: ModePagination.ACTIVE_ONLY }));
     dispatch(getLoanCount());
   }, []);
 

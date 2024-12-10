@@ -112,15 +112,26 @@ const pages: navPages[] = [
       },
     ],
   },
+  {
+    icon: <BarChartIcon fontSize="small" />,
+    title: ModulesEnum.PERIOD,
+    child: [
+      {
+        icon: <BarChartIcon fontSize="small" />,
+        link: RoutesEnum.PERIOD,
+        title: "Balances",
+      },
+    ],
+  },
 ];
 
-export const NavigationBar = () => {
+export const NavigationBar = (props: { isOffLine: boolean }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMdScreen = useMediaQuery(theme.breakpoints.up("md"));
-  const { authStatus, signOut } = useAuthenticator((context) => [
-    context.authStatus,
-  ]);
+  const { authStatus, signOut } = props.isOffLine
+    ? { authStatus: "authenticated", signOut: () => {} }
+    : useAuthenticator((context) => [context.authStatus]);
 
   const [anchorElEntry, setAnchorElEntry] = useState<null | HTMLElement>(null);
   const [anchorElLoan, setAnchorElLoan] = useState<null | HTMLElement>(null);
@@ -134,6 +145,9 @@ export const NavigationBar = () => {
     null
   );
   const [anchorElLogin, setAnchorElLogin] = useState<null | HTMLElement>(null);
+  const [anchorElPeriod, setAnchorElPeriod] = useState<null | HTMLElement>(
+    null
+  );
 
   const [openSideBar, setOpenSidebar] = useState<boolean>(false);
 
@@ -179,6 +193,11 @@ export const NavigationBar = () => {
         );
 
         return;
+
+      case ModulesEnum.PERIOD:
+        setAnchorElPeriod((prevState) =>
+          prevState ? null : event!.currentTarget
+        );
     }
   };
 
@@ -196,6 +215,8 @@ export const NavigationBar = () => {
         return anchorElMetrics;
       case ModulesEnum.LOGIN:
         return anchorElLogin;
+      case ModulesEnum.PERIOD:
+        return anchorElPeriod;
     }
   };
 

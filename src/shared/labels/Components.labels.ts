@@ -47,4 +47,6 @@ export enum ComponentsLabels {
   LATE = "Mora",
   ACCOUNT_OK = "Al Día",
   ACCOUNT_LATE = "Aportes Atrasados",
+  INITIAL_AMOUNT = "Monto Inicial",
+  ACCOUNT_DISABLED = "Cuenta Deshabilitada",
 }

@@ -11,15 +11,17 @@ import { PartnerList } from "./containers/PartnerList/PartnerList.tsx";
 import { MetricsContainer } from "./containers/Metrics/Metrics.tsx";
 import { Login } from "./containers/Login/Login.tsx";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchAuthSession } from "aws-amplify/auth";
 import instance from "./shared/utils/Axios.util.ts";
 import { Amplify } from "aws-amplify";
 import { AwsConfig } from "./shared/constants/KajaConfig.ts";
+import { PeriodContainer } from "./containers/Period/PeriodContainer.tsx";
 
 Amplify.configure(AwsConfig);
 
 function App() {
+  const [isOffline] = useState(true);
   const { authStatus } = useAuthenticator((context) => [context.authStatus]);
   const setJwt = async () => {
     const jwt = await fetchAuthSession();
@@ -30,6 +32,8 @@ function App() {
   };
 
   useEffect(() => {
+    if (isOffline) return;
+
     if (authStatus === "authenticated") {
       setJwt();
     }
@@ -37,10 +41,10 @@ function App() {
 
   return (
     <>
-      <NavigationBar />
+      <NavigationBar isOffLine={isOffline} />
       <Routes>
         <Route path={RoutesEnum.INDEX} element={<Login />} />
-        {authStatus === "authenticated" ? (
+        {isOffline || authStatus === "authenticated" ? (
           <>
             <Route path={RoutesEnum.ENTRY} element={<EntryContainer />} />
             <Route path={RoutesEnum.LOAN} element={<LoanContainer />} />
@@ -53,6 +57,7 @@ function App() {
             />
             <Route path={RoutesEnum.PARTNER_LIST} element={<PartnerList />} />
             <Route path={RoutesEnum.METRICS} element={<MetricsContainer />} />
+            <Route path={RoutesEnum.PERIOD} element={<PeriodContainer />} />
           </>
         ) : (
           <Route path="*" element={<Navigate to={RoutesEnum.INDEX} />} />

@@ -15,6 +15,7 @@ import {
 import { getLoanCount } from "../../../store/epics/LoanEpics/getLoanCount.epic.ts";
 import { getLoansPaginated } from "../../../store/epics/LoanEpics/getLoansPaginated.epic.ts";
 import { Loan } from "../../../store/interfaces/LoanState.interfaces.ts";
+import { ModePagination } from "../../../store/interfaces/PartnerState.interfaces.ts";
 
 export const useLoanHistoryState = () => {
   const dispatch = useAppDispatch();
@@ -60,7 +61,7 @@ export const useLoanHistoryState = () => {
   useEffect(() => {
     setIsLoading(true);
     dispatch(getLoanCount());
-    dispatch(getPartners());
+    dispatch(getPartners({ mode: ModePagination.SIMPLE }));
   }, []);
 
   useEffect(() => {

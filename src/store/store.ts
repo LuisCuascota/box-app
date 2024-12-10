@@ -5,6 +5,8 @@ import entryReducer from "./reducers/Entry.slice.ts";
 import loanReducer from "./reducers/Loan.slice.ts";
 import egressReducer from "./reducers/Egress.slice.ts";
 import metricsReducer from "./reducers/Metrics.slice.ts";
+import balanceReducer from "./reducers/Balance.slice.ts";
+
 import appEpic from "./epics/epics";
 
 export const epicMiddleware = createEpicMiddleware();
@@ -20,6 +22,7 @@ export const store = configureStore({
     loan: loanReducer,
     egress: egressReducer,
     metrics: metricsReducer,
+    balance: balanceReducer,
   },
 });
 

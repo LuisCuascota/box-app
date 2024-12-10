@@ -9,17 +9,20 @@ import {
   setCount,
   setGetEntryCountStatus,
 } from "../../actions/entry.actions.ts";
+import { CountFilter } from "../../interfaces/EntryState.interfaces.ts";
 
-export const getEntryCount = createAction("GET_ENTRY_COUNT");
+export const getEntryCount = createAction<CountFilter | undefined>(
+  "GET_ENTRY_COUNT"
+);
 
 export const getEntryCountEpic: EpicCustom = ({ action$, dispatch }) =>
   action$.pipe(
     filter(getEntryCount.match),
     tap(() => dispatch(setGetEntryCountStatus(RequestStatusEnum.PENDING))),
-    switchMap(() =>
-      axios.get<number>(ApiRoutes.GET_ENTRY_COUNT).pipe(
+    switchMap(({ payload }) =>
+      axios.get<number>(ApiRoutes.GET_ENTRY_COUNT, { params: payload }).pipe(
         tap(({ data }: { data: number }) => {
-          dispatch(setCount(data - 1));
+          dispatch(setCount(data));
           dispatch(setGetEntryCountStatus(RequestStatusEnum.SUCCESS));
         }),
         catchError(() => {

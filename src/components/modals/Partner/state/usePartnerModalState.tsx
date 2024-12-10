@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { postPartner } from "../../../../store/epics/PartnerEpics/postPartner.epic.ts";
 import { selectPartners } from "../../../../store/selectors/selectors.ts";
 import { RequestStatusEnum } from "../../../../shared/enums/RequestStatus.enum.ts";
-import {putPartner} from "../../../../store/epics/PartnerEpics/putPartner.epic.ts";
+import { putPartner } from "../../../../store/epics/PartnerEpics/putPartner.epic.ts";
 
 export enum PartnerInputEnum {
   NAMES = "names",
@@ -16,6 +16,7 @@ export enum PartnerInputEnum {
   BIRTHDAY = "birthday",
   ADDRESS = "address",
   PHONE = "phone",
+  INITIAL_AMOUNT = "initialAmount",
 }
 export const usePartnerModalState = (props: PartnerModalProps) => {
   const dispatch = useAppDispatch();
@@ -27,35 +28,41 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
   const [birthday, setBirthday] = useState<string>();
   const [address, setAddress] = useState<string | null>();
   const [phone, setPhone] = useState<string | null>();
+  const [initialAmount, setInitialAmount] = useState<number>(0);
 
   const [disableSave, setDisableSave] = useState<boolean>(true);
   const [disableUpdate, setDisableUpdate] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const onChangeInput = (input: PartnerInputEnum, value: string) => {
+  const onChangeInput = (input: PartnerInputEnum, value: string | number) => {
     switch (input) {
       case PartnerInputEnum.NAMES:
-        setNames(value);
+        setNames(value as string);
 
         return;
       case PartnerInputEnum.SURNAMES:
-        setSurnames(value);
+        setSurnames(value as string);
 
         return;
       case PartnerInputEnum.DNI:
-        setDni(value);
+        setDni(value as string);
 
         return;
       case PartnerInputEnum.BIRTHDAY:
-        setBirthday(value);
+        setBirthday(value as string);
 
         return;
       case PartnerInputEnum.ADDRESS:
-        setAddress(value);
+        setAddress(value as string);
 
         return;
       case PartnerInputEnum.PHONE:
-        setPhone(value);
+        setPhone(value as string);
+
+        return;
+
+      case PartnerInputEnum.INITIAL_AMOUNT:
+        setInitialAmount(value as number);
 
         return;
     }
@@ -71,6 +78,7 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
         phone: phone!,
         birth_day: birthday!,
         address: address!,
+        start_amount: initialAmount!,
       })
     );
   };
@@ -86,6 +94,7 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
         phone: phone!,
         birth_day: birthday!,
         address: address!,
+        start_amount: initialAmount!,
       })
     );
   };
@@ -98,6 +107,7 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
       setBirthday(props.partnerData?.birth_day);
       setAddress(props.partnerData?.address);
       setPhone(props.partnerData?.phone);
+      setInitialAmount(props.partnerData?.start_amount);
     } else {
       setNames("");
       setSurnames("");
@@ -105,18 +115,27 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
       setBirthday("");
       setAddress("");
       setPhone("");
+      setInitialAmount(0);
     }
   }, [props.partnerData]);
 
   useEffect(() => {
-    if (names && surnames && dni && birthday && address && phone) {
+    if (
+      names &&
+      surnames &&
+      dni &&
+      birthday &&
+      address &&
+      phone &&
+      initialAmount > 0
+    ) {
       setDisableSave(false);
       setDisableUpdate(false);
     } else {
       setDisableSave(true);
       setDisableUpdate(true);
     }
-  }, [names, surnames, dni, birthday, address, phone]);
+  }, [names, surnames, dni, birthday, address, phone, initialAmount]);
 
   useEffect(() => {
     if (
@@ -141,6 +160,7 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
       birthday,
       address,
       phone,
+      initialAmount,
       onChangeInput,
     },
   };

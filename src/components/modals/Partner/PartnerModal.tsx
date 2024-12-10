@@ -93,7 +93,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
           </Grid>
           <Grid item md={6}>
             <TextField
-              disabled={props.partnerData ? true : false}
+              disabled={!!props.partnerData}
               fullWidth
               size={"small"}
               type={"text"}
@@ -142,6 +142,22 @@ export const PartnerModal = (props: PartnerModalProps) => {
                 inputValues.onChangeInput(
                   PartnerInputEnum.PHONE,
                   event.target.value.toUpperCase()
+                )
+              }
+            />
+          </Grid>
+          <Grid item md={6}>
+            <TextField
+              disabled={!!props.partnerData}
+              fullWidth
+              size={"small"}
+              type={"text"}
+              label={ComponentsLabels.INITIAL_AMOUNT}
+              value={inputValues.initialAmount}
+              onChange={(event) =>
+                inputValues.onChangeInput(
+                  PartnerInputEnum.INITIAL_AMOUNT,
+                  event.target.value
                 )
               }
             />

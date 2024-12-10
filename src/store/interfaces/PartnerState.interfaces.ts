@@ -19,10 +19,19 @@ export interface PartnerData {
   birth_day: string;
   address: string;
   current_saving?: number;
+  start_amount: number;
+  is_disabled?: boolean;
   status?: string;
 }
 
 export interface PartnerPagination {
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
+  mode: ModePagination;
+}
+
+export enum ModePagination {
+  FULL = "full",
+  SIMPLE = "simple",
+  ACTIVE_ONLY = "activeOnly",
 }

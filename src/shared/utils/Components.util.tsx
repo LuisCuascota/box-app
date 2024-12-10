@@ -10,6 +10,7 @@ import {
 } from "../enums/RegistryType.enum.ts";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 
 export const getPaymentTypeIcon = (status?: string) => {
   if (status)
@@ -64,7 +65,14 @@ export const getStatusTypeIcon = (status?: string) => {
     }
 };
 
-export const geAccountStatusIcon = (status?: string) => {
+export const geAccountStatusIcon = (status?: string, isDisabled?: boolean) => {
+  if (isDisabled)
+    return (
+      <Tooltip title={ComponentsLabels.ACCOUNT_DISABLED}>
+        <PersonOffIcon sx={{ color: ColorsEnum.LATE }} />
+      </Tooltip>
+    );
+
   if (status)
     switch (status) {
       case AccountStatusEnum.OK:

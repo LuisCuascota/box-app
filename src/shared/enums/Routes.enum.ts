@@ -8,6 +8,7 @@ export enum RoutesEnum {
   EGRESS_HISTORY = "/egress/history",
   PARTNER_LIST = "/partner",
   METRICS = "/metrics",
+  PERIOD = "/period",
 }
 
 export enum ModulesEnum {
@@ -17,4 +18,5 @@ export enum ModulesEnum {
   PARTNERS = "Socios",
   METRICS = "Métricas",
   LOGIN = "Login",
+  PERIOD = "Periodo",
 }

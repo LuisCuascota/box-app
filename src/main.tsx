@@ -54,12 +54,12 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ThemeProvider theme={theme}>
-    <Authenticator.Provider>
-      <Provider store={store}>
+    <Provider store={store}>
+      <Authenticator.Provider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </Provider>
-    </Authenticator.Provider>
+      </Authenticator.Provider>
+    </Provider>
   </ThemeProvider>
 );

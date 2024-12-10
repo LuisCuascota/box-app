@@ -38,6 +38,7 @@ import {
   setEntryAmounts,
   setPostEntryStatus,
 } from "../../store/actions/entry.actions.ts";
+import { ModePagination } from "../../store/interfaces/PartnerState.interfaces.ts";
 
 export interface IEntryContext {
   disableSearch: boolean;
@@ -198,7 +199,7 @@ const EntryContextProvider = ({ children }: any) => {
     isPrint?: boolean
   ): NewEntry => {
     const header: EntryHeader = {
-      number: entryNumber,
+      number: entryNumber + 1,
       account_number: partnerSelected!.id,
       amount: totalToPay,
       date: entryDate!,
@@ -208,7 +209,7 @@ const EntryContextProvider = ({ children }: any) => {
     const detail: EntryAmountDetail[] = (
       isPrint ? amountsToPay : amountsToPay.filter((amount) => amount.value > 0)
     ).map((amount) => ({
-      entry_number: entryNumber,
+      entry_number: entryNumber + 1,
       type_id: amount.id,
       value: amount.value,
       ...(amount.id === EntryTypesIdEnum.CONTRIBUTION
@@ -255,7 +256,7 @@ const EntryContextProvider = ({ children }: any) => {
   const onCancelEntry = () => clearStateForNew();
 
   useEffect(() => {
-    dispatch(getPartners());
+    dispatch(getPartners({ mode: ModePagination.ACTIVE_ONLY }));
     dispatch(getEntryCount());
     dispatch(getEntryTypes());
   }, []);

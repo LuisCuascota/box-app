@@ -41,7 +41,7 @@ export const EntryHeader = () => {
       <Grid item md={2} xs={4}>
         <Typography textAlign={"right"} color={"red"}>
           {countStatus === RequestStatusEnum.SUCCESS ? (
-            <b>{`Nº${count}`}</b>
+            <b>{`Nº${count + 1}`}</b>
           ) : (
             <Skeleton height={40} />
           )}

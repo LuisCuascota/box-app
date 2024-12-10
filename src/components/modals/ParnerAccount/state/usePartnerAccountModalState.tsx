@@ -15,6 +15,7 @@ import { Contribution } from "../../../../store/interfaces/EntryState.interfaces
 import moment from "moment/min/moment-with-locales";
 import { environment } from "../../../../environments/environment.ts";
 import { setContributionList } from "../../../../store/actions/entry.actions.ts";
+import { DATE_FORMAT } from "../../../../shared/utils/Date.utils.ts";
 export interface ContributionProcessed {
   date: string;
   description: string;
@@ -48,9 +49,7 @@ export const UsePartnerAccountModalState = (
       contributionList.map((contribution: Contribution) => {
         moment.locale("es-us");
 
-        const formattedDate = moment
-          .utc(contribution.date)
-          .format("YYYY-MM-DD");
+        const formattedDate = moment.utc(contribution.date).format(DATE_FORMAT);
         const monthName = moment.utc(contribution.date).format("MMMM");
         const monthDetailMessage =
           contribution.value > environment.contributionAmount

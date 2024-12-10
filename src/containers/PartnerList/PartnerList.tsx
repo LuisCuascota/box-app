@@ -131,7 +131,7 @@ export const PartnerList = () => {
                       <b>{row.number}</b>
                     </TableCell>
                     <TableCell align={"center"}>
-                      <b>{geAccountStatusIcon(row.status)}</b>
+                      <b>{geAccountStatusIcon(row.status, row.is_disabled)}</b>
                     </TableCell>
                     <TableCell>
                       <i>{`${row.names} ${row.surnames}`}</i>

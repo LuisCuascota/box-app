@@ -5,7 +5,10 @@ import {
 } from "../../../shared/hooks/Store.hook.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
 import { selectPartners } from "../../../store/selectors/selectors.ts";
-import { PartnerData } from "../../../store/interfaces/PartnerState.interfaces.ts";
+import {
+  ModePagination,
+  PartnerData,
+} from "../../../store/interfaces/PartnerState.interfaces.ts";
 import { getPartners } from "../../../store/epics/PartnerEpics/getPartners.epic.ts";
 import { getPartnersCount } from "../../../store/epics/PartnerEpics/getPartnersCount.epic.ts";
 import { deletePartner } from "../../../store/epics/PartnerEpics/deletePartner.epic.ts";
@@ -67,6 +70,7 @@ export const usePartnerListState = () => {
       getPartners({
         limit: rowsPerPage,
         offset: page * rowsPerPage,
+        mode: ModePagination.FULL,
       })
     );
   };
