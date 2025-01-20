@@ -12,13 +12,12 @@ export interface TypesSelector {
 }
 
 export interface TypesSearchParams {
-  value: TypesSelector | null | undefined;
   disableSearch: boolean;
-  onChangeSelector: (selected: TypesSelector) => void;
-  onCleanSelector?: () => void;
+  onChangeSelector: (selected: TypesSelector | null) => void;
 }
 export const TypesSearch = (props: TypesSearchParams) => {
   const [typesList, setTypesList] = useState<TypesSelector[]>([]);
+  const [value, setValue] = useState<TypesSelector | null>(null);
 
   const { getTypesMetricsStatus, typesMetrics } = useAppSelector(selectMetrics);
 
@@ -35,8 +34,8 @@ export const TypesSearch = (props: TypesSearchParams) => {
     _event: SyntheticEvent,
     value: TypesSelector | null
   ): void => {
-    if (value) props.onChangeSelector(value);
-    else if (props.onCleanSelector) props.onCleanSelector();
+    props.onChangeSelector(value);
+    setValue(value);
   };
 
   useEffect(() => {
@@ -47,7 +46,7 @@ export const TypesSearch = (props: TypesSearchParams) => {
     <>
       {getTypesMetricsStatus === RequestStatusEnum.SUCCESS ? (
         <Autocomplete
-          value={props.value}
+          value={value}
           disabled={props.disableSearch}
           options={typesList}
           renderInput={(params) => (

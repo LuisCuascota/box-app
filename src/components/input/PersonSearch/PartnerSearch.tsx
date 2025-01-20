@@ -13,14 +13,12 @@ export interface PartnerSelector {
 }
 
 export interface PartnerSearchParams {
-  value: PartnerSelector | null | undefined;
   disableSearch: boolean;
-  onChangeSelector: (selected: PartnerSelector) => void;
-  onCleanSelector?: () => void;
+  onChangeSelector: (selected: PartnerSelector | null) => void;
 }
 export const PartnerSearch = (props: PartnerSearchParams) => {
   const [personList, setPersonList] = useState<PartnerSelector[]>([]);
-
+  const [value, setValue] = useState<PartnerSelector | null>(null);
   const { getPartnersStatus, partners } = useAppSelector(selectPartners);
 
   const buildSelector = () => {
@@ -39,8 +37,8 @@ export const PartnerSearch = (props: PartnerSearchParams) => {
     _event: SyntheticEvent,
     value: PartnerSelector | null
   ): void => {
-    if (value) props.onChangeSelector(value);
-    else if (props.onCleanSelector) props.onCleanSelector();
+    props.onChangeSelector(value);
+    setValue(value);
   };
 
   useEffect(() => {
@@ -51,7 +49,7 @@ export const PartnerSearch = (props: PartnerSearchParams) => {
     <>
       {getPartnersStatus === RequestStatusEnum.SUCCESS ? (
         <Autocomplete
-          value={props.value}
+          value={value}
           disabled={props.disableSearch}
           options={personList}
           renderInput={(params) => (

@@ -4,6 +4,7 @@ import {
   EgressDetail,
   EgressHeader,
   IEgressState,
+  LoanCounter,
 } from "../interfaces/EgressState.interfaces.ts";
 
 export const egressInitialState: IEgressState = {
@@ -11,7 +12,12 @@ export const egressInitialState: IEgressState = {
   postEgressStatus: RequestStatusEnum.PENDING,
   getEgressPaginatedStatus: RequestStatusEnum.PENDING,
   getEgressDetailStatus: RequestStatusEnum.PENDING,
-  egressCount: 0,
+  egressCount: {
+    count: 0,
+    cash: 0,
+    transfer: 0,
+    total: 0,
+  },
   egressList: [],
   egressDetail: {
     amountDetail: [],
@@ -32,7 +38,7 @@ export const egressSlice = createSlice({
     ) => {
       state.getEgressCountStatus = action.payload;
     },
-    setEgressCount: (state, action: PayloadAction<number>) => {
+    setEgressCount: (state, action: PayloadAction<LoanCounter>) => {
       state.egressCount = action.payload;
     },
     setPostEgressStatus: (state, action: PayloadAction<RequestStatusEnum>) => {

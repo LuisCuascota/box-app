@@ -49,7 +49,7 @@ export interface IEntryContext {
   isOpenBillDetailModal: boolean;
   amountsToPay: EntryAmount[];
   totalToPay: number;
-  onChangePartnerSelector: (partnerSelected: PartnerSelector) => void;
+  onChangePartnerSelector: (partnerSelected: PartnerSelector | null) => void;
   onChangeEntryDate: (date: string) => void;
   onUpdateAmounts: (id: number, value: number) => void;
   onUpdateLoanDetailsToPay: (detailsToPay: LoanDetailToPay[]) => void;
@@ -114,12 +114,14 @@ const EntryContextProvider = ({ children }: any) => {
     setOpenBillDetailModal(true);
   };
 
-  const onChangePartnerSelector = (partnerSelected: PartnerSelector) => {
-    setPartnerSelected(partnerSelected);
-    setDisableSearch(true);
-    setIsLoading(true);
+  const onChangePartnerSelector = (partnerSelected: PartnerSelector | null) => {
+    if (partnerSelected) {
+      setPartnerSelected(partnerSelected);
+      setDisableSearch(true);
+      setIsLoading(true);
 
-    dispatch(getEntryAmounts(partnerSelected.id));
+      dispatch(getEntryAmounts(partnerSelected.id));
+    }
   };
 
   const onChangeEntryDate = (date: string) => {
@@ -199,7 +201,7 @@ const EntryContextProvider = ({ children }: any) => {
     isPrint?: boolean
   ): NewEntry => {
     const header: EntryHeader = {
-      number: entryNumber + 1,
+      number: entryNumber.count + 1,
       account_number: partnerSelected!.id,
       amount: totalToPay,
       date: entryDate!,
@@ -209,7 +211,7 @@ const EntryContextProvider = ({ children }: any) => {
     const detail: EntryAmountDetail[] = (
       isPrint ? amountsToPay : amountsToPay.filter((amount) => amount.value > 0)
     ).map((amount) => ({
-      entry_number: entryNumber + 1,
+      entry_number: entryNumber.count + 1,
       type_id: amount.id,
       value: amount.value,
       ...(amount.id === EntryTypesIdEnum.CONTRIBUTION
@@ -303,7 +305,7 @@ const EntryContextProvider = ({ children }: any) => {
     if (
       partnerSelected &&
       entryDate &&
-      entryNumber > 0 &&
+      entryNumber.count > 0 &&
       totalToPay > 0 &&
       validationWhenAmountDefinitionExist()
     )
@@ -341,7 +343,6 @@ const EntryContextProvider = ({ children }: any) => {
         onActionLoanModal,
         onCloseSaveDialog,
         onOpenBillDetailModal,
-        partnerSelected,
       }}
     >
       {children}

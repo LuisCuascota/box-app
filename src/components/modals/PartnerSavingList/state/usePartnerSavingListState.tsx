@@ -29,7 +29,7 @@ export interface UsePartnerAccountModalStateProps {
   partnerData?: PartnerData;
 }
 
-export const UsePartnerAccountModalState = (
+export const UsePartnerSavingListState = (
   props: UsePartnerAccountModalStateProps
 ) => {
   const dispatch = useAppDispatch();

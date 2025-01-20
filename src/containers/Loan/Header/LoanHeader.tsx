@@ -35,9 +35,6 @@ export const LoanHeader = () => {
     amount,
     interest,
     loanType,
-    partner,
-    guarantor1,
-    guarantor2,
     disableSave,
     disableCalculate,
     isOpenSaveDialog,
@@ -92,7 +89,7 @@ export const LoanHeader = () => {
       <Grid item md={1} xs={2}>
         <Typography color={"red"}>
           {loanCountStatus === RequestStatusEnum.SUCCESS ? (
-            <b>{`Nº${loanCount}`}</b>
+            <b>{`Nº${loanCount.count + 1}`}</b>
           ) : (
             <Skeleton height={40} />
           )}
@@ -144,7 +141,6 @@ export const LoanHeader = () => {
         <PartnerSearch
           disableSearch={false}
           onChangeSelector={onSelectPartner}
-          value={partner}
         />
       </Grid>
       <Grid
@@ -193,7 +189,6 @@ export const LoanHeader = () => {
         <PartnerSearch
           disableSearch={false}
           onChangeSelector={onSelectGuarantor1}
-          value={guarantor1}
         />
       </Grid>
       <Grid item md={2} xs={3} display={"flex"} alignItems={"center"}>
@@ -222,7 +217,6 @@ export const LoanHeader = () => {
         <PartnerSearch
           disableSearch={false}
           onChangeSelector={onSelectGuarantor2}
-          value={guarantor2}
         />
       </Grid>
       <Grid

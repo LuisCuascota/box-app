@@ -75,7 +75,7 @@ export const useLoanModalState = (
       totalFee += loanDetail.fee_value;
       totalInterest += loanDetail.interest;
       detailToPay.push({
-        entry: entryNumber + 1,
+        entry: entryNumber.count + 1,
         id: loanDetail.id!,
         feeValue: loanDetail.fee_value,
       });
@@ -102,7 +102,7 @@ export const useLoanModalState = (
       const detailToPay: LoanDetailToPay[] = props.loanDetail
         .filter((detail) => !detail.is_paid)
         .map((loanDetail: LoanDetail) => ({
-          entry: entryNumber + 1,
+          entry: entryNumber.count + 1,
           id: loanDetail.id!,
           feeValue: loanDetail.fee_value,
         }));

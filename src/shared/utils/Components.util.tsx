@@ -11,6 +11,12 @@ import {
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
+import { DefaultPagination } from "../constants/KajaConfig.ts";
+import { MutableRefObject } from "react";
+import { PartnerSelector } from "../../components/input/PersonSearch/PartnerSearch.tsx";
+import { TypesSelector } from "../../components/input/TypesSearch/TypesSearch.tsx";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 
 export const getPaymentTypeIcon = (status?: string) => {
   if (status)
@@ -41,7 +47,7 @@ export const getPaymentTypeIcon = (status?: string) => {
     }
 };
 
-export const getStatusTypeIcon = (status?: string) => {
+export const getLoanStatusTypeIcon = (status?: string) => {
   if (status)
     switch (status) {
       case LoanStatusEnum.PAID:
@@ -65,11 +71,11 @@ export const getStatusTypeIcon = (status?: string) => {
     }
 };
 
-export const geAccountStatusIcon = (status?: string, isDisabled?: boolean) => {
+export const geSavingStatusIcon = (status?: string, isDisabled?: boolean) => {
   if (isDisabled)
     return (
       <Tooltip title={ComponentsLabels.ACCOUNT_DISABLED}>
-        <PersonOffIcon sx={{ color: ColorsEnum.LATE }} />
+        <PersonOffIcon sx={{ color: ColorsEnum.LATE }} fontSize={"small"} />
       </Tooltip>
     );
 
@@ -78,14 +84,64 @@ export const geAccountStatusIcon = (status?: string, isDisabled?: boolean) => {
       case AccountStatusEnum.OK:
         return (
           <Tooltip title={ComponentsLabels.ACCOUNT_OK}>
-            <PriceCheckIcon sx={{ color: ColorsEnum.PAID }} />
+            <PriceCheckIcon
+              sx={{ color: ColorsEnum.PAID }}
+              fontSize={"small"}
+            />
           </Tooltip>
         );
       case AccountStatusEnum.LATE:
         return (
           <Tooltip title={ComponentsLabels.ACCOUNT_LATE}>
-            <ReportProblemRoundedIcon sx={{ color: ColorsEnum.LATE }} />
+            <ReportProblemRoundedIcon
+              sx={{ color: ColorsEnum.LATE }}
+              fontSize={"small"}
+            />
           </Tooltip>
         );
     }
+};
+
+export const getLoanAccountStatusIcon = (status?: string) => {
+  if (status)
+    switch (status) {
+      case LoanStatusEnum.FREE:
+        return (
+          <Tooltip title={ComponentsLabels.FREE_LOAN}>
+            <TaskAltIcon sx={{ color: ColorsEnum.MIXED }} fontSize={"small"} />
+          </Tooltip>
+        );
+      case LoanStatusEnum.DEBT:
+        return (
+          <Tooltip title={ComponentsLabels.CURRENT_LOAN}>
+            <PublishedWithChangesIcon
+              sx={{ color: ColorsEnum.CASH }}
+              fontSize={"small"}
+            />
+          </Tooltip>
+        );
+      case LoanStatusEnum.LATE:
+        return (
+          <Tooltip title={ComponentsLabels.LATE_LOAN}>
+            <ReportProblemRoundedIcon
+              sx={{ color: ColorsEnum.LATE }}
+              fontSize={"small"}
+            />
+          </Tooltip>
+        );
+    }
+};
+
+export const isGetRequest = (
+  currentSelector: MutableRefObject<PartnerSelector | TypesSelector | null>,
+  newSelector: PartnerSelector | TypesSelector | null,
+  page: number,
+  rowsPerPage: number
+) => {
+  return (
+    currentSelector.current === newSelector ||
+    (currentSelector.current != newSelector &&
+      page === DefaultPagination.page &&
+      rowsPerPage === DefaultPagination.rowsPerPage)
+  );
 };

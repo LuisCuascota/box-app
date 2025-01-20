@@ -5,7 +5,7 @@ export interface IEgressState {
   postEgressStatus: RequestStatusEnum;
   getEgressPaginatedStatus: RequestStatusEnum;
   getEgressDetailStatus: RequestStatusEnum;
-  egressCount: number;
+  egressCount: LoanCounter;
   egressList: EgressHeader[];
   egressDetail: EgressDetail;
 }
@@ -35,6 +35,10 @@ export interface EgressAmountDetail {
 export interface EgressPagination {
   limit: number;
   offset: number;
+  type?: number;
+  startDate?: string;
+  endDate?: string;
+  paymentType?: string | null;
 }
 
 export interface EgressBillDetail {
@@ -45,4 +49,18 @@ export interface EgressBillDetail {
 export interface EgressDetail {
   billDetail: EgressBillDetail;
   amountDetail: EgressAmountDetail[];
+}
+
+export interface LoanCounter {
+  count: number;
+  cash: number;
+  transfer: number;
+  total: number;
+}
+
+export interface EgressCountFilter {
+  type?: number;
+  startDate?: string;
+  endDate?: string;
+  paymentType?: string | null;
 }

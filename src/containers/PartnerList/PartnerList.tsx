@@ -26,9 +26,14 @@ import { usePartnerListState } from "./state/usePartnerListState.tsx";
 import { PartnerModal } from "../../components/modals/Partner/PartnerModal.tsx";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { PartnerAccountModal } from "../../components/modals/ParnerAccount/PartnerAccountModal.tsx";
-import { geAccountStatusIcon } from "../../shared/utils/Components.util.tsx";
+import { PartnerSavingListModal } from "../../components/modals/PartnerSavingList/PartnerSavingListModal.tsx";
+import {
+  geSavingStatusIcon,
+  getLoanAccountStatusIcon,
+} from "../../shared/utils/Components.util.tsx";
 import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
+import { PartnerLoanListModal } from "../../components/modals/PartnerLoanList/PartnerLoanListModal.tsx";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 
 export const PartnerList = () => {
   const { partners, pagination, isLoading, modal, alert } =
@@ -47,10 +52,15 @@ export const PartnerList = () => {
           open={modal.isModalOpen}
           handleClose={modal.onCloseModal}
         />
-        <PartnerAccountModal
+        <PartnerSavingListModal
           partnerData={modal.rowSelected}
-          open={modal.isModalAccountOpen}
-          handleClose={modal.onCloseModal}
+          open={modal.isSavingModalOpen}
+          handleClose={modal.onCloseSavingModal}
+        />
+        <PartnerLoanListModal
+          partnerData={modal.rowSelected}
+          open={modal.isLoanModalOpen}
+          handleClose={modal.onCloseLoanModal}
         />
         <Dialog open={alert.isAlertOpen} onClose={alert.onCloseAlert}>
           <DialogTitle>{"Eliminar Socio"}</DialogTitle>
@@ -101,12 +111,17 @@ export const PartnerList = () => {
                   {PartnerListLabels.TH_ACCOUNT}
                 </Typography>
               </TableCell>
-              <TableCell align="left">{PartnerListLabels.TH_STATUS}</TableCell>
               <TableCell align="left">{PartnerListLabels.TH_NAMES}</TableCell>
               <TableCell align="left">
                 {PartnerListLabels.TH_DOCUMENT}
               </TableCell>
-              <TableCell align="left">{PartnerListLabels.TH_SAVING}</TableCell>
+              <TableCell align="center">
+                {PartnerListLabels.TH_SAVING}
+              </TableCell>
+              <TableCell align="center">{PartnerListLabels.TH_LOAN}</TableCell>
+              <TableCell align="center">
+                {PartnerListLabels.TH_RESUME}
+              </TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -130,24 +145,51 @@ export const PartnerList = () => {
                     <TableCell align={"center"}>
                       <b>{row.number}</b>
                     </TableCell>
-                    <TableCell align={"center"}>
-                      <b>{geAccountStatusIcon(row.status, row.is_disabled)}</b>
-                    </TableCell>
                     <TableCell>
                       <i>{`${row.names} ${row.surnames}`}</i>
                     </TableCell>
                     <TableCell>{row.dni}</TableCell>
-                    <TableCell>{`$${row.current_saving}`}</TableCell>
+                    <TableCell align={"center"}>
+                      <Box display={"flex"} justifyContent={"center"}>
+                        {geSavingStatusIcon(row.savingStatus, row.is_disabled)}
+                        <Typography>{`$${row.current_saving}`}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell align={"center"}>
+                      <Box display={"flex"} justifyContent={"center"}>
+                        {getLoanAccountStatusIcon(row.loanStatus)}
+                        <Typography>{`${row.loanCount}`}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell align={"center"}>
+                      <Box display={"flex"} justifyContent={"space-around"}>
+                        <Tooltip title="Lista de Aportes">
+                          <IconButton
+                            size={"small"}
+                            color="primary"
+                            onClick={() => modal.onOpenSavingModal(row)}
+                            sx={{
+                              border: 2,
+                            }}
+                          >
+                            <ChecklistRoundedIcon fontSize={"small"} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Lista de Crèditos">
+                          <IconButton
+                            size={"small"}
+                            color="primary"
+                            onClick={() => modal.onOpenLoanModal(row)}
+                            sx={{
+                              border: 2,
+                            }}
+                          >
+                            <ReceiptIcon fontSize={"small"} />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </TableCell>
                     <TableCell>
-                      <Tooltip title="Lista de Aportes">
-                        <IconButton
-                          aria-label={"eee"}
-                          color="primary"
-                          onClick={() => modal.onOpenAccountModal(row)}
-                        >
-                          <ChecklistRoundedIcon />
-                        </IconButton>
-                      </Tooltip>
                       <Tooltip title="Editar Información">
                         <IconButton
                           color="primary"

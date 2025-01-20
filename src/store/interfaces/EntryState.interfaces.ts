@@ -9,7 +9,7 @@ export interface IEntryState {
   getEntriesPaginatedStatus: RequestStatusEnum;
   getEntryDetailStatus: RequestStatusEnum;
   getContributionListStatus: RequestStatusEnum;
-  count: number;
+  count: EntryCounter;
   types: EntryType[];
   entryAmounts: EntryAmount[];
   entries: EntryHeader[];
@@ -61,6 +61,7 @@ export interface EntryPagination {
   account?: number;
   startDate?: string;
   endDate?: string;
+  paymentType: string | null;
 }
 
 export interface Contribution {
@@ -83,4 +84,12 @@ export interface CountFilter {
   account?: number;
   startDate?: string;
   endDate?: string;
+  paymentType?: string | null;
+}
+
+export interface EntryCounter {
+  count: number;
+  cash: number;
+  transfer: number;
+  total: number;
 }

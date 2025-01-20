@@ -1,4 +1,5 @@
 export enum ColorsEnum {
+  PRIMARY = "#1f3c55",
   SUCCESS_LIGHT = "#CAFFD0",
   PRIMARY_LIGHT = "#7089a4",
   SECONDARY_LIGHT = "rgba(255,237,117,0.62)",

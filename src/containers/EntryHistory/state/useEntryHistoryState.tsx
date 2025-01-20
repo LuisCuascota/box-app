@@ -17,9 +17,26 @@ import {
 } from "../../../store/selectors/selectors.ts";
 import { ModePagination } from "../../../store/interfaces/PartnerState.interfaces.ts";
 import { DefaultPagination } from "../../../shared/constants/KajaConfig.ts";
-import { environment } from "../../../environments/environment.ts";
-import moment from "moment";
-import { DATE_FORMAT } from "../../../shared/utils/Date.utils.ts";
+import { DateRange } from "../../../shared/utils/Date.utils.ts";
+import { SelectType } from "../../../components/input/OptionsSelect/OptionsSelect.tsx";
+import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
+import { PaymentMethodEnum } from "../../../shared/enums/PaymentMethod.enum.ts";
+import { isGetRequest } from "../../../shared/utils/Components.util.tsx";
+
+export const entryTypeOptions: SelectType[] = [
+  {
+    label: ComponentsLabels.TYPE_CASH,
+    id: PaymentMethodEnum.CASH,
+  },
+  {
+    label: ComponentsLabels.TYPE_TRANSFER,
+    id: PaymentMethodEnum.TRANSFER,
+  },
+  {
+    label: ComponentsLabels.TYPE_MIX,
+    id: PaymentMethodEnum.MIXED,
+  },
+];
 
 export const useEntryHistoryState = () => {
   const dispatch = useAppDispatch();
@@ -34,17 +51,18 @@ export const useEntryHistoryState = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<EntryHeader>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [accountSelector, setAccountSelector] = useState<
-    PartnerSelector | undefined
-  >();
-  const [dateRange, setDateRange] = useState<string[]>([
-    environment.startDate,
-    moment().format(DATE_FORMAT),
-  ]);
+  const [accountSelector, setAccountSelector] =
+    useState<PartnerSelector | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [paymentType, setPaymentType] = useState<string | null>(null);
   const accountSelectorRef = useRef(accountSelector);
 
   const onChangeDateRange = (from: string, to: string) => {
-    setDateRange([from, to]);
+    setDateRange({ from, to });
+  };
+
+  const onChangePaymentType = (type: string | null) => {
+    setPaymentType(type);
   };
 
   const onPageChange = (_: any, newPage: number) => {
@@ -66,11 +84,8 @@ export const useEntryHistoryState = () => {
     setIsModalOpen(false);
   };
 
-  const onSelectPartner = (selected: PartnerSelector) => {
+  const onSelectPartner = (selected: PartnerSelector | null) => {
     setAccountSelector(selected);
-  };
-  const onClearPartner = () => {
-    setAccountSelector(undefined);
   };
 
   useEffect(() => {
@@ -81,28 +96,20 @@ export const useEntryHistoryState = () => {
   useEffect(() => {
     setIsLoading(true);
 
-    const isGetRequest = () => {
-      return (
-        accountSelectorRef.current === accountSelector ||
-        (accountSelectorRef.current != accountSelector &&
-          page === DefaultPagination.page &&
-          rowsPerPage === DefaultPagination.rowsPerPage)
-      );
-    };
-
-    if (isGetRequest())
+    if (isGetRequest(accountSelectorRef, accountSelector, page, rowsPerPage))
       dispatch(
         getEntriesPaginated({
           account: accountSelector?.id,
           limit: rowsPerPage,
           offset: page * rowsPerPage,
-          startDate: dateRange[0],
-          endDate: dateRange[1],
+          startDate: dateRange?.from,
+          endDate: dateRange?.to,
+          paymentType,
         })
       );
 
     accountSelectorRef.current = accountSelector;
-  }, [page, rowsPerPage, accountSelector, dateRange]);
+  }, [page, rowsPerPage, accountSelector, dateRange, paymentType]);
 
   useEffect(() => {
     setPage(DefaultPagination.page);
@@ -111,11 +118,12 @@ export const useEntryHistoryState = () => {
     dispatch(
       getEntryCount({
         account: accountSelector?.id,
-        startDate: dateRange[0],
-        endDate: dateRange[1],
+        startDate: dateRange?.from,
+        endDate: dateRange?.to,
+        paymentType,
       })
     );
-  }, [accountSelector, dateRange]);
+  }, [accountSelector, dateRange, paymentType]);
 
   useEffect(() => {
     if (
@@ -142,11 +150,10 @@ export const useEntryHistoryState = () => {
       rowsPerPage,
     },
     search: {
-      onClearPartner,
       onSelectPartner,
       accountSelector,
       onChangeDateRange,
-      dateRange,
+      onChangePaymentType,
     },
   };
 };

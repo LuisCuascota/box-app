@@ -18,10 +18,13 @@ export interface PartnerData {
   phone: string;
   birth_day: string;
   address: string;
+  creation_date?: string;
   current_saving?: number;
   start_amount: number;
   is_disabled?: boolean;
-  status?: string;
+  savingStatus?: string;
+  loanCount?: number;
+  loanStatus?: string;
 }
 
 export interface PartnerPagination {

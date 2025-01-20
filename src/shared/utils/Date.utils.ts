@@ -2,6 +2,11 @@ import moment, { Moment } from "moment";
 
 export const DATE_FORMAT = "YYYY-MM-DD";
 
+export interface DateRange {
+  from: string;
+  to: string;
+}
+
 export const getFistSaturday = (date: Moment): string => {
   date.add(1, "month");
   date.date(1).day(6);

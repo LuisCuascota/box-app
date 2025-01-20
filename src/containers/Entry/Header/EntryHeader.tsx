@@ -17,7 +17,7 @@ import { EntryLabels } from "../../../shared/labels/Entry.labels.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
 
 export const EntryHeader = () => {
-  const { disableSearch, onChangePartnerSelector, partnerSelected, isLoading } =
+  const { disableSearch, onChangePartnerSelector, isLoading } =
     useContext(EntryContext);
   const count = useAppSelector(selectEntryCount);
   const countStatus = useAppSelector(selectEntryCountStatus);
@@ -41,7 +41,7 @@ export const EntryHeader = () => {
       <Grid item md={2} xs={4}>
         <Typography textAlign={"right"} color={"red"}>
           {countStatus === RequestStatusEnum.SUCCESS ? (
-            <b>{`Nº${count + 1}`}</b>
+            <b>{`Nº${count.count + 1}`}</b>
           ) : (
             <Skeleton height={40} />
           )}
@@ -54,7 +54,6 @@ export const EntryHeader = () => {
         <PartnerSearch
           disableSearch={disableSearch}
           onChangeSelector={onChangePartnerSelector}
-          value={partnerSelected}
         />
       </Grid>
     </Grid>

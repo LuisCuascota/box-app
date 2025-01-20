@@ -14,7 +14,11 @@ export const LoanDetail = () => {
       >
         <CircularProgress />
       </Backdrop>
-      <LoanTable loanDetail={loanFees} withActions={false} />
+      <LoanTable
+        isLoading={isLoading}
+        loanDetail={loanFees}
+        withActions={false}
+      />
     </Box>
   );
 };

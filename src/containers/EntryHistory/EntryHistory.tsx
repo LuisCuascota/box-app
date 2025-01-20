@@ -11,8 +11,14 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { getFormattedDate } from "../../shared/utils/Date.utils.ts";
-import { useEntryHistoryState } from "./state/useEntryHistoryState.tsx";
+import {
+  DATE_FORMAT,
+  getFormattedDate,
+} from "../../shared/utils/Date.utils.ts";
+import {
+  entryTypeOptions,
+  useEntryHistoryState,
+} from "./state/useEntryHistoryState.tsx";
 import { PartnerSearch } from "../../components/input/PersonSearch/PartnerSearch.tsx";
 import { EntryModal } from "../../components/modals/Entry/EntryModal.tsx";
 import { EntryHeader } from "../../store/interfaces/EntryState.interfaces.ts";
@@ -22,6 +28,10 @@ import { EntryHistoryLabels } from "../../shared/labels/EntryHistory.labels.ts";
 import { getPaymentTypeIcon } from "../../shared/utils/Components.util.tsx";
 import { DateRangePikerInput } from "../../components/input/DateRangePikerInput/DateRangePikerInput.tsx";
 import { environment } from "../../environments/environment.ts";
+import moment from "moment";
+import { ComponentsLabels } from "../../shared/labels/Components.labels.ts";
+import { PieDataChart } from "../../components/chart/PieDataChart/PieDataChart.tsx";
+import { OptionsSelect } from "../../components/input/OptionsSelect/OptionsSelect.tsx";
 
 export const EntryHistory = () => {
   const { entriesPaginated, pagination, isLoading, modal, search } =
@@ -35,19 +45,44 @@ export const EntryHistory = () => {
             {EntryHistoryLabels.TITLE}
           </Typography>
         </Grid>
-        <Grid item md={8} xs={12} pr={1}>
+        <Grid item md={6} xs={12} pr={1}>
           <PartnerSearch
-            value={search.accountSelector}
             disableSearch={false}
             onChangeSelector={search.onSelectPartner}
-            onCleanSelector={search.onClearPartner}
+          />
+        </Grid>
+        <Grid item md={2} pr={1}>
+          <OptionsSelect
+            label={"Tipo"}
+            options={entryTypeOptions}
+            onSelect={search.onChangePaymentType}
           />
         </Grid>
         <Grid item md={4} xs={12}>
           <DateRangePikerInput
-            from={search.dateRange[0]}
-            to={search.dateRange[1]}
+            defaultFrom={environment.startDate}
+            defaultTo={moment().format(DATE_FORMAT)}
             onChangeDate={search.onChangeDateRange}
+          />
+        </Grid>
+        <Grid item md={12} xs={12}>
+          <PieDataChart
+            data={[
+              {
+                id: 0,
+                value: +pagination.entryCount.cash.toFixed(2),
+                label: ComponentsLabels.TYPE_CASH,
+                color: "#1f3c55",
+              },
+              {
+                id: 1,
+                value: +pagination.entryCount.transfer.toFixed(2),
+                label: ComponentsLabels.TYPE_TRANSFER,
+                color: "#d5a92b",
+              },
+            ]}
+            totalValue={+pagination.entryCount.total.toFixed(2)}
+            totalLabel={"Total: $"}
           />
         </Grid>
       </Grid>
@@ -115,7 +150,7 @@ export const EntryHistory = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 100]}
-                count={pagination.entryCount}
+                count={pagination.entryCount.count}
                 rowsPerPage={pagination.rowsPerPage}
                 page={pagination.page}
                 onPageChange={pagination.onPageChange}

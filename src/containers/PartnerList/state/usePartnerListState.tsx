@@ -29,7 +29,8 @@ export const usePartnerListState = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [rowToDelete, setRowToDelete] = useState<PartnerData>();
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
-  const [isModalAccountOpen, setIsModalAccountOpen] = useState<boolean>(false);
+  const [isSavingModalOpen, setIsSavingModalOpen] = useState<boolean>(false);
+  const [isLoanModalOpen, setIsLoanModalOpen] = useState<boolean>(false);
 
   const onPageChange = (_: any, newPage: number) => {
     setPage(newPage);
@@ -60,9 +61,14 @@ export const usePartnerListState = () => {
     setIsModalOpen(true);
   };
 
-  const onOpenAccountModal = (row: PartnerData) => {
+  const onOpenSavingModal = (row: PartnerData) => {
     setRowSelected(row);
-    setIsModalAccountOpen(true);
+    setIsSavingModalOpen(true);
+  };
+
+  const onOpenLoanModal = (row: PartnerData) => {
+    setRowSelected(row);
+    setIsLoanModalOpen(true);
   };
 
   const searchPartners = () => {
@@ -78,9 +84,18 @@ export const usePartnerListState = () => {
   const onCloseModal = () => {
     setRowSelected(undefined);
     setIsModalOpen(false);
-    setIsModalAccountOpen(false);
     setIsLoading(true);
     searchPartners();
+  };
+
+  const onCloseSavingModal = () => {
+    setRowSelected(undefined);
+    setIsSavingModalOpen(false);
+  };
+
+  const onCloseLoanModal = () => {
+    setRowSelected(undefined);
+    setIsLoanModalOpen(false);
   };
 
   useEffect(() => {
@@ -122,10 +137,14 @@ export const usePartnerListState = () => {
     },
     modal: {
       isModalOpen,
-      isModalAccountOpen,
       onCloseModal,
       onOpenModal,
-      onOpenAccountModal,
+      isSavingModalOpen,
+      onOpenSavingModal,
+      onCloseSavingModal,
+      isLoanModalOpen,
+      onOpenLoanModal,
+      onCloseLoanModal,
       rowSelected,
     },
     pagination: {

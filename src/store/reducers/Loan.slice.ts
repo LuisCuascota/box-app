@@ -3,6 +3,7 @@ import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import {
   ILoanState,
   Loan,
+  LoanCounter,
   LoanDetail,
 } from "../interfaces/LoanState.interfaces.ts";
 
@@ -11,7 +12,11 @@ export const loanInitialState: ILoanState = {
   getLoanCountStatus: RequestStatusEnum.PENDING,
   getLoansPaginatedStatus: RequestStatusEnum.PENDING,
   getLoanDetailStatus: RequestStatusEnum.PENDING,
-  loanCount: 0,
+  loanCount: {
+    total: 0,
+    debt: 0,
+    count: 0,
+  },
   loans: [],
   loanDetail: [],
 };
@@ -26,7 +31,7 @@ export const loanSlice = createSlice({
     ) => {
       state.getLoanCountStatus = action.payload;
     },
-    setLoanCount: (state, action: PayloadAction<number>) => {
+    setLoanCount: (state, action: PayloadAction<LoanCounter>) => {
       state.loanCount = action.payload;
     },
     setPostLoanStatus: (state, action: PayloadAction<RequestStatusEnum>) => {

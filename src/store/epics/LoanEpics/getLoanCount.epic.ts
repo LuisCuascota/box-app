@@ -9,25 +9,31 @@ import {
   setGetLoanCountStatus,
   setLoanCount,
 } from "../../actions/loan.actions.ts";
+import { CountFilter } from "../../interfaces/EntryState.interfaces.ts";
+import { LoanCounter } from "../../interfaces/LoanState.interfaces.ts";
 
-export const getLoanCount = createAction("GET_LOAN_COUNT");
+export const getLoanCount = createAction<CountFilter | undefined>(
+  "GET_LOAN_COUNT"
+);
 
 export const getLoanCountEpic: EpicCustom = ({ action$, dispatch }) =>
   action$.pipe(
     filter(getLoanCount.match),
     tap(() => dispatch(setGetLoanCountStatus(RequestStatusEnum.PENDING))),
-    switchMap(() =>
-      axios.get<number>(ApiRoutes.GET_LOAN_COUNT).pipe(
-        tap(({ data }: { data: number }) => {
-          dispatch(setLoanCount(data + 1));
-          dispatch(setGetLoanCountStatus(RequestStatusEnum.SUCCESS));
-        }),
-        catchError(() => {
-          dispatch(setGetLoanCountStatus(RequestStatusEnum.ERROR));
+    switchMap(({ payload }) =>
+      axios
+        .get<LoanCounter>(ApiRoutes.GET_LOAN_COUNT, { params: payload })
+        .pipe(
+          tap(({ data }: { data: LoanCounter }) => {
+            dispatch(setLoanCount(data));
+            dispatch(setGetLoanCountStatus(RequestStatusEnum.SUCCESS));
+          }),
+          catchError(() => {
+            dispatch(setGetLoanCountStatus(RequestStatusEnum.ERROR));
 
-          return EMPTY;
-        })
-      )
+            return EMPTY;
+          })
+        )
     ),
     ignoreElements()
   );

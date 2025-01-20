@@ -29,9 +29,9 @@ export interface ILoanContext {
   isOpenSaveDialog: boolean;
   isLoading: boolean;
   loanFees: LoanDetail[];
-  onSelectPartner: (selected: PartnerSelector) => void;
-  onSelectGuarantor1: (selected: PartnerSelector) => void;
-  onSelectGuarantor2: (selected: PartnerSelector) => void;
+  onSelectPartner: (selected: PartnerSelector | null) => void;
+  onSelectGuarantor1: (selected: PartnerSelector | null) => void;
+  onSelectGuarantor2: (selected: PartnerSelector | null) => void;
   onChangeLoanType: (type: RegistryTypeEnum) => void;
   onChangeAmount: (value: number) => void;
   onChangeMonths: (value: number) => void;
@@ -44,9 +44,6 @@ export interface ILoanContext {
   amount: number;
   months: number;
   interest: number;
-  partner?: PartnerSelector | null;
-  guarantor1?: PartnerSelector | null;
-  guarantor2?: PartnerSelector | null;
   loanType?: RegistryTypeEnum | null;
 }
 
@@ -111,7 +108,7 @@ const LoanContextProvider = ({ children }: any) => {
   const buildNewLoan = (isPrint?: boolean): LoanDefinition => {
     return {
       loan: {
-        number: loanCount,
+        number: loanCount.count + 1,
         account: partner!.id,
         date: date!,
         value: amount,
@@ -158,7 +155,7 @@ const LoanContextProvider = ({ children }: any) => {
         fee_value: +feeValue.toFixed(2),
         interest: +interestCalc.toFixed(2),
         is_paid: false,
-        loan_number: loanCount,
+        loan_number: loanCount.count + 1,
         payment_date: getFistSaturday(paymentDate),
       });
 
@@ -185,10 +182,11 @@ const LoanContextProvider = ({ children }: any) => {
     dispatch(getLoanCount());
   };
 
-  const onSelectPartner = (selected: PartnerSelector) => setPartner(selected);
-  const onSelectGuarantor1 = (selected: PartnerSelector) =>
+  const onSelectPartner = (selected: PartnerSelector | null) =>
+    setPartner(selected);
+  const onSelectGuarantor1 = (selected: PartnerSelector | null) =>
     setGuarantor1(selected);
-  const onSelectGuarantor2 = (selected: PartnerSelector) =>
+  const onSelectGuarantor2 = (selected: PartnerSelector | null) =>
     setGuarantor2(selected);
   const onChangeLoanType = (type: RegistryTypeEnum) => setLoanType(type);
   const onChangeAmount = (value: number) => setAmount(value);
@@ -235,9 +233,6 @@ const LoanContextProvider = ({ children }: any) => {
         amount,
         months,
         interest,
-        partner,
-        guarantor1,
-        guarantor2,
         loanType,
         loanFees,
         onSelectPartner,

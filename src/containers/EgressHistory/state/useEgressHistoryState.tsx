@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -13,6 +13,29 @@ import {
 import { EgressHeader } from "../../../store/interfaces/EgressState.interfaces.ts";
 import { getEgressCount } from "../../../store/epics/EgressEpics/getEgressCount.epic.ts";
 import { getEgressPaginated } from "../../../store/epics/EgressEpics/getEgressPaginated.epic.ts";
+import { SelectType } from "../../../components/input/OptionsSelect/OptionsSelect.tsx";
+import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
+import { PaymentMethodEnum } from "../../../shared/enums/PaymentMethod.enum.ts";
+import { getTypesMetrics } from "../../../store/epics/MetricsEpics/getTypesMetrics.epic.ts";
+import { DateRange } from "../../../shared/utils/Date.utils.ts";
+import { TypesSelector } from "../../../components/input/TypesSearch/TypesSearch.tsx";
+import { isGetRequest } from "../../../shared/utils/Components.util.tsx";
+import { DefaultPagination } from "../../../shared/constants/KajaConfig.ts";
+
+export const egressTypeOptions: SelectType[] = [
+  {
+    label: ComponentsLabels.TYPE_CASH,
+    id: PaymentMethodEnum.CASH,
+  },
+  {
+    label: ComponentsLabels.TYPE_TRANSFER,
+    id: PaymentMethodEnum.TRANSFER,
+  },
+  {
+    label: ComponentsLabels.TYPE_MIX,
+    id: PaymentMethodEnum.MIXED,
+  },
+];
 
 export const useEgressHistoryState = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +48,23 @@ export const useEgressHistoryState = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<EgressHeader>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [typeSelector, setTypeSelector] = useState<TypesSelector | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [paymentType, setPaymentType] = useState<string | null>(null);
+
+  const typeSelectorRef = useRef(typeSelector);
+
+  const onChangeDateRange = (from: string, to: string) => {
+    setDateRange({ from, to });
+  };
+
+  const onChangePaymentType = (type: string | null) => {
+    setPaymentType(type);
+  };
+
+  const onSelectType = (selected: TypesSelector | null) => {
+    setTypeSelector(selected);
+  };
 
   const onPageChange = (_: any, newPage: number) => {
     setPage(newPage);
@@ -47,18 +87,39 @@ export const useEgressHistoryState = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(getEgressCount());
+    dispatch(getTypesMetrics());
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
+    if (isGetRequest(typeSelectorRef, typeSelector, page, rowsPerPage))
+      dispatch(
+        getEgressPaginated({
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+          type: typeSelector?.id,
+          startDate: dateRange?.from,
+          endDate: dateRange?.to,
+          paymentType: paymentType,
+        })
+      );
+
+    typeSelectorRef.current = typeSelector;
+  }, [page, rowsPerPage, typeSelector, dateRange, paymentType]);
+
+  useEffect(() => {
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
+
     dispatch(
-      getEgressPaginated({
-        limit: rowsPerPage,
-        offset: page * rowsPerPage,
+      getEgressCount({
+        type: typeSelector?.id,
+        startDate: dateRange?.from,
+        endDate: dateRange?.to,
+        paymentType: paymentType,
       })
     );
-  }, [page, rowsPerPage]);
+  }, [typeSelector, dateRange, paymentType]);
 
   useEffect(() => {
     if (
@@ -83,6 +144,11 @@ export const useEgressHistoryState = () => {
       onRowsPerPageChange,
       page,
       rowsPerPage,
+    },
+    search: {
+      onSelectType,
+      onChangeDateRange,
+      onChangePaymentType,
     },
   };
 };

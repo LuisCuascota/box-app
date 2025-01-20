@@ -23,7 +23,6 @@ export const EgressHeader = () => {
     onChangeBeneficiary,
     isLoading,
     onChangeCategorySelector,
-    categorySelected,
   } = useContext(EgressContext);
 
   const count = useAppSelector(selectEgressCount);
@@ -48,7 +47,7 @@ export const EgressHeader = () => {
       <Grid item md={2} xs={4}>
         <Typography textAlign={"right"} color={"red"}>
           {countStatus === RequestStatusEnum.SUCCESS ? (
-            <b>{`Nº${count}`}</b>
+            <b>{`Nº${count.count + 1}`}</b>
           ) : (
             <Skeleton height={40} />
           )}
@@ -67,7 +66,6 @@ export const EgressHeader = () => {
         <TypesSearch
           disableSearch={false}
           onChangeSelector={onChangeCategorySelector}
-          value={categorySelected}
         />
       </Grid>
     </Grid>

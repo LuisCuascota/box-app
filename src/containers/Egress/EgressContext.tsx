@@ -34,7 +34,7 @@ export interface IEgressContext {
   totalDischarge: number;
   isOpenBillDetailModal: boolean;
   onChangeBeneficiary: (event: ChangeEvent<HTMLInputElement>) => void;
-  onChangeCategorySelector: (categorySelected: TypesSelector) => void;
+  onChangeCategorySelector: (categorySelected: TypesSelector | null) => void;
   onAddDetail: () => void;
   onDeleteDetail: (index: number) => void;
   onUpdateDetail: (index: number, description: string, value: number) => void;
@@ -128,7 +128,7 @@ const EgressContestProvider = ({ children }: any) => {
     setBeneficiary(event.target.value.toUpperCase());
   };
 
-  const onChangeCategorySelector = (categorySelected: TypesSelector) => {
+  const onChangeCategorySelector = (categorySelected: TypesSelector | null) => {
     setCategorySelected(categorySelected);
   };
 
@@ -139,7 +139,7 @@ const EgressContestProvider = ({ children }: any) => {
   const buildNewEgress = (billDetail: EntryBillDetail): NewEgress => {
     return {
       header: {
-        number: count,
+        number: count.count + 1,
         date: egressDate,
         place: KajaConfig.defaultPlace,
         beneficiary: beneficiary,
@@ -147,7 +147,7 @@ const EgressContestProvider = ({ children }: any) => {
         type_id: categorySelected!.id,
       },
       detail: egressDetail.map((detail) => ({
-        discharge_number: count,
+        discharge_number: count.count + 1,
         description: detail.description,
         value: detail.value,
       })),
@@ -231,7 +231,6 @@ const EgressContestProvider = ({ children }: any) => {
         disableSave,
         beneficiary,
         egressDetail,
-        categorySelected,
         totalDischarge,
         isOpenBillDetailModal,
         onChangeBeneficiary,

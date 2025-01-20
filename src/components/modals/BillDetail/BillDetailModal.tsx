@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { EntryBillDetail } from "../../../store/interfaces/EntryState.interfaces.ts";
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
+import { PaymentMethodEnum } from "../../../shared/enums/PaymentMethod.enum.ts";
 
 interface PaymentModalProps {
   open: boolean;
@@ -23,23 +24,23 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
   onDispatchBillDetail,
   totalAmount,
 }) => {
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState(PaymentMethodEnum.CASH);
   const [cash, setCash] = useState(0);
   const [transfer, setTransfer] = useState(0);
   const isSubmitDisabled =
-    paymentMethod === "combined" && (cash === 0 || transfer === 0);
+    paymentMethod === PaymentMethodEnum.MIXED && (cash === 0 || transfer === 0);
 
   const handlePaymentMethodChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const method = event.target.value;
 
-    setPaymentMethod(method);
+    setPaymentMethod(method as PaymentMethodEnum);
 
-    if (method === "cash") {
+    if (method === PaymentMethodEnum.CASH) {
       setCash(totalAmount);
       setTransfer(0);
-    } else if (method === "transfer") {
+    } else if (method === PaymentMethodEnum.TRANSFER) {
       setCash(0);
       setTransfer(totalAmount);
     } else {
@@ -64,8 +65,9 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
 
   const handleSubmit = () => {
     const billDetail: EntryBillDetail = {
-      cash: paymentMethod === "cash" ? totalAmount : cash,
-      transfer: paymentMethod === "transfer" ? totalAmount : transfer,
+      cash: paymentMethod === PaymentMethodEnum.CASH ? totalAmount : cash,
+      transfer:
+        paymentMethod === PaymentMethodEnum.TRANSFER ? totalAmount : transfer,
     };
 
     onDispatchBillDetail(billDetail);
@@ -102,25 +104,25 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
           onChange={handlePaymentMethodChange}
         >
           <FormControlLabel
-            value="cash"
+            value={PaymentMethodEnum.CASH}
             control={<Radio />}
             label={ComponentsLabels.TYPE_CASH}
           />
           <FormControlLabel
-            value="transfer"
+            value={PaymentMethodEnum.TRANSFER}
             control={<Radio />}
             label={ComponentsLabels.TYPE_TRANSFER}
           />
           <FormControlLabel
-            value="combined"
+            value={PaymentMethodEnum.MIXED}
             control={<Radio />}
             label={ComponentsLabels.TYPE_MIX}
           />
         </RadioGroup>
-        {paymentMethod === "combined" && (
+        {paymentMethod === PaymentMethodEnum.MIXED && (
           <Box>
             <TextField
-              label="Efectivo"
+              label={ComponentsLabels.TYPE_CASH}
               type="number"
               value={cash}
               onChange={handleCashChange}
@@ -129,7 +131,7 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
               inputProps={{ min: 0, max: totalAmount }}
             />
             <TextField
-              label="Transferencia"
+              label={ComponentsLabels.TYPE_TRANSFER}
               type="number"
               value={transfer}
               onChange={handleTransferChange}

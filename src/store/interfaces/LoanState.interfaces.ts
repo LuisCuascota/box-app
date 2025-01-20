@@ -5,7 +5,7 @@ export interface ILoanState {
   getLoanCountStatus: RequestStatusEnum;
   getLoansPaginatedStatus: RequestStatusEnum;
   getLoanDetailStatus: RequestStatusEnum;
-  loanCount: number;
+  loanCount: LoanCounter;
   loans: Loan[];
   loanDetail: LoanDetail[];
 }
@@ -57,7 +57,16 @@ export interface EntryLoanData {
 }
 
 export interface LoanPagination {
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
   account?: number;
+  startDate?: string;
+  endDate?: string;
+  paymentType?: string | null;
+}
+
+export interface LoanCounter {
+  count: number;
+  total: number;
+  debt: number;
 }

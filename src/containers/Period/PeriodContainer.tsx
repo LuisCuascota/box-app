@@ -15,7 +15,6 @@ import {
   Typography,
 } from "@mui/material";
 import { UsePeriodState } from "./usePeriodState.ts";
-import { PieChart } from "@mui/x-charts";
 import { PartnerListLabels } from "../../shared/labels/PartnerList.labels.ts";
 import {
   PartnerBalance,
@@ -26,6 +25,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useState } from "react";
 import { ColorsEnum } from "../../shared/enums/Colors.enum.ts";
+import { PieDataChart } from "../../components/chart/PieDataChart/PieDataChart.tsx";
 
 interface BalanceDetailProps {
   balance: PartnerBalance;
@@ -166,34 +166,16 @@ export const PeriodContainer = () => {
           </Typography>
         </Grid>
         <Grid item md={12} xs={12}>
-          <PieChart
+          <PieDataChart
             colors={["#d5a92b", "#1f3c55", "#808080"]}
-            series={[
-              {
-                data: revenueValues.map((item, index) => ({
-                  id: index,
-                  value: item.sum,
-                  label: item.description,
-                })),
-                highlightScope: { faded: "global", highlighted: "item" },
-                faded: {
-                  innerRadius: 30,
-                  additionalRadius: -30,
-                  color: "gray",
-                },
-                arcLabel: (item) => `$${item.value}`,
-                innerRadius: 14,
-                paddingAngle: 2,
-                cornerRadius: 4,
-              },
-            ]}
-            height={250}
+            data={revenueValues.map((item, index) => ({
+              id: index,
+              value: item.sum,
+              label: item.description,
+            }))}
+            totalValue={totalRevenue}
+            totalLabel={"Ganancias: $"}
           />
-        </Grid>
-        <Grid item md={12} xs={12}>
-          <Typography textAlign={"center"} variant={"h5"}>
-            {`Ganancias: $${totalRevenue}`}
-          </Typography>
         </Grid>
       </Grid>
       <TableContainer>
@@ -232,7 +214,9 @@ export const PeriodContainer = () => {
             <TableRow>
               <TableCell colSpan={3} />
               <TableCell>TOTAL</TableCell>
-              <TableCell align={"center"}>{`%${validationAverage}`}</TableCell>
+              <TableCell
+                align={"center"}
+              >{`%${validationAverage.toFixed(2)}`}</TableCell>
               <TableCell align={"center"}>{`$${validationRevenue.toFixed(
                 2
               )}`}</TableCell>

@@ -7,6 +7,8 @@ export enum LoanStatusEnum {
   PAID = "paid",
   CURRENT = "current",
   LATE = "late",
+  FREE = "free",
+  DEBT = "debt",
 }
 
 export enum AccountStatusEnum {

@@ -7,6 +7,7 @@ import {
   EntryHeader,
   Contribution,
   EntryDetail,
+  EntryCounter,
 } from "../interfaces/EntryState.interfaces.ts";
 
 export const entryInitialState: IEntryState = {
@@ -17,7 +18,12 @@ export const entryInitialState: IEntryState = {
   getEntriesPaginatedStatus: RequestStatusEnum.PENDING,
   getEntryDetailStatus: RequestStatusEnum.PENDING,
   getContributionListStatus: RequestStatusEnum.PENDING,
-  count: 0,
+  count: {
+    cash: 0,
+    count: 0,
+    transfer: 0,
+    total: 0,
+  },
   types: [],
   entryAmounts: [],
   entries: [],
@@ -41,7 +47,7 @@ export const entrySlice = createSlice({
     ) => {
       state.getEntryCountStatus = action.payload;
     },
-    setCount: (state, action: PayloadAction<number>) => {
+    setCount: (state, action: PayloadAction<EntryCounter>) => {
       state.count = action.payload;
     },
     setGetEntryTypesStatus: (
