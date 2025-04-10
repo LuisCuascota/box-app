@@ -1,6 +1,7 @@
 export enum ComponentsLabels {
   LOAN_MODAL_TITLE = "DETALLE DE CRÉDITO",
   PARTNER = "Socio:",
+  PERIOD = "Periodo:",
   CATEGORY = "Rubro:",
   PAY = "Pagar",
   TH_LOAN_FEE = "Cuota",
@@ -28,6 +29,7 @@ export enum ComponentsLabels {
   TH_ENTRY_VALUE = "Valor",
   CLOSE = "Cerrar",
   PRINT = "Imprimir",
+  LOAN_PAYMENT = "Abonar Pago",
   INTEREST = "Interes (Mensual):",
   DEBT = "Deuda:",
   MONTHS = "Meses:",
@@ -55,4 +57,6 @@ export enum ComponentsLabels {
   CURRENT_LOAN = "Crédito Vigente al día",
   LATE_LOAN = "Crédito en Mora",
   FREE_LOAN = "Sin Crédito",
+  ACTUAL = "Actual",
+  REDUCED = "Reducido",
 }

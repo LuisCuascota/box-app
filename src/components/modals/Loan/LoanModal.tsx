@@ -19,6 +19,8 @@ import CreditScoreIcon from "@mui/icons-material/CreditScore";
 import SaveIcon from "@mui/icons-material/Save";
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
 import { Print } from "@mui/icons-material";
+import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
+import { LoanStatusEnum } from "../../../shared/enums/LoanCalcTypeEnum.ts";
 
 export interface LoanModalProps {
   open: boolean;
@@ -26,6 +28,7 @@ export interface LoanModalProps {
   viewMode?: boolean;
   loan?: Loan;
   loanDetail?: LoanDetail[];
+  loanBottom?: boolean;
 }
 
 export const LoanModal = (props: LoanModalProps) => {
@@ -36,6 +39,7 @@ export const LoanModal = (props: LoanModalProps) => {
     onSave,
     onPreCancel,
     onPrintLoan,
+    goToLoanUpdate,
   } = useLoanModalState(props);
 
   return (
@@ -94,6 +98,8 @@ export const LoanModal = (props: LoanModalProps) => {
           loanDetail={finalLoanDetail}
           onPayButton={onPayButton}
           withActions={!props.viewMode}
+          loanBottom={props.loanBottom}
+          withStatus={true}
         />
       </DialogContent>
       <DialogActions>
@@ -105,14 +111,33 @@ export const LoanModal = (props: LoanModalProps) => {
           </Grid>
           <Grid item xs={8} display={"flex"} justifyContent={"end"}>
             {props.viewMode ? (
-              <Button
-                onClick={onPrintLoan}
-                variant={"contained"}
-                color={"primary"}
-                endIcon={<Print />}
-              >
-                {ComponentsLabels.PRINT}
-              </Button>
+              <>
+                {props.loan &&
+                  finalLoanDetail &&
+                  props.loan.status === LoanStatusEnum.CURRENT &&
+                  props.loan.value > props.loan.debt && (
+                    <Box pr={1}>
+                      <Button
+                        onClick={() =>
+                          goToLoanUpdate(props.loan!, finalLoanDetail)
+                        }
+                        variant={"contained"}
+                        color={"secondary"}
+                        endIcon={<RequestQuoteIcon />}
+                      >
+                        {ComponentsLabels.LOAN_PAYMENT}
+                      </Button>
+                    </Box>
+                  )}
+                <Button
+                  onClick={onPrintLoan}
+                  variant={"contained"}
+                  color={"primary"}
+                  endIcon={<Print />}
+                >
+                  {ComponentsLabels.PRINT}
+                </Button>
+              </>
             ) : (
               <>
                 <Box pr={1}>

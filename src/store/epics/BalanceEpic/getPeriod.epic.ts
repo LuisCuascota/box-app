@@ -5,35 +5,30 @@ import { EpicCustom } from "../../interfaces/Epics.interfaces.ts";
 import { ApiRoutes } from "../../../shared/constants/ApiRoutes.ts";
 import axios from "../../../shared/utils/Axios.util.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
+import { Period } from "../../interfaces/BalanceState.interfaces.ts";
 import {
-  BalanceFilters,
-  PartnerBalance,
-} from "../../interfaces/BalanceState.interfaces.ts";
-import {
-  setGetBalanceStatus,
-  setPartnersBalance,
+  setGetPeriodListStatus,
+  setPeriodList,
 } from "../../actions/balance.actions.ts";
 
-export const getPartnersBalance = createAction<BalanceFilters>(
-  "GET_PARTNERS_BALANCE"
-);
+export const getPeriodList = createAction("GET_PERIOD_LIST");
 
-export const getPartnersBalancesEpic: EpicCustom = ({ action$, dispatch }) =>
+export const getPeriodListEpic: EpicCustom = ({ action$, dispatch }) =>
   action$.pipe(
-    filter(getPartnersBalance.match),
-    tap(() => dispatch(setGetBalanceStatus(RequestStatusEnum.PENDING))),
+    filter(getPeriodList.match),
+    tap(() => dispatch(setGetPeriodListStatus(RequestStatusEnum.PENDING))),
     switchMap(({ payload }) =>
       axios
-        .get<PartnerBalance[]>(ApiRoutes.GET_BALANCE, {
+        .get<Period[]>(ApiRoutes.GET_PERIOD_LIST, {
           params: payload,
         })
         .pipe(
-          tap(({ data }: { data: PartnerBalance[] }) => {
-            dispatch(setPartnersBalance(data));
-            dispatch(setGetBalanceStatus(RequestStatusEnum.SUCCESS));
+          tap(({ data }: { data: Period[] }) => {
+            dispatch(setPeriodList(data));
+            dispatch(setGetPeriodListStatus(RequestStatusEnum.SUCCESS));
           }),
           catchError(() => {
-            dispatch(setGetBalanceStatus(RequestStatusEnum.ERROR));
+            dispatch(setGetPeriodListStatus(RequestStatusEnum.ERROR));
 
             return EMPTY;
           })

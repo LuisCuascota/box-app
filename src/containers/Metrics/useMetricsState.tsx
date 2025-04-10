@@ -8,14 +8,20 @@ import { getMetrics } from "../../store/epics/MetricsEpics/getMetrics.epic.ts";
 import { getTypesMetrics } from "../../store/epics/MetricsEpics/getTypesMetrics.epic.ts";
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import { TypeMetric } from "../../store/interfaces/MetricsState.interfaces.ts";
+import { getPeriodList } from "../../store/epics/BalanceEpic/getPeriod.epic.ts";
+import { PeriodSelector } from "../../components/input/PeriodSearch/PeriodSearch.tsx";
 
 export const useMetricsState = () => {
   const dispatch = useAppDispatch();
 
   const { metrics, getMetricsStatus, getTypesMetricsStatus, typesMetrics } =
     useAppSelector(selectMetrics);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [utilsMetrics, setUtilsMetrics] = useState<TypeMetric[]>([]);
+  const [periodSelector, setPeriodSelector] = useState<PeriodSelector | null>(
+    null
+  );
 
   const buildUtilsMetrics = () => {
     const utilsMetrics: TypeMetric[] = [];
@@ -47,10 +53,21 @@ export const useMetricsState = () => {
     setUtilsMetrics(utilsMetrics);
   };
 
+  const onSelectPeriod = (selected: PeriodSelector | null) => {
+    setPeriodSelector(selected);
+  };
+
+  useEffect(() => {
+    if (periodSelector) {
+      setIsLoading(true);
+      dispatch(getMetrics({ period: periodSelector.id }));
+      dispatch(getTypesMetrics({ period: periodSelector.id }));
+    }
+  }, [periodSelector]);
+
   useEffect(() => {
     setIsLoading(true);
-    dispatch(getMetrics());
-    dispatch(getTypesMetrics());
+    dispatch(getPeriodList());
   }, []);
 
   useEffect(() => {
@@ -68,5 +85,8 @@ export const useMetricsState = () => {
     typesMetrics,
     utilsMetrics,
     isLoading,
+    search: {
+      onSelectPeriod,
+    },
   };
 };

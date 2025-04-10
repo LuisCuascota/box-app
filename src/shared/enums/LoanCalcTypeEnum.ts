@@ -1,4 +1,4 @@
-export enum RegistryTypeEnum {
+export enum LoanCalcTypeEnum {
   FIXED_FEE = "fixed",
   VARIABLE_FEE = "variable",
 }
@@ -14,4 +14,9 @@ export enum LoanStatusEnum {
 export enum AccountStatusEnum {
   OK = "ok",
   LATE = "late",
+}
+
+export enum UpdateLoanType {
+  EQA_LF = "eqAlF",
+  LA_EQF = "lAeqF",
 }

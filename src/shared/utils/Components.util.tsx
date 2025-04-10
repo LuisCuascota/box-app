@@ -1,5 +1,5 @@
 import { PaymentMethodEnum } from "../enums/PaymentMethod.enum.ts";
-import { Tooltip } from "@mui/material";
+import { Chip, Tooltip } from "@mui/material";
 import { ComponentsLabels } from "../labels/Components.labels.ts";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { ColorsEnum } from "../enums/Colors.enum.ts";
@@ -7,7 +7,7 @@ import CreditScoreIcon from "@mui/icons-material/CreditScore";
 import {
   AccountStatusEnum,
   LoanStatusEnum,
-} from "../enums/RegistryType.enum.ts";
+} from "../enums/LoanCalcTypeEnum.ts";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
@@ -17,32 +17,42 @@ import { PartnerSelector } from "../../components/input/PersonSearch/PartnerSear
 import { TypesSelector } from "../../components/input/TypesSearch/TypesSearch.tsx";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
+import SwapHorizontalCircleIcon from "@mui/icons-material/SwapHorizontalCircle";
+import { LoanDetail } from "../../store/interfaces/LoanState.interfaces.ts";
+import moment from "moment/moment";
 
 export const getPaymentTypeIcon = (status?: string) => {
   if (status)
     switch (status) {
       case PaymentMethodEnum.CASH:
         return (
-          <Tooltip title={ComponentsLabels.TYPE_CASH}>
-            <PriceCheckIcon sx={{ color: ColorsEnum.CASH }} />
-          </Tooltip>
+          <Chip
+            variant="filled"
+            color="success"
+            size="small"
+            icon={<PriceCheckIcon />}
+            label={ComponentsLabels.TYPE_CASH}
+          />
         );
       case PaymentMethodEnum.TRANSFER:
         return (
-          <Tooltip title={ComponentsLabels.TYPE_TRANSFER}>
-            <CreditScoreIcon sx={{ color: ColorsEnum.TRANSFER }} />
-          </Tooltip>
+          <Chip
+            variant="filled"
+            color="secondary"
+            size="small"
+            icon={<CreditScoreIcon />}
+            label={ComponentsLabels.TYPE_TRANSFER}
+          />
         );
       case PaymentMethodEnum.MIXED:
         return (
-          <>
-            <Tooltip title={ComponentsLabels.TYPE_MIX}>
-              <CreditScoreIcon sx={{ color: ColorsEnum.MIXED }} />
-            </Tooltip>
-            <Tooltip title={ComponentsLabels.TYPE_MIX}>
-              <PriceCheckIcon sx={{ color: ColorsEnum.MIXED }} />
-            </Tooltip>
-          </>
+          <Chip
+            variant="filled"
+            color="primary"
+            size="small"
+            icon={<SwapHorizontalCircleIcon />}
+            label={ComponentsLabels.TYPE_MIX}
+          />
         );
     }
 };
@@ -52,21 +62,33 @@ export const getLoanStatusTypeIcon = (status?: string) => {
     switch (status) {
       case LoanStatusEnum.PAID:
         return (
-          <Tooltip title={ComponentsLabels.PAID}>
-            <PriceCheckIcon sx={{ color: ColorsEnum.PAID }} />
-          </Tooltip>
+          <Chip
+            variant="filled"
+            color="success"
+            size="small"
+            icon={<PriceCheckIcon />}
+            label={ComponentsLabels.PAID}
+          />
         );
       case LoanStatusEnum.CURRENT:
         return (
-          <Tooltip title={ComponentsLabels.CURRENT}>
-            <CurrencyExchangeIcon sx={{ color: ColorsEnum.CURRENT }} />
-          </Tooltip>
+          <Chip
+            variant="filled"
+            color="secondary"
+            size="small"
+            icon={<CurrencyExchangeIcon />}
+            label={ComponentsLabels.CURRENT}
+          />
         );
       case LoanStatusEnum.LATE:
         return (
-          <Tooltip title={ComponentsLabels.LATE}>
-            <ReportProblemRoundedIcon sx={{ color: ColorsEnum.LATE }} />
-          </Tooltip>
+          <Chip
+            variant="filled"
+            color="error"
+            size="small"
+            icon={<ReportProblemRoundedIcon />}
+            label={ComponentsLabels.LATE}
+          />
         );
     }
 };
@@ -130,6 +152,64 @@ export const getLoanAccountStatusIcon = (status?: string) => {
           </Tooltip>
         );
     }
+};
+
+export const getLoanFeeIcon = (loanDetail: LoanDetail) => {
+  if (
+    loanDetail.is_paid &&
+    loanDetail.fee_total === 0 &&
+    loanDetail.fee_value === 0 &&
+    loanDetail.interest === 0
+  )
+    return (
+      <Chip
+        variant="filled"
+        color="warning"
+        size="small"
+        icon={<CurrencyExchangeIcon />}
+        label={ComponentsLabels.REDUCED}
+      />
+    );
+
+  if (loanDetail.is_paid)
+    return (
+      <Chip
+        variant="filled"
+        color="success"
+        size="small"
+        icon={<PriceCheckIcon />}
+        label={ComponentsLabels.PAID}
+      />
+    );
+
+  if (
+    !loanDetail.is_paid &&
+    moment.utc().isSameOrAfter(loanDetail.payment_date, "month") &&
+    moment.utc().isAfter(loanDetail.payment_date, "day")
+  ) {
+    return (
+      <Chip
+        variant="filled"
+        color="error"
+        size="small"
+        icon={<ReportProblemRoundedIcon />}
+        label={ComponentsLabels.LATE}
+      />
+    );
+  }
+  if (
+    !loanDetail.is_paid &&
+    moment.utc().isSame(loanDetail.payment_date, "month")
+  )
+    return (
+      <Chip
+        variant="filled"
+        color="info"
+        size="small"
+        icon={<CurrencyExchangeIcon />}
+        label={ComponentsLabels.ACTUAL}
+      />
+    );
 };
 
 export const isGetRequest = (

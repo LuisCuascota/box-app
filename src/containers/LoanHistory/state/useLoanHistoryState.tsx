@@ -18,7 +18,7 @@ import { Loan } from "../../../store/interfaces/LoanState.interfaces.ts";
 import { ModePagination } from "../../../store/interfaces/PartnerState.interfaces.ts";
 import { SelectType } from "../../../components/input/OptionsSelect/OptionsSelect.tsx";
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
-import { LoanStatusEnum } from "../../../shared/enums/RegistryType.enum.ts";
+import { LoanStatusEnum } from "../../../shared/enums/LoanCalcTypeEnum.ts";
 import { DefaultPagination } from "../../../shared/constants/KajaConfig.ts";
 import { DateRange } from "../../../shared/utils/Date.utils.ts";
 import { isGetRequest } from "../../../shared/utils/Components.util.tsx";

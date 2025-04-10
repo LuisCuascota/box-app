@@ -13,6 +13,8 @@ import { TypeMetric } from "../../store/interfaces/MetricsState.interfaces.ts";
 import { getPartnersBalance } from "../../store/epics/BalanceEpic/getBalance.epic.ts";
 import { PartnerEntry } from "../../store/interfaces/BalanceState.interfaces.ts";
 import moment from "moment/moment";
+import { PeriodSelector } from "../../components/input/PeriodSearch/PeriodSearch.tsx";
+import { getPeriodList } from "../../store/epics/BalanceEpic/getPeriod.epic.ts";
 
 export const UsePeriodState = () => {
   const dispatch = useAppDispatch();
@@ -26,6 +28,13 @@ export const UsePeriodState = () => {
   const [headYearCount, setHeadYearCount] = useState({});
   const [validationRevenue, setValidationRevenue] = useState<number>(0);
   const [validationAverage, setValidationAverage] = useState<number>(0);
+  const [periodSelector, setPeriodSelector] = useState<PeriodSelector | null>(
+    null
+  );
+
+  const onSelectPeriod = (selected: PeriodSelector | null) => {
+    setPeriodSelector(selected);
+  };
 
   const buildRevenueFields = () => {
     const revenueValues = typesMetrics.filter((item) =>
@@ -84,9 +93,15 @@ export const UsePeriodState = () => {
   }, [totalRevenue]);
 
   useEffect(() => {
-    setIsLoading(true);
-    dispatch(getTypesMetrics());
-    dispatch(getPartnersBalance());
+    if (periodSelector) {
+      setIsLoading(true);
+      dispatch(getTypesMetrics({ period: periodSelector.id }));
+      dispatch(getPartnersBalance({ period: periodSelector.id }));
+    }
+  }, [periodSelector]);
+
+  useEffect(() => {
+    dispatch(getPeriodList());
   }, []);
 
   useEffect(() => {
@@ -109,5 +124,8 @@ export const UsePeriodState = () => {
     headYearCount,
     validationAverage,
     validationRevenue,
+    search: {
+      onSelectPeriod,
+    },
   };
 };

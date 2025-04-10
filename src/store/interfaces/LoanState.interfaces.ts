@@ -1,6 +1,7 @@
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 
 export interface ILoanState {
+  updateLoanStatus: RequestStatusEnum;
   postLoanStatus: RequestStatusEnum;
   getLoanCountStatus: RequestStatusEnum;
   getLoansPaginatedStatus: RequestStatusEnum;
@@ -41,6 +42,7 @@ export interface LoanDetail {
 export interface LoanDefinition {
   loan: Loan;
   loanDetails?: LoanDetail[];
+  loanPayment?: LoanPayment;
 }
 
 export interface LoanDetailToPay {
@@ -69,4 +71,11 @@ export interface LoanCounter {
   count: number;
   total: number;
   debt: number;
+}
+
+export interface LoanPayment {
+  loan_number: number;
+  payment_date: string;
+  payment_amount: number;
+  old_debt: number;
 }

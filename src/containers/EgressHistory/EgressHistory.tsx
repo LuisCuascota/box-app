@@ -32,6 +32,7 @@ import moment from "moment";
 import { TypesSearch } from "../../components/input/TypesSearch/TypesSearch.tsx";
 import { PieDataChart } from "../../components/chart/PieDataChart/PieDataChart.tsx";
 import { ComponentsLabels } from "../../shared/labels/Components.labels.ts";
+import { PeriodSearch } from "../../components/input/PeriodSearch/PeriodSearch.tsx";
 
 export const EgressHistory = () => {
   const { egressPaginated, pagination, isLoading, modal, search } =
@@ -45,7 +46,13 @@ export const EgressHistory = () => {
             {EgressHistoryLabels.TITLE}
           </Typography>
         </Grid>
-        <Grid item md={6} xs={12} pr={1}>
+        <Grid item md={2} xs={12} pr={1}>
+          <PeriodSearch
+            disableSearch={false}
+            onChangeSelector={search.onSelectPeriod}
+          />
+        </Grid>
+        <Grid item md={4} xs={12} pr={1}>
           <TypesSearch
             disableSearch={false}
             onChangeSelector={search.onSelectType}

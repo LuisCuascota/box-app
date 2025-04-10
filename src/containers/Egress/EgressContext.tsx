@@ -11,6 +11,7 @@ import {
 import { KajaConfig } from "../../shared/constants/KajaConfig.ts";
 import {
   selectEgressCount,
+  selectGetPeriodList,
   selectPostEgressStatus,
 } from "../../store/selectors/selectors.ts";
 import { postEgress } from "../../store/epics/EgressEpics/postEgress.epic.ts";
@@ -20,6 +21,7 @@ import { buildEgressPDFDoc } from "../../shared/utils/BuildEgressPdf.utils.ts";
 import { getTypesMetrics } from "../../store/epics/MetricsEpics/getTypesMetrics.epic.ts";
 import { TypesSelector } from "../../components/input/TypesSearch/TypesSearch.tsx";
 import { EntryBillDetail } from "../../store/interfaces/EntryState.interfaces.ts";
+import { getPeriodList } from "../../store/epics/BalanceEpic/getPeriod.epic.ts";
 
 export interface IEgressDetail {
   description: string;
@@ -75,6 +77,8 @@ const EgressContestProvider = ({ children }: any) => {
 
   const count = useAppSelector(selectEgressCount);
   const postEgressStatus = useAppSelector(selectPostEgressStatus);
+  const { periodList, getPeriodListStatus } =
+    useAppSelector(selectGetPeriodList);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenSaveDialog, setIsOpenSaveDialog] = useState<boolean>(false);
@@ -90,6 +94,7 @@ const EgressContestProvider = ({ children }: any) => {
     useState<TypesSelector | null>(null);
   const [isOpenBillDetailModal, setOpenBillDetailModal] = useState(false);
   const [billDetail, setBillDetail] = useState<EgressBillDetail>();
+  const [periodId, setPeriodId] = useState<number>();
 
   const onOpenBillDetailModal = () => {
     setOpenBillDetailModal(true);
@@ -145,6 +150,7 @@ const EgressContestProvider = ({ children }: any) => {
         beneficiary: beneficiary,
         amount: totalDischarge,
         type_id: categorySelected!.id,
+        period_id: periodId!,
       },
       detail: egressDetail.map((detail) => ({
         discharge_number: count.count + 1,
@@ -168,7 +174,7 @@ const EgressContestProvider = ({ children }: any) => {
     setIsOpenSaveDialog(false);
     clearStateForNew();
     dispatch(getEgressCount());
-    dispatch(getTypesMetrics());
+    dispatch(getTypesMetrics({ period: periodId }));
   };
   const onPrintEgress = () => {
     buildEgressPDFDoc(buildNewEgress(billDetail!));
@@ -193,6 +199,17 @@ const EgressContestProvider = ({ children }: any) => {
   };
 
   useEffect(() => {
+    if (getPeriodListStatus === RequestStatusEnum.SUCCESS) {
+      const currentPeriod = periodList.find((period) => period.enabled);
+
+      if (currentPeriod) {
+        setPeriodId(currentPeriod.id);
+        dispatch(getTypesMetrics({ period: currentPeriod.id }));
+      }
+    }
+  }, [getPeriodListStatus]);
+
+  useEffect(() => {
     if (postEgressStatus === RequestStatusEnum.SUCCESS)
       setIsOpenSaveDialog(true);
   }, [postEgressStatus]);
@@ -203,11 +220,19 @@ const EgressContestProvider = ({ children }: any) => {
       egressDate &&
       categorySelected &&
       totalDischarge > 0 &&
-      isValidDetail()
+      isValidDetail() &&
+      periodId
     )
       setDisableSave(false);
     else setDisableSave(true);
-  }, [beneficiary, egressDate, totalDischarge, egressDetail, categorySelected]);
+  }, [
+    beneficiary,
+    egressDate,
+    totalDischarge,
+    egressDetail,
+    categorySelected,
+    periodId,
+  ]);
 
   useEffect(() => {
     setTotalDischarge(
@@ -220,7 +245,7 @@ const EgressContestProvider = ({ children }: any) => {
 
   useEffect(() => {
     dispatch(getEgressCount());
-    dispatch(getTypesMetrics());
+    dispatch(getPeriodList());
   }, []);
 
   return (

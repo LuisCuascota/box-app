@@ -64,4 +64,12 @@ export const selectContributionListStatus = (state: RootState) =>
 export const selectContributionList = (state: RootState) =>
   state.entry.contributionList;
 
+export const selectGetPeriodList = (state: RootState) => ({
+  getPeriodListStatus: state.balance.getPeriodListStatus,
+  periodList: state.balance.periodList,
+});
+
+export const selectUpdateLoanStatus = (state: RootState) =>
+  state.loan.updateLoanStatus;
+
 export const selectBalance = (state: RootState) => state.balance;

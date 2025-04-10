@@ -94,6 +94,7 @@ export const LoanHistory = () => {
           loan={modal.rowSelected}
           open={modal.isModalOpen}
           handleClose={modal.onCloseModal}
+          loanBottom={true}
         />
         <Table>
           <TableHead>

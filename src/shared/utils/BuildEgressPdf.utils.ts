@@ -138,12 +138,12 @@ export const buildEgressPDFDoc = (newEgress: NewEgress) => {
   buildDocTable(doc, newEgress, getCenter(2, "H"), getCenter(2, "V"));
   buildDocFooter(doc, getCenter(2, "H"), 0);
 
-  /*buildDocHeader(doc, newEgress.header, getCenter(2, "H"), 0);
-  buildDocHeader(doc, newEgress.header, getCenter(2, "H"), getCenter(2, "V"));
-  buildDocTable(doc, newEgress.header, newEgress.detail, getCenter(2, "H"), 0);
+  /*buildDocHeader(doc, newEgress.Header, getCenter(2, "H"), 0);
+  buildDocHeader(doc, newEgress.Header, getCenter(2, "H"), getCenter(2, "V"));
+  buildDocTable(doc, newEgress.Header, newEgress.detail, getCenter(2, "H"), 0);
   buildDocTable(
     doc,
-    newEgress.header,
+    newEgress.Header,
     newEgress.detail,
     getCenter(2, "H"),
     getCenter(2, "V")

@@ -9,9 +9,12 @@ import {
   setGetMetricsStatus,
   setMetrics,
 } from "../../actions/metrics.actions.ts";
-import { Metrics } from "../../interfaces/MetricsState.interfaces.ts";
+import {
+  Metrics,
+  MetricsFilters,
+} from "../../interfaces/MetricsState.interfaces.ts";
 
-export const getMetrics = createAction("GET_METRICS");
+export const getMetrics = createAction<MetricsFilters>("GET_METRICS");
 
 export const getMetricsEpic: EpicCustom = ({ action$, dispatch }) =>
   action$.pipe(

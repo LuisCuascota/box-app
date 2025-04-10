@@ -22,6 +22,8 @@ import { SelectType } from "../../../components/input/OptionsSelect/OptionsSelec
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
 import { PaymentMethodEnum } from "../../../shared/enums/PaymentMethod.enum.ts";
 import { isGetRequest } from "../../../shared/utils/Components.util.tsx";
+import { getPeriodList } from "../../../store/epics/BalanceEpic/getPeriod.epic.ts";
+import { PeriodSelector } from "../../../components/input/PeriodSearch/PeriodSearch.tsx";
 
 export const entryTypeOptions: SelectType[] = [
   {
@@ -44,6 +46,7 @@ export const useEntryHistoryState = () => {
   const entriesPaginatedStatus = useAppSelector(selectEntriesPaginatedStatus);
   const entryCount = useAppSelector(selectEntryCount);
   const entryCountStatus = useAppSelector(selectEntryCountStatus);
+
   const [page, setPage] = useState<number>(DefaultPagination.page);
   const [rowsPerPage, setRowsPerPage] = useState<number>(
     DefaultPagination.rowsPerPage
@@ -55,6 +58,10 @@ export const useEntryHistoryState = () => {
     useState<PartnerSelector | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [paymentType, setPaymentType] = useState<string | null>(null);
+  const [periodSelector, setPeriodSelector] = useState<PeriodSelector | null>(
+    null
+  );
+
   const accountSelectorRef = useRef(accountSelector);
 
   const onChangeDateRange = (from: string, to: string) => {
@@ -88,15 +95,23 @@ export const useEntryHistoryState = () => {
     setAccountSelector(selected);
   };
 
+  const onSelectPeriod = (selected: PeriodSelector | null) => {
+    setPeriodSelector(selected);
+  };
+
   useEffect(() => {
     setIsLoading(true);
     dispatch(getPartners({ mode: ModePagination.SIMPLE }));
+    dispatch(getPeriodList());
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
 
-    if (isGetRequest(accountSelectorRef, accountSelector, page, rowsPerPage))
+    if (
+      isGetRequest(accountSelectorRef, accountSelector, page, rowsPerPage) &&
+      periodSelector
+    )
       dispatch(
         getEntriesPaginated({
           account: accountSelector?.id,
@@ -105,25 +120,36 @@ export const useEntryHistoryState = () => {
           startDate: dateRange?.from,
           endDate: dateRange?.to,
           paymentType,
+          period: periodSelector?.id,
         })
       );
 
     accountSelectorRef.current = accountSelector;
-  }, [page, rowsPerPage, accountSelector, dateRange, paymentType]);
+  }, [
+    page,
+    rowsPerPage,
+    accountSelector,
+    dateRange,
+    paymentType,
+    periodSelector,
+  ]);
 
   useEffect(() => {
-    setPage(DefaultPagination.page);
-    setRowsPerPage(DefaultPagination.rowsPerPage);
+    if (periodSelector) {
+      setPage(DefaultPagination.page);
+      setRowsPerPage(DefaultPagination.rowsPerPage);
 
-    dispatch(
-      getEntryCount({
-        account: accountSelector?.id,
-        startDate: dateRange?.from,
-        endDate: dateRange?.to,
-        paymentType,
-      })
-    );
-  }, [accountSelector, dateRange, paymentType]);
+      dispatch(
+        getEntryCount({
+          account: accountSelector?.id,
+          startDate: dateRange?.from,
+          endDate: dateRange?.to,
+          paymentType,
+          period: periodSelector?.id,
+        })
+      );
+    }
+  }, [accountSelector, dateRange, paymentType, periodSelector]);
 
   useEffect(() => {
     if (
@@ -150,6 +176,7 @@ export const useEntryHistoryState = () => {
       rowsPerPage,
     },
     search: {
+      onSelectPeriod,
       onSelectPartner,
       accountSelector,
       onChangeDateRange,

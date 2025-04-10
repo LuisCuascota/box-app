@@ -16,6 +16,7 @@ import moment from "moment/min/moment-with-locales";
 import { environment } from "../../../../environments/environment.ts";
 import { setContributionList } from "../../../../store/actions/entry.actions.ts";
 import { DATE_FORMAT } from "../../../../shared/utils/Date.utils.ts";
+import { EntryTypesIdEnum } from "../../../../shared/enums/EntryTypes.enum.ts";
 export interface ContributionProcessed {
   date: string;
   description: string;
@@ -27,6 +28,7 @@ export interface ContributionProcessed {
 export interface UsePartnerAccountModalStateProps {
   handleClose: () => void;
   partnerData?: PartnerData;
+  open: boolean;
 }
 
 export const UsePartnerSavingListState = (
@@ -55,7 +57,10 @@ export const UsePartnerSavingListState = (
           contribution.value > environment.contributionAmount
             ? " + Regularización"
             : "";
-        const description = `Pago del mes (${monthName} ${monthDetailMessage})`;
+        const description =
+          contribution.type_id === EntryTypesIdEnum.CONTRIBUTION
+            ? `Pago del mes (${monthName} ${monthDetailMessage})`
+            : `Depósito ahorro (${monthName})`;
 
         accumulate += contribution.value;
 
@@ -78,7 +83,7 @@ export const UsePartnerSavingListState = (
   };
 
   useMemo(() => {
-    if (props.partnerData && props.partnerData.number) {
+    if (props.partnerData && props.partnerData.number && props.open) {
       dispatch(getContributionList(props.partnerData.number));
       setIsLoading(true);
     }

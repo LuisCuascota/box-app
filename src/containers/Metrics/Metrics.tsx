@@ -15,9 +15,15 @@ import { ComponentsLabels } from "../../shared/labels/Components.labels.ts";
 import { TypeMetric } from "../../store/interfaces/MetricsState.interfaces.ts";
 import { useMetricsState } from "./useMetricsState.tsx";
 import { PieDataChart } from "../../components/chart/PieDataChart/PieDataChart.tsx";
+import { PeriodSearch } from "../../components/input/PeriodSearch/PeriodSearch.tsx";
+import { DateRangePikerInput } from "../../components/input/DateRangePikerInput/DateRangePikerInput.tsx";
+import { environment } from "../../environments/environment.ts";
+import moment from "moment/moment";
+import { DATE_FORMAT } from "../../shared/utils/Date.utils.ts";
 
 export const MetricsContainer = () => {
-  const { isLoading, metrics, typesMetrics, utilsMetrics } = useMetricsState();
+  const { isLoading, metrics, typesMetrics, utilsMetrics, search } =
+    useMetricsState();
 
   return (
     <PaperBase>
@@ -32,6 +38,19 @@ export const MetricsContainer = () => {
           <Typography textAlign={"center"} variant={"h5"}>
             {"MÉTRICAS"}
           </Typography>
+        </Grid>
+        <Grid item md={8} xs={12} pr={1}>
+          <PeriodSearch
+            disableSearch={false}
+            onChangeSelector={search.onSelectPeriod}
+          />
+        </Grid>
+        <Grid item md={4} xs={12}>
+          <DateRangePikerInput
+            defaultFrom={environment.startDate}
+            defaultTo={moment().format(DATE_FORMAT)}
+            onChangeDate={() => {}}
+          />
         </Grid>
         {!isLoading && metrics && (
           <>

@@ -25,7 +25,7 @@ import {
   getLoanAccountStatusIcon,
   getLoanStatusTypeIcon,
 } from "../../../shared/utils/Components.util.tsx";
-import { LoanStatusEnum } from "../../../shared/enums/RegistryType.enum.ts";
+import { LoanStatusEnum } from "../../../shared/enums/LoanCalcTypeEnum.ts";
 
 export interface PartnerLoanListModalProps {
   open: boolean;
@@ -81,13 +81,11 @@ export const PartnerLoanListModal = (props: PartnerLoanListModalProps) => {
             </Typography>
           </Grid>
           <Grid item md={2}>
-            <Typography>
-              <Chip
-                color={getChipColor(props.partnerData?.loanStatus)}
-                icon={getLoanAccountStatusIcon(props.partnerData?.loanStatus)}
-                label={getChipLabel(props.partnerData?.loanStatus)}
-              />
-            </Typography>
+            <Chip
+              color={getChipColor(props.partnerData?.loanStatus)}
+              icon={getLoanAccountStatusIcon(props.partnerData?.loanStatus)}
+              label={getChipLabel(props.partnerData?.loanStatus)}
+            />
           </Grid>
           <Grid item md={4}>
             <Typography>

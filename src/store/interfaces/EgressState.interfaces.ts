@@ -23,6 +23,7 @@ export interface EgressHeader {
   beneficiary: string;
   amount: number;
   type_id: number;
+  period_id: number;
   status?: string;
 }
 
@@ -39,6 +40,7 @@ export interface EgressPagination {
   startDate?: string;
   endDate?: string;
   paymentType?: string | null;
+  period?: number;
 }
 
 export interface EgressBillDetail {
@@ -63,4 +65,5 @@ export interface EgressCountFilter {
   startDate?: string;
   endDate?: string;
   paymentType?: string | null;
+  period?: number;
 }

@@ -21,6 +21,7 @@ import {
   selectEntryCount,
   selectEntryTypes,
   selectEntryTypesStatus,
+  selectGetPeriodList,
   selectPostEntryStatus,
 } from "../../store/selectors/selectors.ts";
 import {
@@ -39,6 +40,7 @@ import {
   setPostEntryStatus,
 } from "../../store/actions/entry.actions.ts";
 import { ModePagination } from "../../store/interfaces/PartnerState.interfaces.ts";
+import { getPeriodList } from "../../store/epics/BalanceEpic/getPeriod.epic.ts";
 
 export interface IEntryContext {
   disableSearch: boolean;
@@ -93,6 +95,8 @@ const EntryContextProvider = ({ children }: any) => {
   const amountsCalculated = useAppSelector(selectAmounts);
   const amountsCalculatedStatus = useAppSelector(selectAmountsStatus);
   const postEntryStatus = useAppSelector(selectPostEntryStatus);
+  const { periodList, getPeriodListStatus } =
+    useAppSelector(selectGetPeriodList);
 
   const [disableSearch, setDisableSearch] = useState<boolean>(false);
   const [disableSave, setDisableSave] = useState<boolean>(true);
@@ -109,6 +113,7 @@ const EntryContextProvider = ({ children }: any) => {
   const [totalToPay, setTotalToPay] = useState<number>(0);
   const [isOpenBillDetailModal, setOpenBillDetailModal] = useState(false);
   const [billDetail, setBillDetail] = useState<EntryBillDetail>();
+  const [periodId, setPeriodId] = useState<number>();
 
   const onOpenBillDetailModal = () => {
     setOpenBillDetailModal(true);
@@ -205,6 +210,7 @@ const EntryContextProvider = ({ children }: any) => {
       account_number: partnerSelected!.id,
       amount: totalToPay,
       date: entryDate!,
+      period_id: periodId!,
       place: KajaConfig.defaultPlace,
       ...(isPrint ? { names: partnerSelected!.label.split("-")[1] } : {}),
     };
@@ -261,6 +267,7 @@ const EntryContextProvider = ({ children }: any) => {
     dispatch(getPartners({ mode: ModePagination.ACTIVE_ONLY }));
     dispatch(getEntryCount());
     dispatch(getEntryTypes());
+    dispatch(getPeriodList());
   }, []);
 
   useEffect(() => {
@@ -271,6 +278,16 @@ const EntryContextProvider = ({ children }: any) => {
   useEffect(() => {
     if (entryTypesStatus === RequestStatusEnum.SUCCESS) cleanEntryAmounts();
   }, [entryTypesStatus]);
+
+  useEffect(() => {
+    if (getPeriodListStatus === RequestStatusEnum.SUCCESS) {
+      const currentPeriod = periodList.find((period) => period.enabled);
+
+      if (currentPeriod) {
+        setPeriodId(currentPeriod.id);
+      }
+    }
+  }, [getPeriodListStatus]);
 
   useEffect(() => {
     if (amountsCalculatedStatus === RequestStatusEnum.SUCCESS) {
@@ -307,11 +324,19 @@ const EntryContextProvider = ({ children }: any) => {
       entryDate &&
       entryNumber.count > 0 &&
       totalToPay > 0 &&
-      validationWhenAmountDefinitionExist()
+      validationWhenAmountDefinitionExist() &&
+      periodId
     )
       setDisableSave(false);
     else setDisableSave(true);
-  }, [partnerSelected, entryDate, loanDetailToPay, entryNumber, totalToPay]);
+  }, [
+    partnerSelected,
+    entryDate,
+    loanDetailToPay,
+    entryNumber,
+    totalToPay,
+    periodId,
+  ]);
 
   useEffect(() => {
     setTotalToPay(

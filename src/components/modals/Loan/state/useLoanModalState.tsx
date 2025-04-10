@@ -1,5 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
+  Loan,
   LoanDetail,
   LoanDetailToPay,
 } from "../../../../store/interfaces/LoanState.interfaces.ts";
@@ -23,6 +24,8 @@ import {
   setGetLoanDetailStatus,
   setLoanDetail,
 } from "../../../../store/actions/loan.actions.ts";
+import { useNavigate } from "react-router-dom";
+import { RoutesEnum } from "../../../../shared/enums/Routes.enum.ts";
 
 export interface useLoanModalStateProps {
   finalLoanDetail: LoanDetail[];
@@ -31,12 +34,14 @@ export interface useLoanModalStateProps {
   onSave: () => void;
   onPreCancel: () => void;
   onPrintLoan: () => void;
+  goToLoanUpdate: (loan: Loan, loanDetail: LoanDetail[]) => void;
 }
 
 export const useLoanModalState = (
   props: LoanModalProps
 ): useLoanModalStateProps => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [detailSelected, setDetailSelected] = useState<LoanDetail[]>([]);
   const [finalLoanDetail, setFinalLoanDetail] = useState<LoanDetail[]>([]);
@@ -125,6 +130,10 @@ export const useLoanModalState = (
     buildLoanPDFDoc({ loan: props.loan!, loanDetails: finalLoanDetail });
   };
 
+  const goToLoanUpdate = (loan: Loan, loanDetail: LoanDetail[]) => {
+    navigate(RoutesEnum.LOAN_UPDATE, { state: { loan, loanDetail } });
+  };
+
   useEffect(() => {
     if (loanDetailStatus === RequestStatusEnum.SUCCESS)
       setFinalLoanDetail(loanDetailFromDB);
@@ -137,5 +146,6 @@ export const useLoanModalState = (
     onSave,
     onPreCancel,
     onPrintLoan,
+    goToLoanUpdate,
   };
 };

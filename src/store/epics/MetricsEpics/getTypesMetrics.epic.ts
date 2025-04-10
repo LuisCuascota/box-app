@@ -9,26 +9,34 @@ import {
   setGetTypesMetricsStatus,
   setTypesMetrics,
 } from "../../actions/metrics.actions.ts";
-import { TypeMetric } from "../../interfaces/MetricsState.interfaces.ts";
+import {
+  MetricsFilters,
+  TypeMetric,
+} from "../../interfaces/MetricsState.interfaces.ts";
 
-export const getTypesMetrics = createAction("GET_TYPES_METRICS");
+export const getTypesMetrics =
+  createAction<MetricsFilters>("GET_TYPES_METRICS");
 
 export const getTypesMetricsEpic: EpicCustom = ({ action$, dispatch }) =>
   action$.pipe(
     filter(getTypesMetrics.match),
     tap(() => dispatch(setGetTypesMetricsStatus(RequestStatusEnum.PENDING))),
-    switchMap(() =>
-      axios.get<TypeMetric[]>(ApiRoutes.GET_TYPES_METRICS).pipe(
-        tap(({ data }: { data: TypeMetric[] }) => {
-          dispatch(setTypesMetrics(data));
-          dispatch(setGetTypesMetricsStatus(RequestStatusEnum.SUCCESS));
-        }),
-        catchError(() => {
-          dispatch(setGetTypesMetricsStatus(RequestStatusEnum.ERROR));
-
-          return EMPTY;
+    switchMap(({ payload }) =>
+      axios
+        .get<TypeMetric[]>(ApiRoutes.GET_TYPES_METRICS, {
+          params: payload,
         })
-      )
+        .pipe(
+          tap(({ data }: { data: TypeMetric[] }) => {
+            dispatch(setTypesMetrics(data));
+            dispatch(setGetTypesMetricsStatus(RequestStatusEnum.SUCCESS));
+          }),
+          catchError(() => {
+            dispatch(setGetTypesMetricsStatus(RequestStatusEnum.ERROR));
+
+            return EMPTY;
+          })
+        )
     ),
     ignoreElements()
   );

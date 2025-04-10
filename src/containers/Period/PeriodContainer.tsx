@@ -26,6 +26,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useState } from "react";
 import { ColorsEnum } from "../../shared/enums/Colors.enum.ts";
 import { PieDataChart } from "../../components/chart/PieDataChart/PieDataChart.tsx";
+import { PeriodSearch } from "../../components/input/PeriodSearch/PeriodSearch.tsx";
 
 interface BalanceDetailProps {
   balance: PartnerBalance;
@@ -149,6 +150,7 @@ export const PeriodContainer = () => {
     partnersBalance,
     validationAverage,
     validationRevenue,
+    search,
   } = UsePeriodState();
 
   return (
@@ -164,6 +166,12 @@ export const PeriodContainer = () => {
           <Typography textAlign={"center"} variant={"h5"}>
             {"Balances del Periodo"}
           </Typography>
+        </Grid>
+        <Grid item md={12} xs={12} pr={1}>
+          <PeriodSearch
+            disableSearch={false}
+            onChangeSelector={search.onSelectPeriod}
+          />
         </Grid>
         <Grid item md={12} xs={12}>
           <PieDataChart

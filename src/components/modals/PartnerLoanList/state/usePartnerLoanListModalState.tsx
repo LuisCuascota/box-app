@@ -22,6 +22,7 @@ export interface ContributionProcessed {
 export interface UsePartnerAccountModalStateProps {
   handleClose: () => void;
   partnerData?: PartnerData;
+  open: boolean;
 }
 
 export const UsePartnerLoanListModalState = (
@@ -40,7 +41,7 @@ export const UsePartnerLoanListModalState = (
   };
 
   useMemo(() => {
-    if (props.partnerData && props.partnerData.number) {
+    if (props.partnerData && props.partnerData.number && props.open) {
       dispatch(getLoansPaginated({ account: props.partnerData.number }));
       setIsLoading(true);
     }

@@ -19,3 +19,9 @@ export interface TypeMetric {
   description: string;
   sum: number;
 }
+
+export interface MetricsFilters {
+  startDate?: string;
+  endDate?: string;
+  period?: number;
+}

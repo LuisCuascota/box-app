@@ -9,6 +9,7 @@ import {
   selectEgressCountStatus,
   selectEgressPaginated,
   selectEgressPaginatedStatus,
+  selectGetPeriodList,
 } from "../../../store/selectors/selectors.ts";
 import { EgressHeader } from "../../../store/interfaces/EgressState.interfaces.ts";
 import { getEgressCount } from "../../../store/epics/EgressEpics/getEgressCount.epic.ts";
@@ -21,6 +22,8 @@ import { DateRange } from "../../../shared/utils/Date.utils.ts";
 import { TypesSelector } from "../../../components/input/TypesSearch/TypesSearch.tsx";
 import { isGetRequest } from "../../../shared/utils/Components.util.tsx";
 import { DefaultPagination } from "../../../shared/constants/KajaConfig.ts";
+import { PeriodSelector } from "../../../components/input/PeriodSearch/PeriodSearch.tsx";
+import { getPeriodList } from "../../../store/epics/BalanceEpic/getPeriod.epic.ts";
 
 export const egressTypeOptions: SelectType[] = [
   {
@@ -43,6 +46,8 @@ export const useEgressHistoryState = () => {
   const egressPaginatedStatus = useAppSelector(selectEgressPaginatedStatus);
   const egressCount = useAppSelector(selectEgressCount);
   const egressCountStatus = useAppSelector(selectEgressCountStatus);
+  const { getPeriodListStatus } = useAppSelector(selectGetPeriodList);
+
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(25);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -51,6 +56,9 @@ export const useEgressHistoryState = () => {
   const [typeSelector, setTypeSelector] = useState<TypesSelector | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [paymentType, setPaymentType] = useState<string | null>(null);
+  const [periodSelector, setPeriodSelector] = useState<PeriodSelector | null>(
+    null
+  );
 
   const typeSelectorRef = useRef(typeSelector);
 
@@ -64,6 +72,10 @@ export const useEgressHistoryState = () => {
 
   const onSelectType = (selected: TypesSelector | null) => {
     setTypeSelector(selected);
+  };
+
+  const onSelectPeriod = (selected: PeriodSelector | null) => {
+    setPeriodSelector(selected);
   };
 
   const onPageChange = (_: any, newPage: number) => {
@@ -87,12 +99,20 @@ export const useEgressHistoryState = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(getTypesMetrics());
+    dispatch(getPeriodList());
   }, []);
 
   useEffect(() => {
+    if (getPeriodListStatus === RequestStatusEnum.SUCCESS && periodSelector)
+      dispatch(getTypesMetrics({ period: periodSelector.id }));
+  }, [periodSelector]);
+
+  useEffect(() => {
     setIsLoading(true);
-    if (isGetRequest(typeSelectorRef, typeSelector, page, rowsPerPage))
+    if (
+      isGetRequest(typeSelectorRef, typeSelector, page, rowsPerPage) &&
+      periodSelector
+    )
       dispatch(
         getEgressPaginated({
           limit: rowsPerPage,
@@ -100,26 +120,30 @@ export const useEgressHistoryState = () => {
           type: typeSelector?.id,
           startDate: dateRange?.from,
           endDate: dateRange?.to,
-          paymentType: paymentType,
+          paymentType,
+          period: periodSelector?.id,
         })
       );
 
     typeSelectorRef.current = typeSelector;
-  }, [page, rowsPerPage, typeSelector, dateRange, paymentType]);
+  }, [page, rowsPerPage, typeSelector, dateRange, paymentType, periodSelector]);
 
   useEffect(() => {
-    setPage(DefaultPagination.page);
-    setRowsPerPage(DefaultPagination.rowsPerPage);
+    if (periodSelector) {
+      setPage(DefaultPagination.page);
+      setRowsPerPage(DefaultPagination.rowsPerPage);
 
-    dispatch(
-      getEgressCount({
-        type: typeSelector?.id,
-        startDate: dateRange?.from,
-        endDate: dateRange?.to,
-        paymentType: paymentType,
-      })
-    );
-  }, [typeSelector, dateRange, paymentType]);
+      dispatch(
+        getEgressCount({
+          type: typeSelector?.id,
+          startDate: dateRange?.from,
+          endDate: dateRange?.to,
+          paymentType: paymentType,
+          period: periodSelector?.id,
+        })
+      );
+    }
+  }, [typeSelector, dateRange, paymentType, periodSelector]);
 
   useEffect(() => {
     if (
@@ -146,6 +170,7 @@ export const useEgressHistoryState = () => {
       rowsPerPage,
     },
     search: {
+      onSelectPeriod,
       onSelectType,
       onChangeDateRange,
       onChangePaymentType,

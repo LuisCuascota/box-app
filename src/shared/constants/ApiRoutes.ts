@@ -7,6 +7,7 @@ export const ApiRoutes = {
   POST_ENTRY: "/api/v1/entry",
   GET_LOAN_COUNT: "/api/v1/loan/count",
   POST_LOAN: "/api/v1/loan",
+  UPDATE_LOAN: "/api/v1/loan",
   GET_ENTRIES: "/api/v1/entry",
   GET_ENTRY_DETAIL: "/api/v1/entry/detail",
   GET_LOAN: "/api/v1/loan",
@@ -22,4 +23,5 @@ export const ApiRoutes = {
   GET_TYPES_METRICS: "/api/v1/metrics/types",
   GET_CONTRIBUTIONS: "/api/v1/entry/contribution",
   GET_BALANCE: "/api/v1/balance",
+  GET_PERIOD_LIST: "/api/v1/balance/period",
 };

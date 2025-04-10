@@ -23,6 +23,8 @@ import { getMetricsEpic } from "./MetricsEpics/getMetrics.epic.ts";
 import { getTypesMetricsEpic } from "./MetricsEpics/getTypesMetrics.epic.ts";
 import { getContributionListEpic } from "./EntryEpics/getContributionList.epic.ts";
 import { getPartnersBalancesEpic } from "./BalanceEpic/getBalance.epic.ts";
+import { getPeriodListEpic } from "./BalanceEpic/getPeriod.epic.ts";
+import { updateLoanEpic } from "./LoanEpics/updateLoan.epic.ts";
 
 export default combineEpics(
   // @ts-ignore
@@ -48,5 +50,7 @@ export default combineEpics(
   getMetricsEpic,
   getTypesMetricsEpic,
   getContributionListEpic,
-  getPartnersBalancesEpic
+  getPartnersBalancesEpic,
+  getPeriodListEpic,
+  updateLoanEpic
 ) as unknown as EpicCustom;

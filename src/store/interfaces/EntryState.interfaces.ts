@@ -42,6 +42,7 @@ export interface EntryHeader {
   amount: number;
   date: string;
   place: string;
+  period_id: number;
   names?: string;
   surnames?: string;
   status?: string;
@@ -62,12 +63,14 @@ export interface EntryPagination {
   startDate?: string;
   endDate?: string;
   paymentType: string | null;
+  period?: number;
 }
 
 export interface Contribution {
   date: string;
   number: number;
   value: number;
+  type_id: number;
 }
 
 export interface EntryBillDetail {
@@ -85,6 +88,7 @@ export interface CountFilter {
   startDate?: string;
   endDate?: string;
   paymentType?: string | null;
+  period?: number;
 }
 
 export interface EntryCounter {

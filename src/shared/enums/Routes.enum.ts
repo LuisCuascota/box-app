@@ -9,6 +9,7 @@ export enum RoutesEnum {
   PARTNER_LIST = "/partner",
   METRICS = "/metrics",
   PERIOD = "/period",
+  LOAN_UPDATE = "/loan/update",
 }
 
 export enum ModulesEnum {

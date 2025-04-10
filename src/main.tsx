@@ -23,6 +23,12 @@ const theme = createTheme({
       dark: "#d5a92b",
       contrastText: "#000",
     },
+    warning: {
+      light: "#ffbf75",
+      main: "#ea9330",
+      dark: "#d56c2b",
+      contrastText: "#000",
+    },
   },
   components: {
     MuiTableCell: {

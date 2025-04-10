@@ -17,6 +17,7 @@ import instance from "./shared/utils/Axios.util.ts";
 import { Amplify } from "aws-amplify";
 import { AwsConfig } from "./shared/constants/KajaConfig.ts";
 import { PeriodContainer } from "./containers/Period/PeriodContainer.tsx";
+import { UpdateLoan } from "./containers/UpdateLoan/UpdateLoan.tsx";
 
 Amplify.configure(AwsConfig);
 
@@ -58,6 +59,7 @@ function App() {
             <Route path={RoutesEnum.PARTNER_LIST} element={<PartnerList />} />
             <Route path={RoutesEnum.METRICS} element={<MetricsContainer />} />
             <Route path={RoutesEnum.PERIOD} element={<PeriodContainer />} />
+            <Route path={RoutesEnum.LOAN_UPDATE} element={<UpdateLoan />} />
           </>
         ) : (
           <Route path="*" element={<Navigate to={RoutesEnum.INDEX} />} />

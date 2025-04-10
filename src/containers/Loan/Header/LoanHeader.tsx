@@ -18,7 +18,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import ListIcon from "@mui/icons-material/ListAlt";
 import { DatePikerInput } from "../../../components/input/DatePikerInput/DatePikerInput.tsx";
 import { PartnerSearch } from "../../../components/input/PersonSearch/PartnerSearch.tsx";
-import { RegistryTypeEnum } from "../../../shared/enums/RegistryType.enum.ts";
+import { LoanCalcTypeEnum } from "../../../shared/enums/LoanCalcTypeEnum.ts";
 import { LoanLabels } from "../../../shared/labels/Loan.labels.ts";
 import { ChangeEvent, useContext } from "react";
 import { LoanContext } from "../LoanContext.tsx";
@@ -55,7 +55,7 @@ export const LoanHeader = () => {
   const loanCountStatus = useAppSelector(selectLoanCountStatus);
 
   const onChangeRadioButton = (event: ChangeEvent<HTMLInputElement>) => {
-    onChangeLoanType(event.target.value as RegistryTypeEnum);
+    onChangeLoanType(event.target.value as LoanCalcTypeEnum);
   };
   const onChangeMonthsInput = (event: ChangeEvent<HTMLInputElement>) => {
     onChangeMonths(+event.target.value);
@@ -199,12 +199,12 @@ export const LoanHeader = () => {
       <Grid item md={3} xs={9}>
         <RadioGroup row onChange={onChangeRadioButton} value={loanType}>
           <FormControlLabel
-            value={RegistryTypeEnum.FIXED_FEE}
+            value={LoanCalcTypeEnum.FIXED_FEE}
             control={<Radio size={"small"} />}
             label={LoanLabels.FEE_TYPE_FIXED}
           />
           <FormControlLabel
-            value={RegistryTypeEnum.VARIABLE_FEE}
+            value={LoanCalcTypeEnum.VARIABLE_FEE}
             control={<Radio size={"small"} />}
             label={LoanLabels.FEE_TYPE_VARIABLE}
           />

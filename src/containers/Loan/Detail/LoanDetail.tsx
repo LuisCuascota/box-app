@@ -18,6 +18,7 @@ export const LoanDetail = () => {
         isLoading={isLoading}
         loanDetail={loanFees}
         withActions={false}
+        loanBottom={true}
       />
     </Box>
   );

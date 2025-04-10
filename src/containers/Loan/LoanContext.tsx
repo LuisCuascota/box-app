@@ -5,14 +5,13 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "../../shared/hooks/Store.hook.ts";
-import { RegistryTypeEnum } from "../../shared/enums/RegistryType.enum.ts";
+import { LoanCalcTypeEnum } from "../../shared/enums/LoanCalcTypeEnum.ts";
 import { getLoanCount } from "../../store/epics/LoanEpics/getLoanCount.epic.ts";
 import {
   LoanDefinition,
   LoanDetail,
 } from "../../store/interfaces/LoanState.interfaces.ts";
 import moment from "moment";
-import { getFistSaturday } from "../../shared/utils/Date.utils.ts";
 import {
   selectLoanCount,
   selectPostLoanStatus,
@@ -22,6 +21,7 @@ import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import { buildLoanPDFDoc } from "../../shared/utils/BuildLoanPdf.utils.ts";
 import { setPostLoanStatus } from "../../store/actions/loan.actions.ts";
 import { ModePagination } from "../../store/interfaces/PartnerState.interfaces.ts";
+import { calculateFeeList } from "../../shared/utils/Loan.utils.ts";
 
 export interface ILoanContext {
   disableCalculate: boolean;
@@ -32,7 +32,7 @@ export interface ILoanContext {
   onSelectPartner: (selected: PartnerSelector | null) => void;
   onSelectGuarantor1: (selected: PartnerSelector | null) => void;
   onSelectGuarantor2: (selected: PartnerSelector | null) => void;
-  onChangeLoanType: (type: RegistryTypeEnum) => void;
+  onChangeLoanType: (type: LoanCalcTypeEnum) => void;
   onChangeAmount: (value: number) => void;
   onChangeMonths: (value: number) => void;
   onChangeInterest: (value: number) => void;
@@ -44,7 +44,7 @@ export interface ILoanContext {
   amount: number;
   months: number;
   interest: number;
-  loanType?: RegistryTypeEnum | null;
+  loanType?: LoanCalcTypeEnum | null;
 }
 
 const initialLoanContext: ILoanContext = {
@@ -85,7 +85,7 @@ const LoanContextProvider = ({ children }: any) => {
   const [partner, setPartner] = useState<PartnerSelector | null>(null);
   const [guarantor1, setGuarantor1] = useState<PartnerSelector | null>(null);
   const [guarantor2, setGuarantor2] = useState<PartnerSelector | null>(null);
-  const [loanType, setLoanType] = useState<RegistryTypeEnum | null>(null);
+  const [loanType, setLoanType] = useState<LoanCalcTypeEnum | null>(null);
   const [amount, setAmount] = useState<number>(0);
   const [months, setMonths] = useState<number>(0);
   const [interest, setInterest] = useState<number>(0);
@@ -126,44 +126,16 @@ const LoanContextProvider = ({ children }: any) => {
   const isValidValue = (value?: number) => value && value > 0;
 
   const onCalculate = () => {
-    const loanFeesCalc: LoanDetail[] = [];
-    const paymentDate = moment.utc(date);
-    let feeValue = +(amount! / months!).toFixed(2);
-    const interestValue = interest! / 100;
-    let balance = amount!;
-    let interestCalc = 0;
-    let feeTotal = 0;
-    let interestTotal = 0;
+    const feeList = calculateFeeList(
+      loanType!,
+      loanCount.count + 1,
+      moment.utc(date),
+      amount,
+      months,
+      interest
+    );
 
-    if (loanType === RegistryTypeEnum.FIXED_FEE)
-      interestCalc = amount! * interestValue;
-
-    for (let value = 1; value <= months!; value++) {
-      if (loanType === RegistryTypeEnum.VARIABLE_FEE) {
-        interestCalc = balance * interestValue;
-      }
-
-      if (value === months) {
-        feeValue = balance;
-        balance = 0;
-      } else balance -= feeValue;
-
-      loanFeesCalc.push({
-        balance_after_pay: +balance.toFixed(2),
-        fee_number: value,
-        fee_total: +(feeValue + interestCalc).toFixed(2),
-        fee_value: +feeValue.toFixed(2),
-        interest: +interestCalc.toFixed(2),
-        is_paid: false,
-        loan_number: loanCount.count + 1,
-        payment_date: getFistSaturday(paymentDate),
-      });
-
-      feeTotal += feeValue;
-      interestTotal += +interestCalc.toFixed(2);
-
-      setLoanFees(loanFeesCalc);
-    }
+    setLoanFees(feeList);
   };
 
   const onSaveLoan = () => {
@@ -188,7 +160,7 @@ const LoanContextProvider = ({ children }: any) => {
     setGuarantor1(selected);
   const onSelectGuarantor2 = (selected: PartnerSelector | null) =>
     setGuarantor2(selected);
-  const onChangeLoanType = (type: RegistryTypeEnum) => setLoanType(type);
+  const onChangeLoanType = (type: LoanCalcTypeEnum) => setLoanType(type);
   const onChangeAmount = (value: number) => setAmount(value);
   const onChangeMonths = (value: number) => setMonths(value);
   const onChangeInterest = (value: number) => setInterest(value);

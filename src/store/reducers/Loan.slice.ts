@@ -9,6 +9,7 @@ import {
 
 export const loanInitialState: ILoanState = {
   postLoanStatus: RequestStatusEnum.PENDING,
+  updateLoanStatus: RequestStatusEnum.PENDING,
   getLoanCountStatus: RequestStatusEnum.PENDING,
   getLoansPaginatedStatus: RequestStatusEnum.PENDING,
   getLoanDetailStatus: RequestStatusEnum.PENDING,
@@ -36,6 +37,9 @@ export const loanSlice = createSlice({
     },
     setPostLoanStatus: (state, action: PayloadAction<RequestStatusEnum>) => {
       state.postLoanStatus = action.payload;
+    },
+    setUpdateLoanStatus: (state, action: PayloadAction<RequestStatusEnum>) => {
+      state.updateLoanStatus = action.payload;
     },
     setGetLoansPaginatedStatus: (
       state,

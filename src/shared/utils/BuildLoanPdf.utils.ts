@@ -40,7 +40,7 @@ const buildHead = (doc: jsPDF, loan: Loan) => {
   doc.text(`Nº${loan.number}`, 185, 30);
   setText(doc);
   doc.text(`Nombre: ${loan.names} ${loan.surnames ?? ""}`, 10, 37);
-  doc.text(`Fecha: ${loan.date}`, 160, 37);
+  doc.text(`Fecha: ${getFormattedDate(loan.date)}`, 160, 37);
   doc.text(`Monto: $${loan.value}`, 10, 44);
   doc.text(`Plazo Meses: ${loan.term}`, 90, 44);
   doc.text(`Tasa Mensual: ${loan.rate}%`, 160, 44);
@@ -70,13 +70,13 @@ const buildTable = (doc: jsPDF, loanDetail: LoanDetail[]) => {
     doc.rect(23, stY, 40, 6);
     doc.text(getFormattedDate(detail.payment_date), 25, stY + 5);
     doc.rect(63, stY, 30, 6);
-    doc.text(detail.fee_value.toString(), 65, stY + 5);
+    doc.text(detail.fee_value.toFixed(2), 65, stY + 5);
     doc.rect(93, stY, 30, 6);
-    doc.text(detail.interest.toString(), 95, stY + 5);
+    doc.text(detail.interest.toFixed(2), 95, stY + 5);
     doc.rect(123, stY, 30, 6);
-    doc.text(detail.fee_total.toString(), 125, stY + 5);
+    doc.text(detail.fee_total.toFixed(2), 125, stY + 5);
     doc.rect(153, stY, 47, 6);
-    doc.text(detail.balance_after_pay.toString(), 155, stY + 5);
+    doc.text(detail.balance_after_pay.toFixed(2), 155, stY + 5);
     stY += 6;
   });
 };
@@ -171,15 +171,20 @@ const buildDecorator = (doc: jsPDF) => {
   doc.text("COPIA", 60, 190, undefined, 45);
 };
 
-export const buildLoanPDFDoc = (newLoan: LoanDefinition) => {
+export const buildLoanPDFDoc = (
+  newLoan: LoanDefinition,
+  isUpdate?: boolean
+) => {
   const doc = new jsPDF("p", "mm", "A4");
 
-  buildHead(doc, newLoan.loan);
-  buildTable(doc, newLoan.loanDetails!);
-  buildContract(doc, newLoan.loan);
-  buildFooter(doc, newLoan.loan);
+  if (!isUpdate) {
+    buildHead(doc, newLoan.loan);
+    buildTable(doc, newLoan.loanDetails!);
+    buildContract(doc, newLoan.loan);
+    buildFooter(doc, newLoan.loan);
 
-  doc.addPage();
+    doc.addPage();
+  }
 
   buildHead(doc, newLoan.loan);
   buildTable(doc, newLoan.loanDetails!);

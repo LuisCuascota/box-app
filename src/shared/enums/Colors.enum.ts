@@ -4,6 +4,7 @@ export enum ColorsEnum {
   PRIMARY_LIGHT = "#7089a4",
   SECONDARY_LIGHT = "rgba(255,237,117,0.62)",
   ERROR_LIGHT = "#FFCACA",
+  WARNING_LIGHT = "#fbc269",
   PAID = "#005107",
   CURRENT = "#714d00",
   LATE = "#9f0000",
