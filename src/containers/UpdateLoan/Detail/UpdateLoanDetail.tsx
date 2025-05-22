@@ -176,13 +176,14 @@ export const UpdateLoanDetail = ({
           <Typography>{LoanUpdateLabels.NEW_AMOUNT}</Typography>
         </Grid>
         <Grid item md={3} display={"flex"} alignItems={"center"}>
-          <Typography>{`$${loan.debt - amount}`}</Typography>
+          <Typography>{`$${(loan.debt - amount).toFixed(2)}`}</Typography>
         </Grid>
         {updatedFees.length > 0 && (
           <LoanTable
             isLoading={false}
             loanDetail={updatedFees}
             loanBottom={true}
+            withStatus={true}
           />
         )}
       </Grid>

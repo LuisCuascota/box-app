@@ -12,6 +12,7 @@ import { getFormattedDate } from "./Date.utils.ts";
 import {
   NewEntry,
   EntryHeader,
+  EntryLoanDetail,
 } from "../../store/interfaces/EntryState.interfaces.ts";
 
 const buildDocHeader = (doc: jsPDF, entryHead: EntryHeader, stX: number) => {
@@ -95,10 +96,10 @@ const buildDocTable = (doc: jsPDF, entry: NewEntry, stX: number) => {
 };
 
 const buildDocFooter = (doc: jsPDF) => {
-  doc.line(15, 180, 60, 180);
-  doc.line(88, 180, 133, 180);
-  doc.text("TESORERIA", 37, 185, undefined, "center");
-  doc.text("PRESIDENCIA", 111, 185, undefined, "center");
+  doc.line(15, 200, 60, 200);
+  doc.line(88, 200, 133, 200);
+  doc.text("TESORERIA", 37, 205, undefined, "center");
+  doc.text("PRESIDENCIA", 111, 205, undefined, "center");
 };
 
 const buildDocComplements = (doc: jsPDF) => {
@@ -111,7 +112,41 @@ const buildDocComplements = (doc: jsPDF) => {
   doc.text("COPIA", 180, 160, undefined, 45);
 };
 
-export const buildEntryPDFDoc = (newEntry: NewEntry) => {
+const buildDocEntryLoan = (
+  doc: jsPDF,
+  entryLoan: EntryLoanDetail,
+  stX: number
+) => {
+  const cellH = 7;
+  const cellW = 70;
+  const stY = 137;
+
+  doc.rect(stX, stY, cellW, cellH);
+  doc.rect(stX, stY + cellH, cellW, cellH);
+  doc.rect(stX, stY + cellH * 2, cellW, cellH);
+  doc.rect(stX, stY + cellH * 3, cellW, cellH);
+  doc.rect(stX, stY + cellH * 4, cellW, cellH);
+
+  doc.text("DETALLE DE CRÉDITO", stX + 11, stY + 5);
+  doc.text("Monto original:", stX + 2, stY + cellH + 5);
+  doc.text("Cuota:", stX + 2, stY + cellH * 2 + 5);
+  doc.text("Cuota + Interés:", stX + 2, stY + cellH * 3 + 5);
+  doc.text("Capital restante:", stX + 2, stY + cellH * 4 + 5);
+
+  doc.text(`$${entryLoan.value}`, stX + 55, stY + cellH + 5);
+  doc.text(
+    `${entryLoan.fee_number}/${entryLoan.term}`,
+    stX + 55,
+    stY + cellH * 2 + 5
+  );
+  doc.text(`$${entryLoan.fee_total}`, stX + 55, stY + cellH * 3 + 5);
+  doc.text(`$${entryLoan.balance_after_pay}`, stX + 55, stY + cellH * 4 + 5);
+};
+
+export const buildEntryPDFDoc = (
+  newEntry: NewEntry,
+  entryLoan?: EntryLoanDetail
+) => {
   const doc = new jsPDF("l", "mm", "A4");
   const stX = 10;
 
@@ -119,6 +154,11 @@ export const buildEntryPDFDoc = (newEntry: NewEntry) => {
   buildDocHeader(doc, newEntry.header, getCenter(2, "H") + stX);
   buildDocTable(doc, newEntry, stX);
   buildDocTable(doc, newEntry, getCenter(2, "H") + stX);
+  if (entryLoan) {
+    buildDocEntryLoan(doc, entryLoan, stX);
+    buildDocEntryLoan(doc, entryLoan, getCenter(2, "H") + stX);
+  }
+
   buildDocFooter(doc);
   buildDocComplements(doc);
 

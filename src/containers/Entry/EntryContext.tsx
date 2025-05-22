@@ -12,6 +12,7 @@ import {
   EntryAmountDetail,
   EntryBillDetail,
   EntryHeader,
+  EntryLoanDetail,
   EntryType,
   NewEntry,
 } from "../../store/interfaces/EntryState.interfaces.ts";
@@ -234,6 +235,23 @@ const EntryContextProvider = ({ children }: any) => {
     };
   };
 
+  const buildEntryLoanDetail = (): EntryLoanDetail | undefined => {
+    if (loanDefinition && loanDetailToPay && loanDetailToPay.length > 0) {
+      loanDetailToPay.sort((a, b) => b.fee_number - a.fee_number);
+      const topFee = loanDetailToPay[0];
+
+      return {
+        term: loanDefinition.loan.term,
+        value: loanDefinition.loan.value,
+        fee_number: topFee.fee_number,
+        fee_total: topFee.fee_total,
+        balance_after_pay: topFee.balance_after_pay,
+      };
+    }
+
+    return undefined;
+  };
+
   const clearStateForNew = () => {
     dispatch(setPostEntryStatus(RequestStatusEnum.PENDING));
     dispatch(setEntryAmounts([]));
@@ -247,7 +265,7 @@ const EntryContextProvider = ({ children }: any) => {
   };
 
   const onPrintEntry = () => {
-    buildEntryPDFDoc(buildNewEntry(billDetail!, true));
+    buildEntryPDFDoc(buildNewEntry(billDetail!, true), buildEntryLoanDetail());
     onCloseSaveDialog();
   };
 

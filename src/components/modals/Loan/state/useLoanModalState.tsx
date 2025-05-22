@@ -83,6 +83,9 @@ export const useLoanModalState = (
         entry: entryNumber.count + 1,
         id: loanDetail.id!,
         feeValue: loanDetail.fee_value,
+        fee_number: loanDetail.fee_number,
+        fee_total: loanDetail.fee_total,
+        balance_after_pay: loanDetail.balance_after_pay,
       });
     });
 
@@ -110,6 +113,9 @@ export const useLoanModalState = (
           entry: entryNumber.count + 1,
           id: loanDetail.id!,
           feeValue: loanDetail.fee_value,
+          fee_number: loanDetail.fee_number,
+          fee_total: loanDetail.fee_total,
+          balance_after_pay: loanDetail.balance_after_pay,
         }));
 
       onUpdateAmounts(

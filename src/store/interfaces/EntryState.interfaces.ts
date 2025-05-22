@@ -81,6 +81,15 @@ export interface EntryBillDetail {
 export interface EntryDetail {
   billDetail: EntryBillDetail;
   amountDetail: EntryAmountDetail[];
+  entryLoanDetail?: EntryLoanDetail;
+}
+
+export interface EntryLoanDetail {
+  term: number;
+  value: number;
+  fee_number: number;
+  fee_total: number;
+  balance_after_pay: number;
 }
 
 export interface CountFilter {

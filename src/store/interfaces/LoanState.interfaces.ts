@@ -49,6 +49,9 @@ export interface LoanDetailToPay {
   id: number;
   entry: number;
   feeValue: number;
+  fee_number: number;
+  fee_total: number;
+  balance_after_pay: number;
 }
 
 export interface EntryLoanData {

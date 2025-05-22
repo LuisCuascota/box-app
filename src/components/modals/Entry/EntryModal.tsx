@@ -6,6 +6,7 @@ import {
   DialogTitle,
   Grid,
   Skeleton,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -105,40 +106,87 @@ export const EntryModal = (props: EntryModalProps) => {
         </TableContainer>
         {props.entryData && (
           <Grid border={"1px solid grey"} borderRadius={1} container p={1}>
-            <Grid item md={7}>
+            <Grid item md={6}>
               <Typography>
                 <b>Detalles del Pago</b>
               </Typography>
             </Grid>
-            <Grid item md={2} xs={9}>
-              <Typography textAlign={"right"}>
-                {ComponentsLabels.TYPE_CASH}:
+            <Grid item md={6}>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" color="text.secondary">
+                  {ComponentsLabels.TYPE_CASH}:
+                </Typography>
+                <Typography variant="body2">
+                  ${entryDetail.billDetail.cash.toFixed(2)}
+                </Typography>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" color="text.secondary">
+                  {ComponentsLabels.TYPE_TRANSFER}:
+                </Typography>
+                <Typography variant="body2">
+                  ${entryDetail.billDetail.transfer.toFixed(2)}
+                </Typography>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" color="text.secondary">
+                  <b>{ComponentsLabels.TOTAL}</b>
+                </Typography>
+                <Typography textAlign={"right"}>
+                  ${props.entryData.amount.toFixed(2)}
+                </Typography>
+              </Stack>
+            </Grid>
+          </Grid>
+        )}
+        {entryDetail.entryLoanDetail && (
+          <Grid
+            border={"1px solid grey"}
+            marginTop={1}
+            borderRadius={1}
+            container
+            p={1}
+          >
+            <Grid item md={6}>
+              <Typography>
+                <b>Detalles del Crédito</b>
               </Typography>
             </Grid>
-            <Grid item md={3} xs={3}>
-              <Typography textAlign={"right"}>
-                ${entryDetail.billDetail.cash.toFixed(2)}
-              </Typography>
-            </Grid>
-            <Grid item md={9} xs={9}>
-              <Typography textAlign={"right"}>
-                {ComponentsLabels.TYPE_TRANSFER}:
-              </Typography>
-            </Grid>
-            <Grid item md={3} xs={3}>
-              <Typography textAlign={"right"}>
-                ${entryDetail.billDetail.transfer.toFixed(2)}
-              </Typography>
-            </Grid>
-            <Grid item md={9} xs={9}>
-              <Typography textAlign={"right"}>
-                <b>{ComponentsLabels.TOTAL}</b>
-              </Typography>
-            </Grid>
-            <Grid item md={3} xs={3}>
-              <Typography textAlign={"right"}>
-                ${props.entryData.amount.toFixed(2)}
-              </Typography>
+            <Grid item md={6}>
+              <Stack spacing={0}>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2" color="text.secondary">
+                    Monto original:
+                  </Typography>
+                  <Typography variant="body2">
+                    {`$${entryDetail.entryLoanDetail.value}`}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2" color="text.secondary">
+                    Cuota:
+                  </Typography>
+                  <Typography variant="body2">
+                    {`${entryDetail.entryLoanDetail.fee_number}/${entryDetail.entryLoanDetail.term}`}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2" color="text.secondary">
+                    Cuota + Interés:
+                  </Typography>
+                  <Typography variant="body2">
+                    {`$${entryDetail.entryLoanDetail.fee_total}`}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2" color="text.secondary">
+                    Capital restante:
+                  </Typography>
+                  <Typography variant="body2">
+                    {`$${entryDetail.entryLoanDetail.balance_after_pay}`}
+                  </Typography>
+                </Stack>
+              </Stack>
             </Grid>
           </Grid>
         )}

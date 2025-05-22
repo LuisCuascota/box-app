@@ -28,6 +28,7 @@ import { EgressLabels } from "../../shared/labels/Egress.labels.ts";
 import { LoanUpdateLabels } from "../../shared/labels/LoanUpdate.labels.ts";
 import { buildLoanPDFDoc } from "../../shared/utils/BuildLoanPdf.utils.ts";
 import { getFormattedDate } from "../../shared/utils/Date.utils.ts";
+import { setUpdateLoanStatus } from "../../store/actions/loan.actions.ts";
 
 export const UpdateLoan = () => {
   const navigate = useNavigate();
@@ -73,6 +74,7 @@ export const UpdateLoan = () => {
 
   const onCloseUpdateDialog = () => {
     setIsOpenUpdateDialog(false);
+    dispatch(setUpdateLoanStatus(RequestStatusEnum.PENDING));
     navigate(-1);
   };
 

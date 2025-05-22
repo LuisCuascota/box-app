@@ -64,21 +64,26 @@ const buildTable = (doc: jsPDF, loanDetail: LoanDetail[]) => {
   doc.rect(153, stY, 47, 6);
   stY += 6;
 
-  loanDetail.map((detail, index) => {
-    doc.rect(10, stY, 13, 6);
-    doc.text((index + 1).toString(), 12, stY + 5);
-    doc.rect(23, stY, 40, 6);
-    doc.text(getFormattedDate(detail.payment_date), 25, stY + 5);
-    doc.rect(63, stY, 30, 6);
-    doc.text(detail.fee_value.toFixed(2), 65, stY + 5);
-    doc.rect(93, stY, 30, 6);
-    doc.text(detail.interest.toFixed(2), 95, stY + 5);
-    doc.rect(123, stY, 30, 6);
-    doc.text(detail.fee_total.toFixed(2), 125, stY + 5);
-    doc.rect(153, stY, 47, 6);
-    doc.text(detail.balance_after_pay.toFixed(2), 155, stY + 5);
-    stY += 6;
-  });
+  loanDetail
+    .filter(
+      (detail) =>
+        detail.fee_total > 0 && detail.interest > 0 && detail.fee_value > 0
+    )
+    .map((detail, index) => {
+      doc.rect(10, stY, 13, 6);
+      doc.text((index + 1).toString(), 12, stY + 5);
+      doc.rect(23, stY, 40, 6);
+      doc.text(getFormattedDate(detail.payment_date), 25, stY + 5);
+      doc.rect(63, stY, 30, 6);
+      doc.text(detail.fee_value.toFixed(2), 65, stY + 5);
+      doc.rect(93, stY, 30, 6);
+      doc.text(detail.interest.toFixed(2), 95, stY + 5);
+      doc.rect(123, stY, 30, 6);
+      doc.text(detail.fee_total.toFixed(2), 125, stY + 5);
+      doc.rect(153, stY, 47, 6);
+      doc.text(detail.balance_after_pay.toFixed(2), 155, stY + 5);
+      stY += 6;
+    });
 };
 
 const buildContract = (doc: jsPDF, loan: Loan) => {
