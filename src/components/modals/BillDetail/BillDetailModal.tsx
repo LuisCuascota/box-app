@@ -17,12 +17,14 @@ interface PaymentModalProps {
   open: boolean;
   onDispatchBillDetail: (billDetail: EntryBillDetail) => void;
   totalAmount: number;
+  handleClose: () => void;
 }
 
 export const BillDetailModal: React.FC<PaymentModalProps> = ({
   open,
   onDispatchBillDetail,
   totalAmount,
+  handleClose,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState(PaymentMethodEnum.CASH);
   const [cash, setCash] = useState(0);
@@ -63,6 +65,12 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
     setCash(parseFloat((totalAmount - value).toFixed(2)));
   };
 
+  const cleanValues = () => {
+    setCash(0);
+    setTransfer(0);
+    setPaymentMethod(PaymentMethodEnum.CASH);
+  };
+
   const handleSubmit = () => {
     const billDetail: EntryBillDetail = {
       cash: paymentMethod === PaymentMethodEnum.CASH ? totalAmount : cash,
@@ -71,6 +79,12 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
     };
 
     onDispatchBillDetail(billDetail);
+    cleanValues();
+  };
+
+  const handleCancel = () => {
+    handleClose();
+    cleanValues();
   };
 
   return (
@@ -148,6 +162,9 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
           disabled={isSubmitDisabled}
         >
           OK
+        </Button>
+        <Button variant="outlined" onClick={handleCancel} fullWidth>
+          Cancelar
         </Button>
       </Box>
     </Modal>

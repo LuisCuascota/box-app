@@ -29,6 +29,7 @@ export const EntryFooter = () => {
     onPrintEntry,
     onOpenBillDetailModal,
     isOpenBillDetailModal,
+    onCloseBillDetailModal,
   } = useContext(EntryContext);
 
   return (
@@ -49,6 +50,7 @@ export const EntryFooter = () => {
         open={isOpenBillDetailModal}
         onDispatchBillDetail={onSaveEntry}
         totalAmount={totalToPay}
+        handleClose={onCloseBillDetailModal}
       />
       <Box display={"flex"} justifyContent={"space-between"} pb={2}>
         <Box display={"flex"}>

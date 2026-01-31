@@ -38,6 +38,7 @@ export interface IEgressContext {
   onChangeBeneficiary: (event: ChangeEvent<HTMLInputElement>) => void;
   onChangeCategorySelector: (categorySelected: TypesSelector | null) => void;
   onAddDetail: () => void;
+  onCloseBillDetailModal: () => void;
   onDeleteDetail: (index: number) => void;
   onUpdateDetail: (index: number, description: string, value: number) => void;
   onChangeEgressDate: (date: string) => void;
@@ -68,6 +69,7 @@ const initialEgressContext: IEgressContext = {
   onCloseSaveDialog: () => {},
   onPrintEgress: () => {},
   onOpenBillDetailModal: () => {},
+  onCloseBillDetailModal: () => {},
 };
 
 const EgressContext = createContext<IEgressContext>(initialEgressContext);
@@ -98,6 +100,10 @@ const EgressContestProvider = ({ children }: any) => {
 
   const onOpenBillDetailModal = () => {
     setOpenBillDetailModal(true);
+  };
+
+  const onCloseBillDetailModal = () => {
+    setOpenBillDetailModal(false);
   };
 
   const onChangeEgressDate = (date: string) => setEgressDate(date);
@@ -269,6 +275,7 @@ const EgressContestProvider = ({ children }: any) => {
         onCloseSaveDialog,
         onPrintEgress,
         onOpenBillDetailModal,
+        onCloseBillDetailModal,
       }}
     >
       {children}

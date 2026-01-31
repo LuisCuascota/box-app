@@ -62,6 +62,7 @@ export interface IEntryContext {
   onActionLoanModal: (value: boolean) => void;
   onCloseSaveDialog: () => void;
   onOpenBillDetailModal: () => void;
+  onCloseBillDetailModal: () => void;
   partnerSelected?: PartnerSelector | null;
 }
 
@@ -84,6 +85,7 @@ const initialEntryContext: IEntryContext = {
   onActionLoanModal: () => {},
   onCloseSaveDialog: () => {},
   onOpenBillDetailModal: () => {},
+  onCloseBillDetailModal: () => {},
 };
 const EntryContext = createContext<IEntryContext>(initialEntryContext);
 
@@ -118,6 +120,10 @@ const EntryContextProvider = ({ children }: any) => {
 
   const onOpenBillDetailModal = () => {
     setOpenBillDetailModal(true);
+  };
+
+  const onCloseBillDetailModal = () => {
+    setOpenBillDetailModal(false);
   };
 
   const onChangePartnerSelector = (partnerSelected: PartnerSelector | null) => {
@@ -386,6 +392,7 @@ const EntryContextProvider = ({ children }: any) => {
         onActionLoanModal,
         onCloseSaveDialog,
         onOpenBillDetailModal,
+        onCloseBillDetailModal,
       }}
     >
       {children}

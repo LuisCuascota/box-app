@@ -29,6 +29,7 @@ export const EgressFooter = () => {
     onPrintEgress,
     isOpenBillDetailModal,
     onOpenBillDetailModal,
+    onCloseBillDetailModal,
   } = useContext(EgressContext);
 
   return (
@@ -49,6 +50,7 @@ export const EgressFooter = () => {
         open={isOpenBillDetailModal}
         onDispatchBillDetail={onSaveEgress}
         totalAmount={totalDischarge}
+        handleClose={onCloseBillDetailModal}
       />
       <Box display={"flex"} justifyContent={"space-between"} pb={2}>
         <Box display={"flex"}>
