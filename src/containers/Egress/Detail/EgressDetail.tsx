@@ -10,22 +10,21 @@ export const EgressDetail = () => {
 
   return (
     <Grid container p={2} justifyContent={"space-between"}>
-      <Grid item md={8}>
+      <Grid size={8}>
         <Typography>{EgressLabels.INPUT_REASON}</Typography>
       </Grid>
-      <Grid item md={3}>
+      <Grid size={3}>
         <Typography>{EgressLabels.INPUT_VALUE}</Typography>
       </Grid>
       {egressDetail.map((detail, index) => (
         <Grid
           key={index}
-          item
-          md={12}
+          size={12}
           container
           justifyContent={"space-between"}
           pb={1}
         >
-          <Grid item md={7}>
+          <Grid size={7}>
             <TextField
               type={"text"}
               fullWidth
@@ -36,7 +35,7 @@ export const EgressDetail = () => {
               }
             />
           </Grid>
-          <Grid item md={3}>
+          <Grid size={3}>
             <TextField
               type={"number"}
               fullWidth
@@ -47,7 +46,7 @@ export const EgressDetail = () => {
               }
             />
           </Grid>
-          <Grid item md={1}>
+          <Grid size={1}>
             {egressDetail.length > 1 && (
               <IconButton
                 size={"small"}
@@ -60,7 +59,7 @@ export const EgressDetail = () => {
           </Grid>
         </Grid>
       ))}
-      <Grid item md={12}>
+      <Grid size={12}>
         <IconButton size={"small"} color={"success"} onClick={onAddDetail}>
           <AddCircleIcon />
         </IconButton>

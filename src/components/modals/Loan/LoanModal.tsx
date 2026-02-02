@@ -56,36 +56,36 @@ export const LoanModal = (props: LoanModalProps) => {
       <DialogContent>
         {props.loan && (
           <Grid container spacing={0} pb={2} pt={2}>
-            <Grid item md={4} xs={12}>
+            <Grid size={4}>
               <Typography color={"red"}>
                 <b>{`Nº${props.loan.number}`}</b>
               </Typography>
             </Grid>
-            <Grid item md={4} xs={6}>
+            <Grid size={4}>
               <Typography>
                 <b>{ComponentsLabels.AMOUNT}</b>
                 {` $${props.loan.value}`}
               </Typography>
             </Grid>
-            <Grid item md={4} xs={6}>
+            <Grid size={4}>
               <Typography>
                 <b>{ComponentsLabels.INTEREST}</b>
                 {` ${props.loan.rate}%`}
               </Typography>
             </Grid>
-            <Grid item md={4} xs={6}>
+            <Grid size={4}>
               <Typography>
                 <b>{ComponentsLabels.DATE}</b>
                 {` ${getFormattedDate(props.loan.date)}`}
               </Typography>
             </Grid>
-            <Grid item md={4} xs={6}>
+            <Grid size={4}>
               <Typography>
                 <b>{ComponentsLabels.DEBT}</b>
                 {` $${props.loan.debt}`}
               </Typography>
             </Grid>
-            <Grid item md={4} xs={6}>
+            <Grid size={4}>
               <Typography>
                 <b>{ComponentsLabels.MONTHS}</b>
                 {` ${props.loan.term}`}
@@ -104,12 +104,12 @@ export const LoanModal = (props: LoanModalProps) => {
       </DialogContent>
       <DialogActions>
         <Grid container spacing={0} pl={2} pr={2}>
-          <Grid item xs={4}>
+          <Grid size={4}>
             <Button onClick={onClose} variant={"outlined"} color={"inherit"}>
               {ComponentsLabels.CLOSE}
             </Button>
           </Grid>
-          <Grid item xs={8} display={"flex"} justifyContent={"end"}>
+          <Grid size={8} display={"flex"} justifyContent={"end"}>
             {props.viewMode ? (
               <>
                 {props.loan &&

@@ -47,18 +47,18 @@ export const EntryModal = (props: EntryModalProps) => {
       <DialogContent>
         {props.entryData && (
           <Grid container pt={2}>
-            <Grid item md={10} xs={10}>
+            <Grid size={10}>
               <Typography>
                 <b>{ComponentsLabels.PARTNER}</b>
                 {` ${props.entryData.names} ${props.entryData.surnames}`}
               </Typography>
             </Grid>
-            <Grid item md={2} xs={2}>
+            <Grid size={2}>
               <Typography color={"red"} textAlign={"right"}>
                 <b>{`Nº${props.entryData.number}`}</b>
               </Typography>
             </Grid>
-            <Grid item md={12} xs={12}>
+            <Grid size={12}>
               <Typography>
                 <b>{ComponentsLabels.DATE}</b>
                 {` ${getFormattedDate(props.entryData.date)}`}
@@ -106,12 +106,12 @@ export const EntryModal = (props: EntryModalProps) => {
         </TableContainer>
         {props.entryData && (
           <Grid border={"1px solid grey"} borderRadius={1} container p={1}>
-            <Grid item md={6}>
+            <Grid size={6}>
               <Typography>
                 <b>Detalles del Pago</b>
               </Typography>
             </Grid>
-            <Grid item md={6}>
+            <Grid size={6}>
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="body2" color="text.secondary">
                   {ComponentsLabels.TYPE_CASH}:
@@ -147,12 +147,12 @@ export const EntryModal = (props: EntryModalProps) => {
             container
             p={1}
           >
-            <Grid item md={6}>
+            <Grid size={6}>
               <Typography>
                 <b>Detalles del Crédito</b>
               </Typography>
             </Grid>
-            <Grid item md={6}>
+            <Grid size={6}>
               <Stack spacing={0}>
                 <Stack direction="row" justifyContent="space-between">
                   <Typography variant="body2" color="text.secondary">

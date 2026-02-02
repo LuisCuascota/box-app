@@ -22,54 +22,103 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
   const dispatch = useAppDispatch();
   const { postPartnerStatus, putPartnerStatus } =
     useAppSelector(selectPartners);
-  const [names, setNames] = useState<string>();
-  const [surnames, setSurnames] = useState<string | null>();
-  const [dni, setDni] = useState<string | null>();
-  const [birthday, setBirthday] = useState<string>();
-  const [address, setAddress] = useState<string | null>();
-  const [phone, setPhone] = useState<string | null>();
-  const [initialAmount, setInitialAmount] = useState<number>(0);
+  const [overridesByKey, setOverridesByKey] = useState<
+    Record<
+      string,
+      Partial<{
+        names: string;
+        surnames: string | null;
+        dni: string | null;
+        birthday: string;
+        address: string | null;
+        phone: string | null;
+        initialAmount: number;
+      }>
+    >
+  >({});
+  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
-  const [disableSave, setDisableSave] = useState<boolean>(true);
-  const [disableUpdate, setDisableUpdate] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const dataKey = props.partnerData?.number
+    ? String(props.partnerData.number)
+    : "new";
+  const baseValues = {
+    names: props.partnerData?.names ?? "",
+    surnames: props.partnerData?.surnames ?? "",
+    dni: props.partnerData?.dni ?? "",
+    birthday: props.partnerData?.birth_day ?? "",
+    address: props.partnerData?.address ?? "",
+    phone: props.partnerData?.phone ?? "",
+    initialAmount: props.partnerData?.start_amount ?? 0,
+  };
+  const overrides = overridesByKey[dataKey] ?? {};
+  const names = overrides.names ?? baseValues.names;
+  const surnames = overrides.surnames ?? baseValues.surnames;
+  const dni = overrides.dni ?? baseValues.dni;
+  const birthday = overrides.birthday ?? baseValues.birthday;
+  const address = overrides.address ?? baseValues.address;
+  const phone = overrides.phone ?? baseValues.phone;
+  const initialAmount = overrides.initialAmount ?? baseValues.initialAmount;
 
   const onChangeInput = (input: PartnerInputEnum, value: string | number) => {
     switch (input) {
       case PartnerInputEnum.NAMES:
-        setNames(value as string);
+        setOverridesByKey((current) => ({
+          ...current,
+          [dataKey]: { ...current[dataKey], names: value as string },
+        }));
 
         return;
       case PartnerInputEnum.SURNAMES:
-        setSurnames(value as string);
+        setOverridesByKey((current) => ({
+          ...current,
+          [dataKey]: { ...current[dataKey], surnames: value as string },
+        }));
 
         return;
       case PartnerInputEnum.DNI:
-        setDni(value as string);
+        setOverridesByKey((current) => ({
+          ...current,
+          [dataKey]: { ...current[dataKey], dni: value as string },
+        }));
 
         return;
       case PartnerInputEnum.BIRTHDAY:
-        setBirthday(value as string);
+        setOverridesByKey((current) => ({
+          ...current,
+          [dataKey]: { ...current[dataKey], birthday: value as string },
+        }));
 
         return;
       case PartnerInputEnum.ADDRESS:
-        setAddress(value as string);
+        setOverridesByKey((current) => ({
+          ...current,
+          [dataKey]: { ...current[dataKey], address: value as string },
+        }));
 
         return;
       case PartnerInputEnum.PHONE:
-        setPhone(value as string);
+        setOverridesByKey((current) => ({
+          ...current,
+          [dataKey]: { ...current[dataKey], phone: value as string },
+        }));
 
         return;
 
       case PartnerInputEnum.INITIAL_AMOUNT:
-        setInitialAmount(value as number);
+        setOverridesByKey((current) => ({
+          ...current,
+          [dataKey]: {
+            ...current[dataKey],
+            initialAmount: value as number,
+          },
+        }));
 
         return;
     }
   };
 
   const handleSave = () => {
-    setIsLoading(true);
+    setHasSubmitted(true);
     dispatch(
       postPartner({
         dni: dni!,
@@ -84,7 +133,7 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
   };
 
   const handleUpdate = () => {
-    setIsLoading(true);
+    setHasSubmitted(true);
     dispatch(
       putPartner({
         number: props.partnerData?.number,
@@ -99,43 +148,16 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
     );
   };
 
-  useEffect(() => {
-    if (props.partnerData) {
-      setNames(props.partnerData?.names);
-      setSurnames(props.partnerData?.surnames);
-      setDni(props.partnerData?.dni);
-      setBirthday(props.partnerData?.birth_day);
-      setAddress(props.partnerData?.address);
-      setPhone(props.partnerData?.phone);
-      setInitialAmount(props.partnerData?.start_amount);
-    } else {
-      setNames("");
-      setSurnames("");
-      setDni("");
-      setBirthday("");
-      setAddress("");
-      setPhone("");
-      setInitialAmount(0);
-    }
-  }, [props.partnerData]);
-
-  useEffect(() => {
-    if (
-      names &&
-      surnames &&
-      dni &&
-      birthday &&
-      address &&
-      phone &&
-      initialAmount > 0
-    ) {
-      setDisableSave(false);
-      setDisableUpdate(false);
-    } else {
-      setDisableSave(true);
-      setDisableUpdate(true);
-    }
-  }, [names, surnames, dni, birthday, address, phone, initialAmount]);
+  const disableSave = !(
+    names &&
+    surnames &&
+    dni &&
+    birthday &&
+    address &&
+    phone &&
+    initialAmount > 0
+  );
+  const disableUpdate = disableSave;
 
   useEffect(() => {
     if (
@@ -143,9 +165,13 @@ export const usePartnerModalState = (props: PartnerModalProps) => {
       putPartnerStatus === RequestStatusEnum.SUCCESS
     ) {
       props.handleClose();
-      setIsLoading(false);
     }
   }, [postPartnerStatus, putPartnerStatus]);
+
+  const isLoading =
+    hasSubmitted &&
+    (postPartnerStatus === RequestStatusEnum.PENDING ||
+      putPartnerStatus === RequestStatusEnum.PENDING);
 
   return {
     handleSave,

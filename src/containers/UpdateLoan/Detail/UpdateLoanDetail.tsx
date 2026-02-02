@@ -2,13 +2,13 @@ import {
   Button,
   Divider,
   FormControlLabel,
-  Grid,
   InputAdornment,
   Radio,
   RadioGroup,
   TextField,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { LoanUpdateLabels } from "../../../shared/labels/LoanUpdate.labels.ts";
 import { LoanTable } from "../../../components/loan/loanTable/LoanTable.tsx";
 import {
@@ -22,7 +22,7 @@ import {
   Loan,
   LoanDetail,
 } from "../../../store/interfaces/LoanState.interfaces.ts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { calculateFeeList } from "../../../shared/utils/Loan.utils.ts";
 import moment from "moment";
 
@@ -37,11 +37,11 @@ export const UpdateLoanDetail = ({
   loanDetail,
   onUpdateLoan,
 }: UpdateLoanDetailProps) => {
-  const [disableCalc, setDisableCalc] = useState<boolean>(true);
-  const [disableUpdate, setDisableUpdate] = useState<boolean>(true);
   const [amount, setAmount] = useState<number>(0);
   const [calcType, setCalcType] = useState<UpdateLoanType | null>(null);
   const [updatedFees, setUpdatedFees] = useState<LoanDetail[]>([]);
+  const disableCalc = amount <= 0 || !calcType;
+  const disableUpdate = disableCalc || updatedFees.length === 0;
 
   const getFeeNumber = (pendingAmount: number): number => {
     if (calcType === UpdateLoanType.EQA_LF)
@@ -95,26 +95,16 @@ export const UpdateLoanDetail = ({
     onUpdateLoan(updatedFees, amount);
   };
 
-  useEffect(() => {
-    if (amount > 0 && calcType) setDisableCalc(false);
-    else setDisableCalc(true);
-  }, [amount, calcType]);
-
-  useEffect(() => {
-    if (!disableCalc && updatedFees.length > 0) setDisableUpdate(false);
-    else setDisableUpdate(true);
-  }, [updatedFees, disableCalc]);
-
   return (
     <>
       <Divider>
         <Typography variant={"h6"}>{LoanUpdateLabels.SUB_TITLE_2}</Typography>
       </Divider>
       <Grid container p={2}>
-        <Grid item md={1} display={"flex"} alignItems={"center"}>
+        <Grid size={1} display={"flex"} alignItems={"center"}>
           <Typography>{LoanUpdateLabels.AMOUNT}</Typography>
         </Grid>
-        <Grid item md={3} display={"flex"} alignItems={"center"}>
+        <Grid size={3} display={"flex"} alignItems={"center"}>
           <TextField
             type={"number"}
             size={"small"}
@@ -127,10 +117,10 @@ export const UpdateLoanDetail = ({
             onChange={(e) => setAmount(+e.target.value)}
           />
         </Grid>
-        <Grid item md={1} display={"flex"} alignItems={"center"}>
+        <Grid size={1} display={"flex"} alignItems={"center"}>
           <Typography>{LoanUpdateLabels.CALC_TYPE}</Typography>
         </Grid>
-        <Grid item md={3}>
+        <Grid size={3}>
           <RadioGroup
             row
             value={calcType}
@@ -149,8 +139,7 @@ export const UpdateLoanDetail = ({
           </RadioGroup>
         </Grid>
         <Grid
-          item
-          md={4}
+          size={4}
           display={"flex"}
           alignItems={"center"}
           justifyContent={"space-evenly"}
@@ -172,10 +161,10 @@ export const UpdateLoanDetail = ({
             {LoanLabels.SAVE}
           </Button>
         </Grid>
-        <Grid item md={1} display={"flex"} alignItems={"center"}>
+        <Grid size={1} display={"flex"} alignItems={"center"}>
           <Typography>{LoanUpdateLabels.NEW_AMOUNT}</Typography>
         </Grid>
-        <Grid item md={3} display={"flex"} alignItems={"center"}>
+        <Grid size={3} display={"flex"} alignItems={"center"}>
           <Typography>{`$${(loan.debt - amount).toFixed(2)}`}</Typography>
         </Grid>
         {updatedFees.length > 0 && (

@@ -30,15 +30,15 @@ export const EntryHeader = () => {
       >
         <CircularProgress />
       </Backdrop>
-      <Grid item md={12} xs={12}>
+      <Grid size={12}>
         <Typography textAlign={"center"} variant={"h5"}>
           {EntryLabels.TITLE}
         </Typography>
       </Grid>
-      <Grid item md={10} xs={12}>
+      <Grid size={10}>
         <Typography>{EntryLabels.SUBTITLE}</Typography>
       </Grid>
-      <Grid item md={2} xs={4}>
+      <Grid size={2}>
         <Typography textAlign={"right"} color={"red"}>
           {countStatus === RequestStatusEnum.SUCCESS ? (
             <b>{`Nº${count.count + 1}`}</b>
@@ -47,10 +47,10 @@ export const EntryHeader = () => {
           )}
         </Typography>
       </Grid>
-      <Grid item md={5} xs={6}>
+      <Grid size={5}>
         <Typography>{EntryLabels.PARTNER_INPUT}</Typography>
       </Grid>
-      <Grid item md={7} xs={6}>
+      <Grid size={7}>
         <PartnerSearch
           disableSearch={disableSearch}
           onChangeSelector={onChangePartnerSelector}

@@ -34,18 +34,18 @@ export const MetricsContainer = () => {
         <CircularProgress />
       </Backdrop>
       <Grid container spacing={1}>
-        <Grid item md={12} xs={12}>
+        <Grid size={12}>
           <Typography textAlign={"center"} variant={"h5"}>
             {"MÉTRICAS"}
           </Typography>
         </Grid>
-        <Grid item md={8} xs={12} pr={1}>
+        <Grid size={8} pr={1}>
           <PeriodSearch
             disableSearch={false}
             onChangeSelector={search.onSelectPeriod}
           />
         </Grid>
-        <Grid item md={4} xs={12}>
+        <Grid size={4}>
           <DateRangePikerInput
             defaultFrom={environment.startDate}
             defaultTo={moment().format(DATE_FORMAT)}
@@ -54,7 +54,7 @@ export const MetricsContainer = () => {
         </Grid>
         {!isLoading && metrics && (
           <>
-            <Grid item md={12} xs={12}>
+            <Grid size={12}>
               <PieDataChart
                 data={[
                   {
@@ -74,10 +74,10 @@ export const MetricsContainer = () => {
                 totalLabel={"Total: $"}
               />
             </Grid>
-            <Grid item md={12} xs={12}>
+            <Grid size={12}>
               <Typography variant={"h6"}>{"RUBROS"}</Typography>
             </Grid>
-            <Grid item md={12} xs={12}>
+            <Grid size={12}>
               <TableContainer>
                 <Table>
                   <TableHead>
@@ -97,10 +97,10 @@ export const MetricsContainer = () => {
                 </Table>
               </TableContainer>
             </Grid>
-            <Grid item md={12} xs={12}>
+            <Grid size={12}>
               <Typography variant={"h6"}>{"VALORES DE UTILIDAD"}</Typography>
             </Grid>
-            <Grid item md={12} xs={12}>
+            <Grid size={12}>
               <TableContainer>
                 <Table>
                   <TableHead>

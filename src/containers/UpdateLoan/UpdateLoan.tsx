@@ -14,7 +14,7 @@ import {
 } from "../../shared/hooks/Store.hook.ts";
 import { updateLoan } from "../../store/epics/LoanEpics/updateLoan.epic.ts";
 import { selectUpdateLoanStatus } from "../../store/selectors/selectors.ts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import {
   Button,
@@ -40,7 +40,7 @@ export const UpdateLoan = () => {
   };
   const updateLoanStatus = useAppSelector(selectUpdateLoanStatus);
   const [updatedLoan, setUpdatedLoan] = useState<LoanDefinition>();
-  const [isOpenUpdateDialog, setIsOpenUpdateDialog] = useState<boolean>(false);
+  const isOpenUpdateDialog = updateLoanStatus === RequestStatusEnum.SUCCESS;
 
   const onUpdateLoan = (updatedFees: LoanDetail[], payment: number) => {
     const newLoanHead: Loan = {
@@ -73,7 +73,6 @@ export const UpdateLoan = () => {
   };
 
   const onCloseUpdateDialog = () => {
-    setIsOpenUpdateDialog(false);
     dispatch(setUpdateLoanStatus(RequestStatusEnum.PENDING));
     navigate(-1);
   };
@@ -82,11 +81,6 @@ export const UpdateLoan = () => {
     buildLoanPDFDoc(updatedLoan!, true);
     onCloseUpdateDialog();
   };
-
-  useEffect(() => {
-    if (updateLoanStatus === RequestStatusEnum.SUCCESS)
-      setIsOpenUpdateDialog(true);
-  }, [updateLoanStatus]);
 
   return (
     <PaperBase>

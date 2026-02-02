@@ -40,32 +40,32 @@ export const LoanHistory = () => {
   return (
     <PaperBase>
       <Grid container p={1}>
-        <Grid item md={12} xs={12}>
+        <Grid size={12}>
           <Typography textAlign={"center"} variant={"h6"}>
             {LoanHistoryLabels.TITLE}
           </Typography>
         </Grid>
-        <Grid item md={6} xs={12} pr={1}>
+        <Grid size={6} pr={1}>
           <PartnerSearch
             disableSearch={false}
             onChangeSelector={search.onSelectPartner}
           />
         </Grid>
-        <Grid item md={2} pr={1}>
+        <Grid size={2} pr={1}>
           <OptionsSelect
             label={"Estado"}
             options={loanStatusOptions}
             onSelect={search.onChangePaymentStatus}
           />
         </Grid>
-        <Grid item md={4} xs={12}>
+        <Grid size={4}>
           <DateRangePikerInput
             defaultFrom={environment.startDate}
             defaultTo={moment().format(DATE_FORMAT)}
             onChangeDate={search.onChangeDateRange}
           />
         </Grid>
-        <Grid item md={12} xs={12}>
+        <Grid size={12}>
           <PieDataChart
             data={[
               {

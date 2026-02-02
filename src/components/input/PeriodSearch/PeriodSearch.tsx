@@ -1,5 +1,5 @@
 import { Autocomplete, Skeleton, TextField } from "@mui/material";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../../shared/hooks/Store.hook.ts";
 import { selectGetPeriodList } from "../../../store/selectors/selectors.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
@@ -17,7 +17,6 @@ export interface PeriodSearchParams {
   onChangeSelector: (selected: PeriodSelector | null) => void;
 }
 export const PeriodSearch = (props: PeriodSearchParams) => {
-  const [periodSelector, setPeriodSelector] = useState<PeriodSelector[]>([]);
   const [value, setValue] = useState<PeriodSelector | null>(null);
   const { getPeriodListStatus, periodList } =
     useAppSelector(selectGetPeriodList);
@@ -27,9 +26,16 @@ export const PeriodSearch = (props: PeriodSearchParams) => {
     label: `${getFormattedDate(period.start_date)}-${period.end_date ? getFormattedDate(period.end_date) : "ACTUAL"}`,
   });
 
-  const buildSelector = () => {
-    setPeriodSelector(periodList.map((period: Period) => buildItem(period)));
-  };
+  const periodSelector = useMemo(
+    () => periodList.map((period: Period) => buildItem(period)),
+    [periodList]
+  );
+
+  const defaultPeriod = useMemo(() => {
+    const currentPeriod = periodList.find((period) => period.enabled);
+
+    return currentPeriod ? buildItem(currentPeriod) : null;
+  }, [periodList]);
 
   const onChangeSelector = (
     _event: SyntheticEvent,
@@ -40,25 +46,21 @@ export const PeriodSearch = (props: PeriodSearchParams) => {
   };
 
   useEffect(() => {
-    if (getPeriodListStatus === RequestStatusEnum.SUCCESS) {
-      buildSelector();
-      const currentPeriod = periodList.find((period) => period.enabled);
-
-      if (currentPeriod) {
-        const defaultPeriod = buildItem(currentPeriod);
-
-        props.onChangeSelector(defaultPeriod);
-        setValue(defaultPeriod);
-      }
+    if (
+      getPeriodListStatus === RequestStatusEnum.SUCCESS &&
+      !value &&
+      defaultPeriod
+    ) {
+      props.onChangeSelector(defaultPeriod);
     }
-  }, [getPeriodListStatus]);
+  }, [defaultPeriod, getPeriodListStatus, props, value]);
 
   return (
     <>
       {getPeriodListStatus === RequestStatusEnum.SUCCESS ? (
         <Autocomplete
           disableClearable={true}
-          value={value!}
+          value={value ?? defaultPeriod ?? undefined}
           disabled={props.disableSearch}
           options={periodSelector}
           renderInput={(params) => (

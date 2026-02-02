@@ -11,13 +11,13 @@ export interface PieDataChartProps {
 export const PieDataChart = (props: PieDataChartProps) => {
   return (
     <Grid container spacing={1}>
-      <Grid item md={12} xs={12}>
+      <Grid size={12}>
         <PieChart
           colors={props.colors}
           series={[
             {
               data: props.data,
-              highlightScope: { faded: "global", highlighted: "item" },
+              highlightScope: { fade: "global", highlight: "item" },
               faded: {
                 innerRadius: 30,
                 additionalRadius: -30,
@@ -32,7 +32,7 @@ export const PieDataChart = (props: PieDataChartProps) => {
           height={250}
         />
       </Grid>
-      <Grid item md={12} xs={12}>
+      <Grid size={12}>
         <Typography textAlign={"center"} variant={"h5"}>
           {`${props.totalLabel}${props.totalValue.toFixed(2)}`}
         </Typography>

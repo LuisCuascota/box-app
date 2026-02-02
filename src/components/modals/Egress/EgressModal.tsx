@@ -41,18 +41,18 @@ export const EgressModal = (props: EgressModalProps) => {
       <DialogContent>
         {props.egressData && (
           <Grid container>
-            <Grid item md={10} xs={10}>
+            <Grid size={10}>
               <Typography>
                 <b>{ComponentsLabels.PARTNER}</b>
                 {` ${props.egressData.beneficiary}`}
               </Typography>
             </Grid>
-            <Grid item md={2} xs={2}>
+            <Grid size={2}>
               <Typography color={"red"} textAlign={"right"}>
                 <b>{`Nº${props.egressData.number}`}</b>
               </Typography>
             </Grid>
-            <Grid item md={12} xs={12}>
+            <Grid size={12}>
               <Typography>
                 <b>{ComponentsLabels.DATE}</b>
                 {` ${getFormattedDate(props.egressData.date)}`}
@@ -100,37 +100,37 @@ export const EgressModal = (props: EgressModalProps) => {
         </TableContainer>
         {props.egressData && (
           <Grid border={"1px solid grey"} borderRadius={1} container p={1}>
-            <Grid item md={7}>
+            <Grid size={7}>
               <Typography>
                 <b>Detalles del Pago</b>
               </Typography>
             </Grid>
-            <Grid item md={2} xs={9}>
+            <Grid size={2}>
               <Typography textAlign={"right"}>
                 {ComponentsLabels.TYPE_CASH}:
               </Typography>
             </Grid>
-            <Grid item md={3} xs={3}>
+            <Grid size={3}>
               <Typography textAlign={"right"}>
                 ${egressDetail.billDetail.cash.toFixed(2)}
               </Typography>
             </Grid>
-            <Grid item md={9} xs={9}>
+            <Grid size={9}>
               <Typography textAlign={"right"}>
                 {ComponentsLabels.TYPE_TRANSFER}:
               </Typography>
             </Grid>
-            <Grid item md={3} xs={3}>
+            <Grid size={3}>
               <Typography textAlign={"right"}>
                 ${egressDetail.billDetail.transfer.toFixed(2)}
               </Typography>
             </Grid>
-            <Grid item md={9} xs={9}>
+            <Grid size={9}>
               <Typography textAlign={"right"}>
                 <b>{ComponentsLabels.TOTAL}</b>
               </Typography>
             </Grid>
-            <Grid item md={3} xs={3}>
+            <Grid size={3}>
               <Typography textAlign={"right"}>
                 ${props.egressData.amount.toFixed(2)}
               </Typography>

@@ -23,7 +23,7 @@ export const CardItem = (props: CardItemProps) => {
   const navigate = useNavigate();
 
   return (
-    <Grid item xs={12} sm={6} md={4} p={2}>
+    <Grid size={4} p={2}>
       <Card>
         <CardMedia
           component="img"

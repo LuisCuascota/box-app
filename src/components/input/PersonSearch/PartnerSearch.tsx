@@ -1,5 +1,5 @@
 import { Autocomplete, Skeleton, TextField } from "@mui/material";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useMemo, useState } from "react";
 import { useAppSelector } from "../../../shared/hooks/Store.hook.ts";
 import { selectPartners } from "../../../store/selectors/selectors.ts";
 import { PartnerData } from "../../../store/interfaces/PartnerState.interfaces.ts";
@@ -17,21 +17,20 @@ export interface PartnerSearchParams {
   onChangeSelector: (selected: PartnerSelector | null) => void;
 }
 export const PartnerSearch = (props: PartnerSearchParams) => {
-  const [personList, setPersonList] = useState<PartnerSelector[]>([]);
   const [value, setValue] = useState<PartnerSelector | null>(null);
   const { getPartnersStatus, partners } = useAppSelector(selectPartners);
 
-  const buildSelector = () => {
-    setPersonList(
+  const personList = useMemo(
+    () =>
       partners.map((person: PartnerData) => ({
         id: person.number ? person.number : 0,
         label: `${person.number ? person.number : 0}-${person.names} ${
           person.surnames
         }`,
         currentSaving: person.current_saving!,
-      }))
-    );
-  };
+      })),
+    [partners]
+  );
 
   const onChangeSelector = (
     _event: SyntheticEvent,
@@ -40,10 +39,6 @@ export const PartnerSearch = (props: PartnerSearchParams) => {
     props.onChangeSelector(value);
     setValue(value);
   };
-
-  useEffect(() => {
-    if (getPartnersStatus === RequestStatusEnum.SUCCESS) buildSelector();
-  }, [getPartnersStatus]);
 
   return (
     <>

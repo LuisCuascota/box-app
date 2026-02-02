@@ -65,41 +65,41 @@ export const PartnerLoanListModal = (props: PartnerLoanListModalProps) => {
     <Dialog maxWidth={"md"} open={props.open} onClose={onCloseModal}>
       <DialogTitle>
         <Grid container>
-          <Grid item textAlign={"center"} md={12}>
+          <Grid textAlign={"center"} size={12}>
             {ComponentsLabels.PARTNER_MODAL_LOAN_TITLE}
           </Grid>
-          <Grid item md={7}>
+          <Grid size={7}>
             <Typography>
               <b>{"Nombres:"}</b>
               {` ${props.partnerData?.names} ${props.partnerData?.surnames}`}
             </Typography>
           </Grid>
-          <Grid item md={3}>
+          <Grid size={3}>
             <Typography>
               <b>{"Cedula:"}</b>
               {` ${props.partnerData?.dni}`}
             </Typography>
           </Grid>
-          <Grid item md={2}>
+          <Grid size={2}>
             <Chip
               color={getChipColor(props.partnerData?.loanStatus)}
               icon={getLoanAccountStatusIcon(props.partnerData?.loanStatus)}
               label={getChipLabel(props.partnerData?.loanStatus)}
             />
           </Grid>
-          <Grid item md={4}>
+          <Grid size={4}>
             <Typography>
               <b>{"Créditos realizados:"}</b>
               {` ${loanList.length}`}
             </Typography>
           </Grid>
-          <Grid item md={3}>
+          <Grid size={3}>
             <Typography>
               <b>{"Desembolzado: "}</b>
               {` $${loanList.reduce((sum, loan) => loan.value + sum, 0)}`}
             </Typography>
           </Grid>
-          <Grid item md={5}>
+          <Grid size={5}>
             <Typography>
               <b>{"Pendiente: "}</b>
               {` $${loanList.reduce((sum, loan) => loan.debt + sum, 0)}`}

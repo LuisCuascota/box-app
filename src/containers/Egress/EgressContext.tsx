@@ -1,4 +1,10 @@
-import { ChangeEvent, createContext, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -79,24 +85,23 @@ const EgressContestProvider = ({ children }: any) => {
 
   const count = useAppSelector(selectEgressCount);
   const postEgressStatus = useAppSelector(selectPostEgressStatus);
-  const { periodList, getPeriodListStatus } =
-    useAppSelector(selectGetPeriodList);
+  const { periodList } = useAppSelector(selectGetPeriodList);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isOpenSaveDialog, setIsOpenSaveDialog] = useState<boolean>(false);
-  const [disableSave, setDisableSave] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const [beneficiary, setBeneficiary] = useState<string>("");
   const [egressDetail, setEgressDetail] = useState<IEgressDetail[]>([
     { description: "", value: 0 },
   ]);
-  const [totalDischarge, setTotalDischarge] = useState<number>(0);
   const [egressDate, setEgressDate] = useState<string>("");
   const [categorySelected, setCategorySelected] =
     useState<TypesSelector | null>(null);
   const [isOpenBillDetailModal, setOpenBillDetailModal] = useState(false);
   const [billDetail, setBillDetail] = useState<EgressBillDetail>();
-  const [periodId, setPeriodId] = useState<number>();
+  const periodId = useMemo(
+    () => periodList.find((period) => period.enabled)?.id,
+    [periodList]
+  );
 
   const onOpenBillDetailModal = () => {
     setOpenBillDetailModal(true);
@@ -168,7 +173,7 @@ const EgressContestProvider = ({ children }: any) => {
   };
 
   const onSaveEgress = (billDetail: EgressBillDetail) => {
-    setIsLoading(true);
+    setIsSaving(true);
     setOpenBillDetailModal(false);
     setBillDetail(billDetail);
 
@@ -177,10 +182,11 @@ const EgressContestProvider = ({ children }: any) => {
     dispatch(postEgress(newEgress));
   };
   const onCloseSaveDialog = () => {
-    setIsOpenSaveDialog(false);
     clearStateForNew();
     dispatch(getEgressCount());
-    dispatch(getTypesMetrics({ period: periodId }));
+    if (periodId) {
+      dispatch(getTypesMetrics({ period: periodId }));
+    }
   };
   const onPrintEgress = () => {
     buildEgressPDFDoc(buildNewEgress(billDetail!));
@@ -198,61 +204,39 @@ const EgressContestProvider = ({ children }: any) => {
 
   const clearStateForNew = () => {
     dispatch(setPostEgressStatus(RequestStatusEnum.PENDING));
-    setIsLoading(false);
     setBeneficiary("");
     setCategorySelected(null);
     setEgressDetail([{ description: "", value: 0 }]);
+    setIsSaving(false);
   };
 
   useEffect(() => {
-    if (getPeriodListStatus === RequestStatusEnum.SUCCESS) {
-      const currentPeriod = periodList.find((period) => period.enabled);
-
-      if (currentPeriod) {
-        setPeriodId(currentPeriod.id);
-        dispatch(getTypesMetrics({ period: currentPeriod.id }));
-      }
+    if (periodId) {
+      dispatch(getTypesMetrics({ period: periodId }));
     }
-  }, [getPeriodListStatus]);
-
-  useEffect(() => {
-    if (postEgressStatus === RequestStatusEnum.SUCCESS)
-      setIsOpenSaveDialog(true);
-  }, [postEgressStatus]);
-
-  useEffect(() => {
-    if (
-      beneficiary &&
-      egressDate &&
-      categorySelected &&
-      totalDischarge > 0 &&
-      isValidDetail() &&
-      periodId
-    )
-      setDisableSave(false);
-    else setDisableSave(true);
-  }, [
-    beneficiary,
-    egressDate,
-    totalDischarge,
-    egressDetail,
-    categorySelected,
-    periodId,
-  ]);
-
-  useEffect(() => {
-    setTotalDischarge(
-      egressDetail.reduce(
-        (total, detail) => +(total + detail.value).toFixed(2),
-        0
-      )
-    );
-  }, [egressDetail]);
+  }, [dispatch, periodId]);
 
   useEffect(() => {
     dispatch(getEgressCount());
     dispatch(getPeriodList());
-  }, []);
+  }, [dispatch]);
+
+  const totalDischarge = egressDetail.reduce(
+    (total, detail) => +(total + detail.value).toFixed(2),
+    0
+  );
+
+  const disableSave = !(
+    beneficiary &&
+    egressDate &&
+    categorySelected &&
+    totalDischarge > 0 &&
+    isValidDetail() &&
+    periodId
+  );
+
+  const isOpenSaveDialog = postEgressStatus === RequestStatusEnum.SUCCESS;
+  const isLoading = isSaving && postEgressStatus === RequestStatusEnum.PENDING;
 
   return (
     <EgressContext.Provider

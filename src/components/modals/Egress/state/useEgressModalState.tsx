@@ -1,5 +1,5 @@
 import { EgressModalProps } from "../EgressModal.tsx";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -16,7 +16,6 @@ export const useEgressModalState = (props: EgressModalProps) => {
   const dispatch = useAppDispatch();
   const egressDetail = useAppSelector(selectEgressDetail);
   const egressDetailStatus = useAppSelector(selectEgressDetailStatus);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleBuildDoc = () => {
     if (props.egressData)
@@ -28,19 +27,14 @@ export const useEgressModalState = (props: EgressModalProps) => {
   };
 
   useEffect(() => {
-    if (props.egressData) {
-      setIsLoading(true);
-      dispatch(getEgressDetail(props.egressData.number));
-    }
-  }, [props.egressData]);
-
-  useEffect(() => {
-    if (egressDetailStatus === RequestStatusEnum.SUCCESS) setIsLoading(false);
-  }, [egressDetailStatus]);
+    if (props.egressData) dispatch(getEgressDetail(props.egressData.number));
+  }, [dispatch, props.egressData]);
 
   return {
     egressDetail,
     handleBuildDoc,
-    isLoading,
+    isLoading:
+      Boolean(props.egressData) &&
+      egressDetailStatus === RequestStatusEnum.PENDING,
   };
 };

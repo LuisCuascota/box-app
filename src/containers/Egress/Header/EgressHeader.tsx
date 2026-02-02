@@ -36,15 +36,15 @@ export const EgressHeader = () => {
       >
         <CircularProgress />
       </Backdrop>
-      <Grid item md={12} xs={12}>
+      <Grid size={12}>
         <Typography textAlign={"center"} variant={"h5"}>
           {EgressLabels.TITLE}
         </Typography>
       </Grid>
-      <Grid item md={6} xs={12}>
+      <Grid size={6}>
         <Typography>{EgressLabels.SUBTITLE}</Typography>
       </Grid>
-      <Grid item md={2} xs={4}>
+      <Grid size={2}>
         <Typography textAlign={"right"} color={"red"}>
           {countStatus === RequestStatusEnum.SUCCESS ? (
             <b>{`Nº${count.count + 1}`}</b>
@@ -53,7 +53,7 @@ export const EgressHeader = () => {
           )}
         </Typography>
       </Grid>
-      <Grid item md={12} xs={12} pt={2}>
+      <Grid size={12} pt={2}>
         <TextField
           fullWidth
           label={EgressLabels.INPUT_BENEFICIARY}
@@ -62,7 +62,7 @@ export const EgressHeader = () => {
           onChange={onChangeBeneficiary}
         />
       </Grid>
-      <Grid item md={12} xs={12} pt={2}>
+      <Grid size={12} pt={2}>
         <TypesSearch
           disableSearch={false}
           onChangeSelector={onChangeCategorySelector}

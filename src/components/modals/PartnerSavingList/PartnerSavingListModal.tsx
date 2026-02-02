@@ -36,39 +36,39 @@ export const PartnerSavingListModal = (props: PartnerAccountModalProps) => {
     <Dialog maxWidth={"md"} open={props.open} onClose={onCloseModal}>
       <DialogTitle>
         <Grid container>
-          <Grid item textAlign={"center"} md={10}>
+          <Grid textAlign={"center"} size={10}>
             {ComponentsLabels.PARTNER_MODAL_ACCOUNT_TITLE}
           </Grid>
-          <Grid item md={2}>
+          <Grid size={2}>
             <Typography color={"red"} textAlign={"right"}>
               <b>{`Nº${props.partnerData?.number}`}</b>
             </Typography>
           </Grid>
-          <Grid item md={8}>
+          <Grid size={8}>
             <Typography>
               <b>{"Nombres:"}</b>
               {` ${props.partnerData?.names} ${props.partnerData?.surnames}`}
             </Typography>
           </Grid>
-          <Grid item md={4}>
+          <Grid size={4}>
             <Typography>
               <b>{"Cedula:"}</b>
               {` ${props.partnerData?.dni}`}
             </Typography>
           </Grid>
-          <Grid item md={4}>
+          <Grid size={4}>
             <Typography>
               <b>{"Fecha de Creación:"}</b>
               {` ${getFormattedDate(props.partnerData?.creation_date)}`}
             </Typography>
           </Grid>
-          <Grid item md={4}>
+          <Grid size={4}>
             <Typography>
               <b>{"Monto Inicial:"}</b>
               {` $${props.partnerData?.start_amount}`}
             </Typography>
           </Grid>
-          <Grid item md={4}>
+          <Grid size={4}>
             <Typography>
               <b>{"Ahorro Actual:"}</b>
               {` $${props.partnerData?.current_saving}`}

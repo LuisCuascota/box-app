@@ -129,9 +129,10 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const authenticator = useAuthenticator((context) => [context.authStatus]);
   const { authStatus, signOut } = props.isOffLine
     ? { authStatus: "authenticated", signOut: () => {} }
-    : useAuthenticator((context) => [context.authStatus]);
+    : authenticator;
 
   const [anchorElEntry, setAnchorElEntry] = useState<null | HTMLElement>(null);
   const [anchorElLoan, setAnchorElLoan] = useState<null | HTMLElement>(null);
