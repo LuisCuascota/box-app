@@ -1,5 +1,5 @@
 import { Autocomplete, Skeleton, TextField } from "@mui/material";
-import { SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector } from "../../../shared/hooks/Store.hook.ts";
 import { selectGetPeriodList } from "../../../store/selectors/selectors.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
@@ -18,6 +18,7 @@ export interface PeriodSearchParams {
 }
 export const PeriodSearch = (props: PeriodSearchParams) => {
   const [value, setValue] = useState<PeriodSelector | null>(null);
+  const didAutoSelectRef = useRef(false);
   const { getPeriodListStatus, periodList } =
     useAppSelector(selectGetPeriodList);
 
@@ -49,11 +50,13 @@ export const PeriodSearch = (props: PeriodSearchParams) => {
     if (
       getPeriodListStatus === RequestStatusEnum.SUCCESS &&
       !value &&
-      defaultPeriod
+      defaultPeriod &&
+      !didAutoSelectRef.current
     ) {
+      didAutoSelectRef.current = true;
       props.onChangeSelector(defaultPeriod);
     }
-  }, [defaultPeriod, getPeriodListStatus, props, value]);
+  }, [defaultPeriod, getPeriodListStatus, props.onChangeSelector, value]);
 
   return (
     <>

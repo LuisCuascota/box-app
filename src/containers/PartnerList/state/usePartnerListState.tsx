@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -30,6 +30,7 @@ export const usePartnerListState = () => {
   const [isAlertOpenState, setIsAlertOpenState] = useState<boolean>(false);
   const [isSavingModalOpen, setIsSavingModalOpen] = useState<boolean>(false);
   const [isLoanModalOpen, setIsLoanModalOpen] = useState<boolean>(false);
+  const prevDeleteStatusRef = useRef<RequestStatusEnum>(deletePartnerStatus);
 
   const onPageChange = (_: any, newPage: number) => {
     setPage(newPage);
@@ -106,18 +107,22 @@ export const usePartnerListState = () => {
   }, [searchPartners]);
 
   useEffect(() => {
-    if (deletePartnerStatus === RequestStatusEnum.SUCCESS) {
+    if (
+      prevDeleteStatusRef.current !== RequestStatusEnum.SUCCESS &&
+      deletePartnerStatus === RequestStatusEnum.SUCCESS
+    ) {
       dispatch(getPartnersCount());
       searchPartners();
     }
+    prevDeleteStatusRef.current = deletePartnerStatus;
   }, [deletePartnerStatus, dispatch, searchPartners]);
 
   return {
     partners,
     isLoading:
       getPartnersStatus === RequestStatusEnum.PENDING ||
-      getPartnersCountStatus === RequestStatusEnum.PENDING ||
-      deletePartnerStatus === RequestStatusEnum.PENDING,
+      getPartnersCountStatus === RequestStatusEnum.PENDING,
+    isDeleting: deletePartnerStatus === RequestStatusEnum.PENDING,
     alert: {
       rowToDelete: rowToDeleteState,
       isAlertOpen: isAlertOpenState,
