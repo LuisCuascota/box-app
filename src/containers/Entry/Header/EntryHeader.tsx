@@ -1,10 +1,15 @@
 import {
+  alpha,
   Backdrop,
+  Box,
+  Chip,
   CircularProgress,
   Grid,
+  Stack,
   Skeleton,
   Typography,
 } from "@mui/material";
+import { cardContainerSx, titleSx } from "../../../shared/styles/Ui.styles.ts";
 import { PartnerSearch } from "../../../components/input/PersonSearch/PartnerSearch.tsx";
 import { useContext } from "react";
 import { EntryContext } from "../EntryContext.tsx";
@@ -23,7 +28,7 @@ export const EntryHeader = () => {
   const countStatus = useAppSelector(selectEntryCountStatus);
 
   return (
-    <Grid container p={2}>
+    <Grid container p={1} spacing={1}>
       <Backdrop
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading}
@@ -31,30 +36,47 @@ export const EntryHeader = () => {
         <CircularProgress />
       </Backdrop>
       <Grid size={12}>
-        <Typography textAlign={"center"} variant={"h5"}>
-          {EntryLabels.TITLE}
-        </Typography>
-      </Grid>
-      <Grid size={10}>
-        <Typography>{EntryLabels.SUBTITLE}</Typography>
-      </Grid>
-      <Grid size={2}>
-        <Typography textAlign={"right"} color={"red"}>
-          {countStatus === RequestStatusEnum.SUCCESS ? (
-            <b>{`Nº${count.count + 1}`}</b>
-          ) : (
-            <Skeleton height={40} />
-          )}
-        </Typography>
-      </Grid>
-      <Grid size={5}>
-        <Typography>{EntryLabels.PARTNER_INPUT}</Typography>
-      </Grid>
-      <Grid size={7}>
-        <PartnerSearch
-          disableSearch={disableSearch}
-          onChangeSelector={onChangePartnerSelector}
-        />
+        <Box sx={(theme) => cardContainerSx(theme)}>
+          <Stack spacing={0.5}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Typography variant="h6" sx={(theme) => titleSx(theme)}>
+                {EntryLabels.TITLE}
+              </Typography>
+              {countStatus === RequestStatusEnum.SUCCESS ? (
+                <Chip
+                  color="secondary"
+                  variant="outlined"
+                  label={`Nº${count.count + 1}`}
+                  size="small"
+                  sx={(theme) => ({
+                    fontWeight: 600,
+                    color: theme.palette.primary.main,
+                    borderColor: alpha(theme.palette.primary.main, 0.5),
+                  })}
+                />
+              ) : (
+                <Skeleton height={26} width={70} />
+              )}
+            </Stack>
+            <Grid container spacing={1} alignItems="center">
+              <Grid size={5}>
+                <Typography variant="caption" color="text.secondary">
+                  {EntryLabels.PARTNER_INPUT}
+                </Typography>
+              </Grid>
+              <Grid size={7}>
+                <PartnerSearch
+                  disableSearch={disableSearch}
+                  onChangeSelector={onChangePartnerSelector}
+                />
+              </Grid>
+            </Grid>
+          </Stack>
+        </Box>
       </Grid>
     </Grid>
   );

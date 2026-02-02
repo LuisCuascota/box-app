@@ -1,4 +1,6 @@
 import {
+  alpha,
+  Box,
   Grid,
   IconButton,
   Skeleton,
@@ -11,6 +13,14 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import {
+  cardContainerSx,
+  subtitleSx,
+  tableContainerSx,
+  tableHeadCellSx,
+  tableHeadRowSx,
+  titleSx,
+} from "../../shared/styles/Ui.styles.ts";
 import {
   DATE_FORMAT,
   getFormattedDate,
@@ -41,29 +51,44 @@ export const LoanHistory = () => {
     <PaperBase>
       <Grid container p={1}>
         <Grid size={12}>
-          <Typography textAlign={"center"} variant={"h6"}>
-            {LoanHistoryLabels.TITLE}
-          </Typography>
-        </Grid>
-        <Grid size={6} pr={1}>
-          <PartnerSearch
-            disableSearch={false}
-            onChangeSelector={search.onSelectPartner}
-          />
-        </Grid>
-        <Grid size={2} pr={1}>
-          <OptionsSelect
-            label={"Estado"}
-            options={loanStatusOptions}
-            onSelect={search.onChangePaymentStatus}
-          />
-        </Grid>
-        <Grid size={4}>
-          <DateRangePikerInput
-            defaultFrom={environment.startDate}
-            defaultTo={moment().format(DATE_FORMAT)}
-            onChangeDate={search.onChangeDateRange}
-          />
+          <Box sx={(theme) => cardContainerSx(theme)}>
+            <Grid container spacing={1} alignItems="center">
+              <Grid size={12}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Typography textAlign={"left"} variant={"h6"} sx={(theme) => titleSx(theme)}>
+                    {LoanHistoryLabels.TITLE}
+                  </Typography>
+                  <Typography variant="caption" sx={(theme) => subtitleSx(theme)}>
+                    {ComponentsLabels.FILTERS}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={6} pr={1}>
+                <PartnerSearch
+                  disableSearch={false}
+                  onChangeSelector={search.onSelectPartner}
+                />
+              </Grid>
+              <Grid size={2} pr={1}>
+                <OptionsSelect
+                  label={"Estado"}
+                  options={loanStatusOptions}
+                  onSelect={search.onChangePaymentStatus}
+                />
+              </Grid>
+              <Grid size={4}>
+                <DateRangePikerInput
+                  defaultFrom={environment.startDate}
+                  defaultTo={moment().format(DATE_FORMAT)}
+                  onChangeDate={search.onChangeDateRange}
+                />
+              </Grid>
+            </Grid>
+          </Box>
         </Grid>
         <Grid size={12}>
           <PieDataChart
@@ -72,7 +97,6 @@ export const LoanHistory = () => {
                 id: 0,
                 value: +pagination.loanCount.debt.toFixed(2),
                 label: ComponentsLabels.DEBT,
-                color: "#1f3c55",
               },
               {
                 id: 1,
@@ -80,15 +104,15 @@ export const LoanHistory = () => {
                   pagination.loanCount.total - pagination.loanCount.debt
                 ).toFixed(2),
                 label: ComponentsLabels.PAID,
-                color: "#d5a92b",
               },
             ]}
+            colors={["#1B3A57", "#FFB347"]}
             totalValue={+pagination.loanCount.total.toFixed(2)}
             totalLabel={"Total: $"}
           />
         </Grid>
       </Grid>
-      <TableContainer>
+      <TableContainer sx={(theme) => tableContainerSx(theme)}>
         <LoanModal
           viewMode={true}
           loan={modal.rowSelected}
@@ -96,22 +120,30 @@ export const LoanHistory = () => {
           handleClose={modal.onCloseModal}
           loanBottom={true}
         />
-        <Table>
+        <Table size="small">
           <TableHead>
-            <TableRow>
+            <TableRow sx={(theme) => tableHeadRowSx(theme)}>
               <TableCell align="left">
-                <Typography color={"red"}>
-                  <b>{"Nº"}</b>
+                <Typography sx={(theme) => ({ ...tableHeadCellSx, color: theme.palette.primary.main })}>
+                  {"Nº"}
                 </Typography>
               </TableCell>
-              <TableCell align="left">{LoanHistoryLabels.TH_PARTNER}</TableCell>
-              <TableCell align="left">{LoanHistoryLabels.TH_DATE}</TableCell>
-              <TableCell align="left">{LoanHistoryLabels.TH_AMOUNT}</TableCell>
-              <TableCell align="left">{LoanHistoryLabels.TH_DEBT}</TableCell>
-              <TableCell align="center">
+              <TableCell align="left" sx={tableHeadCellSx}>
+                {LoanHistoryLabels.TH_PARTNER}
+              </TableCell>
+              <TableCell align="left" sx={tableHeadCellSx}>
+                {LoanHistoryLabels.TH_DATE}
+              </TableCell>
+              <TableCell align="left" sx={tableHeadCellSx}>
+                {LoanHistoryLabels.TH_AMOUNT}
+              </TableCell>
+              <TableCell align="left" sx={tableHeadCellSx}>
+                {LoanHistoryLabels.TH_DEBT}
+              </TableCell>
+              <TableCell align="center" sx={tableHeadCellSx}>
                 {LoanHistoryLabels.TH_STATUS}
               </TableCell>
-              <TableCell>{}</TableCell>
+              <TableCell sx={tableHeadCellSx} />
             </TableRow>
           </TableHead>
           <TableBody>

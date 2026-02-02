@@ -1,5 +1,5 @@
 import { PaymentMethodEnum } from "../enums/PaymentMethod.enum.ts";
-import { Chip, Tooltip } from "@mui/material";
+import { alpha, Chip, Tooltip } from "@mui/material";
 import { ComponentsLabels } from "../labels/Components.labels.ts";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { ColorsEnum } from "../enums/Colors.enum.ts";
@@ -27,31 +27,52 @@ export const getPaymentTypeIcon = (status?: string) => {
       case PaymentMethodEnum.CASH:
         return (
           <Chip
-            variant="filled"
+            variant="outlined"
             color="success"
             size="small"
             icon={<PriceCheckIcon />}
             label={ComponentsLabels.TYPE_CASH}
+            sx={(theme) => ({
+              fontWeight: 600,
+              minWidth: 96,
+              justifyContent: "center",
+              backgroundColor: alpha(theme.palette.success.main, 0.12),
+              borderColor: alpha(theme.palette.success.main, 0.45),
+            })}
           />
         );
       case PaymentMethodEnum.TRANSFER:
         return (
           <Chip
-            variant="filled"
-            color="secondary"
+            variant="outlined"
+            color="info"
             size="small"
             icon={<CreditScoreIcon />}
             label={ComponentsLabels.TYPE_TRANSFER}
+            sx={(theme) => ({
+              fontWeight: 600,
+              minWidth: 96,
+              justifyContent: "center",
+              backgroundColor: alpha(theme.palette.info.main, 0.12),
+              borderColor: alpha(theme.palette.info.main, 0.45),
+            })}
           />
         );
       case PaymentMethodEnum.MIXED:
         return (
           <Chip
-            variant="filled"
+            variant="outlined"
             color="primary"
             size="small"
             icon={<SwapHorizontalCircleIcon />}
             label={ComponentsLabels.TYPE_MIX}
+            sx={(theme) => ({
+              fontWeight: 600,
+              minWidth: 96,
+              justifyContent: "center",
+              backgroundColor: alpha(theme.palette.primary.main, 0.12),
+              borderColor: alpha(theme.palette.primary.main, 0.45),
+            })}
           />
         );
     }
@@ -63,31 +84,52 @@ export const getLoanStatusTypeIcon = (status?: string) => {
       case LoanStatusEnum.PAID:
         return (
           <Chip
-            variant="filled"
+            variant="outlined"
             color="success"
             size="small"
             icon={<PriceCheckIcon />}
             label={ComponentsLabels.PAID}
+            sx={(theme) => ({
+              fontWeight: 600,
+              minWidth: 96,
+              justifyContent: "center",
+              backgroundColor: alpha(theme.palette.success.main, 0.12),
+              borderColor: alpha(theme.palette.success.main, 0.45),
+            })}
           />
         );
       case LoanStatusEnum.CURRENT:
         return (
           <Chip
-            variant="filled"
-            color="secondary"
+            variant="outlined"
+            color="info"
             size="small"
             icon={<CurrencyExchangeIcon />}
             label={ComponentsLabels.CURRENT}
+            sx={(theme) => ({
+              fontWeight: 600,
+              minWidth: 96,
+              justifyContent: "center",
+              backgroundColor: alpha(theme.palette.info.main, 0.12),
+              borderColor: alpha(theme.palette.info.main, 0.45),
+            })}
           />
         );
       case LoanStatusEnum.LATE:
         return (
           <Chip
-            variant="filled"
+            variant="outlined"
             color="error"
             size="small"
             icon={<ReportProblemRoundedIcon />}
             label={ComponentsLabels.LATE}
+            sx={(theme) => ({
+              fontWeight: 600,
+              minWidth: 96,
+              justifyContent: "center",
+              backgroundColor: alpha(theme.palette.error.main, 0.12),
+              borderColor: alpha(theme.palette.error.main, 0.45),
+            })}
           />
         );
     }
@@ -163,22 +205,32 @@ export const getLoanFeeIcon = (loanDetail: LoanDetail) => {
   )
     return (
       <Chip
-        variant="filled"
+        variant="outlined"
         color="warning"
         size="small"
         icon={<CurrencyExchangeIcon />}
         label={ComponentsLabels.REDUCED}
+        sx={(theme) => ({
+          fontWeight: 600,
+          backgroundColor: alpha(theme.palette.warning.main, 0.12),
+          borderColor: alpha(theme.palette.warning.main, 0.45),
+        })}
       />
     );
 
   if (loanDetail.is_paid)
     return (
       <Chip
-        variant="filled"
+        variant="outlined"
         color="success"
         size="small"
         icon={<PriceCheckIcon />}
         label={ComponentsLabels.PAID}
+        sx={(theme) => ({
+          fontWeight: 600,
+          backgroundColor: alpha(theme.palette.success.main, 0.12),
+          borderColor: alpha(theme.palette.success.main, 0.45),
+        })}
       />
     );
 
@@ -189,11 +241,16 @@ export const getLoanFeeIcon = (loanDetail: LoanDetail) => {
   ) {
     return (
       <Chip
-        variant="filled"
+        variant="outlined"
         color="error"
         size="small"
         icon={<ReportProblemRoundedIcon />}
         label={ComponentsLabels.LATE}
+        sx={(theme) => ({
+          fontWeight: 600,
+          backgroundColor: alpha(theme.palette.error.main, 0.12),
+          borderColor: alpha(theme.palette.error.main, 0.45),
+        })}
       />
     );
   }
@@ -203,11 +260,16 @@ export const getLoanFeeIcon = (loanDetail: LoanDetail) => {
   )
     return (
       <Chip
-        variant="filled"
+        variant="outlined"
         color="info"
         size="small"
         icon={<CurrencyExchangeIcon />}
         label={ComponentsLabels.ACTUAL}
+        sx={(theme) => ({
+          fontWeight: 600,
+          backgroundColor: alpha(theme.palette.info.main, 0.12),
+          borderColor: alpha(theme.palette.info.main, 0.45),
+        })}
       />
     );
 };

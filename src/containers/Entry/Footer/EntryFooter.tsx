@@ -1,4 +1,5 @@
 import {
+  alpha,
   Box,
   Button,
   Dialog,
@@ -33,7 +34,7 @@ export const EntryFooter = () => {
   } = useContext(EntryContext);
 
   return (
-    <Box pl={2} pr={2}>
+    <Box p={1} pb={1.5}>
       <Dialog open={isOpenSaveDialog} onClose={onCloseSaveDialog}>
         <DialogTitle>{EntryLabels.SUCCESS_SAVE_MODAL_TITLE}</DialogTitle>
         <DialogContent>
@@ -52,38 +53,72 @@ export const EntryFooter = () => {
         totalAmount={totalToPay}
         handleClose={onCloseBillDetailModal}
       />
-      <Box display={"flex"} justifyContent={"space-between"} pb={2}>
-        <Box display={"flex"}>
-          <Typography pr={2}>{EntryLabels.DATE}</Typography>
-          <DatePikerInput onChangeDate={onChangeEntryDate} />
+      <Box
+        sx={(theme) => ({
+          width: "100%",
+          borderRadius: 1.5,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
+          backgroundColor: "#fff",
+          p: 1,
+          mb: 0.5,
+        })}
+      >
+        <Box display="flex" alignItems="center" gap={2}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography
+              variant="caption"
+              sx={(theme) => ({
+                minWidth: 44,
+                color: alpha(theme.palette.primary.main, 0.75),
+              })}
+            >
+              {EntryLabels.DATE}
+            </Typography>
+            <Box sx={{ "& .MuiTextField-root": { width: 160 } }}>
+              <DatePikerInput onChangeDate={onChangeEntryDate} />
+            </Box>
+          </Box>
+          <Box display="flex" alignItems="center" gap={1} sx={{ ml: "auto" }}>
+            <Box display={"flex"} gap={1} alignItems="center">
+              <Button variant={"outlined"} onClick={onCancelEntry} size="small">
+                {EntryLabels.CANCEL}
+              </Button>
+              <Button
+                endIcon={<SaveIcon />}
+                variant="contained"
+                disabled={disableSave}
+                onClick={onOpenBillDetailModal}
+                size="small"
+              >
+                {EntryLabels.SAVE}
+              </Button>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Typography
+                variant="caption"
+                sx={(theme) => ({
+                  minWidth: 44,
+                  textAlign: "right",
+                  color: alpha(theme.palette.primary.main, 0.75),
+                })}
+              >
+                {EntryLabels.TOTAL}
+              </Typography>
+              <TextField
+                type={"number"}
+                size={"small"}
+                disabled
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+                value={totalToPay}
+                sx={{ width: 120 }}
+              />
+            </Box>
+          </Box>
         </Box>
-        <Box display={"flex"}>
-          <Typography pr={2}>{EntryLabels.TOTAL}</Typography>
-          <TextField
-            type={"number"}
-            size={"small"}
-            disabled
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              ),
-            }}
-            value={totalToPay}
-          />
-        </Box>
-      </Box>
-      <Box display={"flex"} justifyContent={"space-between"} pb={2}>
-        <Button variant={"outlined"} onClick={onCancelEntry}>
-          {EntryLabels.CANCEL}
-        </Button>
-        <Button
-          endIcon={<SaveIcon />}
-          variant="contained"
-          disabled={disableSave}
-          onClick={onOpenBillDetailModal}
-        >
-          {EntryLabels.SAVE}
-        </Button>
       </Box>
     </Box>
   );

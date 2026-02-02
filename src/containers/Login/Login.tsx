@@ -10,7 +10,7 @@ import {
 import Logo from "../../assets/caja_logo.png";
 import "@aws-amplify/ui-react/styles.css";
 import { I18n } from "aws-amplify/utils";
-import { Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Container from "@mui/material/Container";
 import { CardItem, CardItemProps } from "./CardItem.tsx";
 import { ModulesEnum, RoutesEnum } from "../../shared/enums/Routes.enum.ts";
@@ -30,7 +30,7 @@ export const Login = () => {
       colors: {
         font: {
           interactive: {
-            value: "#1f3c55",
+            value: "#1B3A57",
           },
         },
       },
@@ -38,7 +38,7 @@ export const Login = () => {
         button: {
           primary: {
             backgroundColor: {
-              value: "#1f3c55",
+              value: "#1B3A57",
             },
           },
         },
@@ -123,8 +123,25 @@ export const Login = () => {
     <ThemeProvider theme={theme}>
       <Authenticator components={components} hideSignUp={true}>
         {() => (
-          <Container>
-            <Grid container>
+          <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Box
+              sx={{
+                mb: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  Panel de Operaciones
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Accede rápido a los módulos principales.
+                </Typography>
+              </Box>
+            </Box>
+            <Grid container spacing={2}>
               {cardItems.map((item, index) => (
                 <CardItem
                   key={index}

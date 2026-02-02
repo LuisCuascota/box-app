@@ -1,6 +1,8 @@
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
 import {
+  alpha,
   Backdrop,
+  Box,
   CircularProgress,
   Grid,
   Table,
@@ -11,6 +13,14 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import {
+  cardContainerSx,
+  subtitleSx,
+  tableContainerSx,
+  tableHeadCellSx,
+  tableHeadRowSx,
+  titleSx,
+} from "../../shared/styles/Ui.styles.ts";
 import { ComponentsLabels } from "../../shared/labels/Components.labels.ts";
 import { TypeMetric } from "../../store/interfaces/MetricsState.interfaces.ts";
 import { useMetricsState } from "./useMetricsState.tsx";
@@ -35,22 +45,37 @@ export const MetricsContainer = () => {
       </Backdrop>
       <Grid container spacing={1}>
         <Grid size={12}>
-          <Typography textAlign={"center"} variant={"h5"}>
-            {"MÉTRICAS"}
-          </Typography>
-        </Grid>
-        <Grid size={8} pr={1}>
-          <PeriodSearch
-            disableSearch={false}
-            onChangeSelector={search.onSelectPeriod}
-          />
-        </Grid>
-        <Grid size={4}>
-          <DateRangePikerInput
-            defaultFrom={environment.startDate}
-            defaultTo={moment().format(DATE_FORMAT)}
-            onChangeDate={() => {}}
-          />
+          <Box sx={(theme) => cardContainerSx(theme)}>
+            <Grid container spacing={1} alignItems="flex-end">
+              <Grid size={12}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Typography variant={"h6"} sx={(theme) => titleSx(theme)}>
+                    {"MÉTRICAS"}
+                  </Typography>
+                  <Typography variant="caption" sx={(theme) => subtitleSx(theme)}>
+                    {ComponentsLabels.FILTERS}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={8} pr={1}>
+                <PeriodSearch
+                  disableSearch={false}
+                  onChangeSelector={search.onSelectPeriod}
+                />
+              </Grid>
+              <Grid size={4}>
+                <DateRangePikerInput
+                  defaultFrom={environment.startDate}
+                  defaultTo={moment().format(DATE_FORMAT)}
+                  onChangeDate={() => {}}
+                />
+              </Grid>
+            </Grid>
+          </Box>
         </Grid>
         {!isLoading && metrics && (
           <>
@@ -61,13 +86,13 @@ export const MetricsContainer = () => {
                     id: 0,
                     value: metrics.cashTotal,
                     label: ComponentsLabels.TYPE_CASH,
-                    color: "#1f3c55",
+                    color: "#1B3A57",
                   },
                   {
                     id: 1,
                     value: metrics.transferTotal,
                     label: ComponentsLabels.TYPE_TRANSFER,
-                    color: "#d5a92b",
+                    color: "#FFB347",
                   },
                 ]}
                 totalValue={metrics.total}
@@ -75,15 +100,21 @@ export const MetricsContainer = () => {
               />
             </Grid>
             <Grid size={12}>
-              <Typography variant={"h6"}>{"RUBROS"}</Typography>
+              <Typography variant={"h6"} sx={{ color: "text.primary" }}>
+                {"RUBROS"}
+              </Typography>
             </Grid>
             <Grid size={12}>
-              <TableContainer>
-                <Table>
+              <TableContainer sx={(theme) => tableContainerSx(theme)}>
+                <Table size="small">
                   <TableHead>
-                    <TableRow>
-                      <TableCell align="left">{"Descripción"}</TableCell>
-                      <TableCell align="left">{"Valor"}</TableCell>
+                    <TableRow sx={(theme) => tableHeadRowSx(theme)}>
+                      <TableCell align="left" sx={tableHeadCellSx}>
+                        {"Descripción"}
+                      </TableCell>
+                      <TableCell align="left" sx={tableHeadCellSx}>
+                        {"Valor"}
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -98,15 +129,21 @@ export const MetricsContainer = () => {
               </TableContainer>
             </Grid>
             <Grid size={12}>
-              <Typography variant={"h6"}>{"VALORES DE UTILIDAD"}</Typography>
+              <Typography variant={"h6"} sx={{ color: "text.primary" }}>
+                {"VALORES DE UTILIDAD"}
+              </Typography>
             </Grid>
             <Grid size={12}>
-              <TableContainer>
-                <Table>
+              <TableContainer sx={(theme) => tableContainerSx(theme)}>
+                <Table size="small">
                   <TableHead>
-                    <TableRow>
-                      <TableCell align="left">{"Descripción"}</TableCell>
-                      <TableCell align="left">{"Valor"}</TableCell>
+                    <TableRow sx={(theme) => tableHeadRowSx(theme)}>
+                      <TableCell align="left" sx={tableHeadCellSx}>
+                        {"Descripción"}
+                      </TableCell>
+                      <TableCell align="left" sx={tableHeadCellSx}>
+                        {"Valor"}
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

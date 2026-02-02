@@ -1,5 +1,8 @@
 import {
+  alpha,
+  Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -34,46 +37,103 @@ export const EntryModal = (props: EntryModalProps) => {
   const { isLoading, entryDetail, handleBuildDoc } = useEntryModalState(props);
 
   return (
-    <Dialog maxWidth={"md"} open={props.open} onClose={props.handleClose}>
+    <Dialog
+      maxWidth={false}
+      open={props.open}
+      onClose={props.handleClose}
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+          overflow: "hidden",
+          width: "820px",
+          maxWidth: "96vw",
+        },
+      }}
+    >
       <DialogTitle
-        textAlign={"center"}
         sx={{
           backgroundColor: (theme) => theme.palette.primary.main,
           color: (theme) => theme.palette.primary.contrastText,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          py: 1.25,
         }}
       >
         {ComponentsLabels.ENTRY_MODAL_TITLE}
+        {props.entryData && (
+          <Chip
+            size="small"
+            label={`Crédito Nº${props.entryData.number}`}
+            color="secondary"
+            variant="outlined"
+            sx={{ fontWeight: 700 }}
+          />
+        )}
       </DialogTitle>
       <DialogContent>
         {props.entryData && (
-          <Grid container pt={2}>
-            <Grid size={10}>
-              <Typography>
-                <b>{ComponentsLabels.PARTNER}</b>
-                {` ${props.entryData.names} ${props.entryData.surnames}`}
-              </Typography>
+          <Grid container spacing={0.75} pt={1.5} pb={0.75}>
+            <Grid size={7}>
+              <Box
+                sx={(theme) => ({
+                  p: 0.75,
+                  borderRadius: 1.5,
+                  backgroundColor: "#fff",
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                })}
+                >
+                <Typography variant="caption" color="text.secondary">
+                  {ComponentsLabels.PARTNER}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {`${props.entryData.names} ${props.entryData.surnames}`}
+                </Typography>
+              </Box>
             </Grid>
-            <Grid size={2}>
-              <Typography color={"red"} textAlign={"right"}>
-                <b>{`Nº${props.entryData.number}`}</b>
-              </Typography>
-            </Grid>
-            <Grid size={12}>
-              <Typography>
-                <b>{ComponentsLabels.DATE}</b>
-                {` ${getFormattedDate(props.entryData.date)}`}
-              </Typography>
+            <Grid size={5}>
+              <Box
+                sx={(theme) => ({
+                  p: 0.75,
+                  borderRadius: 1.5,
+                  backgroundColor: "#fff",
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                })}
+                >
+                <Typography variant="caption" color="text.secondary">
+                  {ComponentsLabels.DATE}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {getFormattedDate(props.entryData.date)}
+                </Typography>
+              </Box>
             </Grid>
           </Grid>
         )}
-        <TableContainer>
-          <Table>
+        <TableContainer
+          sx={(theme) => ({
+            borderRadius: 2,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+            overflow: "hidden",
+          })}
+        >
+          <Table size="small">
             <TableHead>
-              <TableRow>
-                <TableCell align="left">
+              <TableRow
+                sx={(theme) => ({
+                  backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                })}
+              >
+                <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
                   {ComponentsLabels.TH_ENTRY_TYPE}
                 </TableCell>
-                <TableCell align="left">
+                <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
                   {ComponentsLabels.TH_ENTRY_VALUE}
                 </TableCell>
               </TableRow>
@@ -93,22 +153,31 @@ export const EntryModal = (props: EntryModalProps) => {
                           ))}
                       </TableRow>
                     ))
-                : entryDetail.amountDetail.map(
-                    (row: EntryAmountDetail, index: number) => (
-                      <TableRow key={index}>
-                        <TableCell>{row.description}</TableCell>
-                        <TableCell>{row.value ? row.value : 0}</TableCell>
-                      </TableRow>
-                    )
-                  )}
+                  : entryDetail.amountDetail.map(
+                      (row: EntryAmountDetail, index: number) => (
+                        <TableRow key={index}>
+                          <TableCell>{row.description}</TableCell>
+                          <TableCell>{row.value ? row.value : 0}</TableCell>
+                        </TableRow>
+                      )
+                    )}
             </TableBody>
           </Table>
         </TableContainer>
         {props.entryData && (
-          <Grid border={"1px solid grey"} borderRadius={1} container p={1}>
+          <Grid
+            container
+            p={1}
+            mt={1}
+            sx={(theme) => ({
+              borderRadius: 1.5,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
+              backgroundColor: "#fff",
+            })}
+          >
             <Grid size={6}>
-              <Typography>
-                <b>Detalles del Pago</b>
+              <Typography sx={{ fontWeight: 700 }}>
+                Detalles del Pago
               </Typography>
             </Grid>
             <Grid size={6}>
@@ -141,15 +210,18 @@ export const EntryModal = (props: EntryModalProps) => {
         )}
         {entryDetail.entryLoanDetail && (
           <Grid
-            border={"1px solid grey"}
-            marginTop={1}
-            borderRadius={1}
             container
             p={1}
+            mt={1}
+            sx={(theme) => ({
+              borderRadius: 1.5,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
+              backgroundColor: "#fff",
+            })}
           >
             <Grid size={6}>
-              <Typography>
-                <b>Detalles del Crédito</b>
+              <Typography sx={{ fontWeight: 700 }}>
+                Detalles del Crédito
               </Typography>
             </Grid>
             <Grid size={6}>
@@ -192,7 +264,12 @@ export const EntryModal = (props: EntryModalProps) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Grid container pl={2} pr={2} justifyContent={"space-between"}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ width: "100%", px: 2, py: 1 }}
+        >
           <Button
             onClick={props.handleClose}
             variant={"outlined"}
@@ -209,7 +286,7 @@ export const EntryModal = (props: EntryModalProps) => {
           >
             {ComponentsLabels.PRINT}
           </Button>
-        </Grid>
+        </Box>
       </DialogActions>
     </Dialog>
   );
