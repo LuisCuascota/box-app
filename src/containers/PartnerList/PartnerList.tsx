@@ -1,5 +1,4 @@
 import {
-  alpha,
   Box,
   Button,
   Dialog,
@@ -113,7 +112,12 @@ export const PartnerList = () => {
           <TableHead>
             <TableRow sx={(theme) => tableHeadRowSx(theme)}>
               <TableCell align="center">
-                <Typography sx={(theme) => ({ ...tableHeadCellSx, color: theme.palette.primary.main })}>
+                <Typography
+                  sx={(theme) => ({
+                    ...tableHeadCellSx,
+                    color: theme.palette.primary.main,
+                  })}
+                >
                   {PartnerListLabels.TH_ACCOUNT}
                 </Typography>
               </TableCell>
