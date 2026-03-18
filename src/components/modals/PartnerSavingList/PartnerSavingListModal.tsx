@@ -25,6 +25,7 @@ import {
   UsePartnerSavingListState,
 } from "./state/usePartnerSavingListState.tsx";
 import { getFormattedDate } from "../../../shared/utils/Date.utils.ts";
+import { buildSavingCard } from "../../../shared/utils/BuildSavingCard.ts";
 import { AccountStatusEnum } from "../../../shared/enums/LoanCalcTypeEnum.ts";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
@@ -220,7 +221,11 @@ export const PartnerSavingListModal = (props: PartnerAccountModalProps) => {
                             ? theme.palette.warning
                             : theme.palette.error;
 
-                      return { fontWeight: 700, color: palette.main, lineHeight: 1.2 };
+                      return {
+                        fontWeight: 700,
+                        color: palette.main,
+                        lineHeight: 1.2,
+                      };
                     }}
                   >
                     {getSavingStatus(props.partnerData).label}
@@ -264,19 +269,31 @@ export const PartnerSavingListModal = (props: PartnerAccountModalProps) => {
                   backgroundColor: alpha(theme.palette.primary.main, 0.04),
                 })}
               >
-                <TableCell align="center" sx={{ fontWeight: 700, fontSize: 12 }}>
+                <TableCell
+                  align="center"
+                  sx={{ fontWeight: 700, fontSize: 12 }}
+                >
                   {ComponentsLabels.TH_ACCOUNT_DATE}
                 </TableCell>
                 <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
                   {ComponentsLabels.TH_ACCOUNT_DESCRIPTION}
                 </TableCell>
-                <TableCell align="center" sx={{ fontWeight: 700, fontSize: 12 }}>
+                <TableCell
+                  align="center"
+                  sx={{ fontWeight: 700, fontSize: 12 }}
+                >
                   {ComponentsLabels.TH_ACCOUNT_VOUCHER}
                 </TableCell>
-                <TableCell align="center" sx={{ fontWeight: 700, fontSize: 12 }}>
+                <TableCell
+                  align="center"
+                  sx={{ fontWeight: 700, fontSize: 12 }}
+                >
                   {ComponentsLabels.TH_ENTRY_VALUE}
                 </TableCell>
-                <TableCell align="center" sx={{ fontWeight: 700, fontSize: 12 }}>
+                <TableCell
+                  align="center"
+                  sx={{ fontWeight: 700, fontSize: 12 }}
+                >
                   {ComponentsLabels.TH_ACCOUNT_TOTAL}
                 </TableCell>
               </TableRow>
@@ -324,8 +341,14 @@ export const PartnerSavingListModal = (props: PartnerAccountModalProps) => {
           <Button
             variant={"contained"}
             color={"primary"}
-            onClick={() => {}}
-            disabled={true}
+            onClick={() =>
+              props.partnerData &&
+              buildSavingCard(
+                props.partnerData,
+                contributions[contributions.length - 1]
+              )
+            }
+            disabled={!props.partnerData}
             endIcon={<LocalPrintshopIcon />}
           >
             {ComponentsLabels.PRINT}
