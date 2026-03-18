@@ -1,5 +1,5 @@
 import { EntryModalProps } from "../EntryModal";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -16,7 +16,6 @@ export const useEntryModalState = (props: EntryModalProps) => {
   const dispatch = useAppDispatch();
   const entryDetail = useAppSelector(selectEntryDetail);
   const entryDetailStatus = useAppSelector(selectEntryDetailStatus);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleBuildDoc = () => {
     if (props.entryData)
@@ -31,19 +30,14 @@ export const useEntryModalState = (props: EntryModalProps) => {
   };
 
   useEffect(() => {
-    if (props.entryData) {
-      setIsLoading(true);
-      dispatch(getEntryDetail(props.entryData.number));
-    }
-  }, [props.entryData]);
-
-  useEffect(() => {
-    if (entryDetailStatus === RequestStatusEnum.SUCCESS) setIsLoading(false);
-  }, [entryDetailStatus]);
+    if (props.entryData) dispatch(getEntryDetail(props.entryData.number));
+  }, [dispatch, props.entryData]);
 
   return {
     entryDetail,
     handleBuildDoc,
-    isLoading,
+    isLoading:
+      Boolean(props.entryData) &&
+      entryDetailStatus === RequestStatusEnum.PENDING,
   };
 };

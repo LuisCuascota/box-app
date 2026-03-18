@@ -45,13 +45,13 @@ export const PartnerModal = (props: PartnerModalProps) => {
       </Backdrop>
       <DialogTitle>
         <Grid container>
-          <Grid item md={6}>
+          <Grid size={6}>
             {props.partnerData
               ? ComponentsLabels.PARTNER_MODAL_TITLE_EDITION
               : ComponentsLabels.PARTNER_MODAL_TITLE_CREATION}
           </Grid>
           {props.partnerData && (
-            <Grid item md={6}>
+            <Grid size={6}>
               <Typography color={"red"} textAlign={"right"}>
                 <b>{`Nº${props.partnerData?.number}`}</b>
               </Typography>
@@ -61,7 +61,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} pt={2}>
-          <Grid item md={6}>
+          <Grid size={6}>
             <TextField
               fullWidth
               size={"small"}
@@ -76,7 +76,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
               }
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid size={6}>
             <TextField
               fullWidth
               size={"small"}
@@ -91,7 +91,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
               }
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid size={6}>
             <TextField
               disabled={!!props.partnerData}
               fullWidth
@@ -107,7 +107,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
               }
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid size={6}>
             <DatePikerInput
               label={ComponentsLabels.BIRTHDAY}
               value={props.partnerData?.birth_day}
@@ -116,7 +116,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
               }
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid size={6}>
             <TextField
               fullWidth
               size={"small"}
@@ -131,7 +131,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
               }
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid size={6}>
             <TextField
               fullWidth
               size={"small"}
@@ -146,7 +146,7 @@ export const PartnerModal = (props: PartnerModalProps) => {
               }
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid size={6}>
             <TextField
               disabled={!!props.partnerData}
               fullWidth

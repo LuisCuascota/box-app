@@ -1,4 +1,4 @@
-import { Grid, IconButton, TextField, Typography } from "@mui/material";
+import { alpha, Box, Grid, IconButton, TextField, Typography } from "@mui/material";
 import { EgressLabels } from "../../../shared/labels/Egress.labels.ts";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -9,23 +9,39 @@ export const EgressDetail = () => {
     useContext(EgressContext);
 
   return (
-    <Grid container p={2} justifyContent={"space-between"}>
-      <Grid item md={8}>
-        <Typography>{EgressLabels.INPUT_REASON}</Typography>
+    <Grid
+      container
+      p={1}
+      justifyContent={"space-between"}
+      sx={(theme) => ({
+        width: "100%",
+        boxSizing: "border-box",
+        borderRadius: 1.5,
+        backgroundColor: "#fff",
+        border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
+        mb: 1,
+      })}
+    >
+      <Grid size={8}>
+        <Typography variant="caption" color="text.secondary">
+          {EgressLabels.INPUT_REASON}
+        </Typography>
       </Grid>
-      <Grid item md={3}>
-        <Typography>{EgressLabels.INPUT_VALUE}</Typography>
+      <Grid size={3}>
+        <Typography variant="caption" color="text.secondary">
+          {EgressLabels.INPUT_VALUE}
+        </Typography>
       </Grid>
       {egressDetail.map((detail, index) => (
         <Grid
           key={index}
-          item
-          md={12}
+          size={12}
           container
-          justifyContent={"space-between"}
+          spacing={1}
+          alignItems="center"
           pb={1}
         >
-          <Grid item md={7}>
+          <Grid size={8}>
             <TextField
               type={"text"}
               fullWidth
@@ -36,7 +52,7 @@ export const EgressDetail = () => {
               }
             />
           </Grid>
-          <Grid item md={3}>
+          <Grid size={3}>
             <TextField
               type={"number"}
               fullWidth
@@ -47,7 +63,7 @@ export const EgressDetail = () => {
               }
             />
           </Grid>
-          <Grid item md={1}>
+          <Grid size={1}>
             {egressDetail.length > 1 && (
               <IconButton
                 size={"small"}
@@ -60,10 +76,12 @@ export const EgressDetail = () => {
           </Grid>
         </Grid>
       ))}
-      <Grid item md={12}>
-        <IconButton size={"small"} color={"success"} onClick={onAddDetail}>
-          <AddCircleIcon />
-        </IconButton>
+      <Grid size={12}>
+        <Box display="flex" justifyContent="flex-start">
+          <IconButton size={"small"} color={"success"} onClick={onAddDetail}>
+            <AddCircleIcon />
+          </IconButton>
+        </Box>
       </Grid>
     </Grid>
   );

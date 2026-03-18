@@ -1,4 +1,6 @@
 import {
+  alpha,
+  Box,
   Button,
   Chip,
   Dialog,
@@ -15,17 +17,18 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
 import { PartnerData } from "../../../store/interfaces/PartnerState.interfaces.ts";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import { UsePartnerLoanListModalState } from "./state/usePartnerLoanListModalState.tsx";
 import { getFormattedDate } from "../../../shared/utils/Date.utils.ts";
 import { Loan } from "../../../store/interfaces/LoanState.interfaces.ts";
-import {
-  getLoanAccountStatusIcon,
-  getLoanStatusTypeIcon,
-} from "../../../shared/utils/Components.util.tsx";
+import { getLoanStatusTypeIcon } from "../../../shared/utils/Components.util.tsx";
 import { LoanStatusEnum } from "../../../shared/enums/LoanCalcTypeEnum.ts";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
+import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
 
 export interface PartnerLoanListModalProps {
   open: boolean;
@@ -36,6 +39,7 @@ export interface PartnerLoanListModalProps {
 export const PartnerLoanListModal = (props: PartnerLoanListModalProps) => {
   const { loanList, isLoading, onCloseModal } =
     UsePartnerLoanListModalState(props);
+  const theme = useTheme();
 
   const getChipLabel = (status?: string) => {
     if (status)
@@ -61,63 +65,245 @@ export const PartnerLoanListModal = (props: PartnerLoanListModalProps) => {
       }
   };
 
+  const getStatusPalette = (status?: string) => {
+    const color = getChipColor(status);
+
+    if (color === "success") return theme.palette.success;
+    if (color === "error") return theme.palette.error;
+
+    return theme.palette.info;
+  };
+
+  const getStatusIcon = (status?: string) => {
+    if (status)
+      switch (status) {
+        case LoanStatusEnum.FREE:
+          return <TaskAltIcon fontSize="small" />;
+        case LoanStatusEnum.DEBT:
+          return <PublishedWithChangesIcon fontSize="small" />;
+        case LoanStatusEnum.LATE:
+          return <ReportProblemRoundedIcon fontSize="small" />;
+      }
+  };
+
   return (
-    <Dialog maxWidth={"md"} open={props.open} onClose={onCloseModal}>
-      <DialogTitle>
-        <Grid container>
-          <Grid item textAlign={"center"} md={12}>
-            {ComponentsLabels.PARTNER_MODAL_LOAN_TITLE}
-          </Grid>
-          <Grid item md={7}>
-            <Typography>
-              <b>{"Nombres:"}</b>
-              {` ${props.partnerData?.names} ${props.partnerData?.surnames}`}
-            </Typography>
-          </Grid>
-          <Grid item md={3}>
-            <Typography>
-              <b>{"Cedula:"}</b>
-              {` ${props.partnerData?.dni}`}
-            </Typography>
-          </Grid>
-          <Grid item md={2}>
-            <Chip
-              color={getChipColor(props.partnerData?.loanStatus)}
-              icon={getLoanAccountStatusIcon(props.partnerData?.loanStatus)}
-              label={getChipLabel(props.partnerData?.loanStatus)}
-            />
-          </Grid>
-          <Grid item md={4}>
-            <Typography>
-              <b>{"Créditos realizados:"}</b>
-              {` ${loanList.length}`}
-            </Typography>
-          </Grid>
-          <Grid item md={3}>
-            <Typography>
-              <b>{"Desembolzado: "}</b>
-              {` $${loanList.reduce((sum, loan) => loan.value + sum, 0)}`}
-            </Typography>
-          </Grid>
-          <Grid item md={5}>
-            <Typography>
-              <b>{"Pendiente: "}</b>
-              {` $${loanList.reduce((sum, loan) => loan.debt + sum, 0)}`}
-            </Typography>
-          </Grid>
-        </Grid>
+    <Dialog
+      maxWidth={false}
+      open={props.open}
+      onClose={onCloseModal}
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+          overflow: "hidden",
+          width: "900px",
+          maxWidth: "96vw",
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          backgroundColor: (theme) => theme.palette.primary.main,
+          color: (theme) => theme.palette.primary.contrastText,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          py: 1.25,
+        }}
+      >
+        {ComponentsLabels.PARTNER_MODAL_LOAN_TITLE}
+        {props.partnerData && (
+          <Chip
+            size="small"
+            label={`Socio Nº${props.partnerData.number}`}
+            color="secondary"
+            variant="outlined"
+            sx={{ fontWeight: 700 }}
+          />
+        )}
       </DialogTitle>
       <DialogContent>
-        <TableContainer>
-          <Table>
+        {props.partnerData && (
+          <Grid container spacing={0.75} pt={1.5} pb={0.75}>
+            <Grid size={8}>
+              <Box
+                sx={(theme) => ({
+                  p: 0.75,
+                  borderRadius: 1.5,
+                  backgroundColor: "#fff",
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                })}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  Nombres
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {`${props.partnerData.names} ${props.partnerData.surnames}`}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={4}>
+              <Box
+                sx={(theme) => ({
+                  p: 0.75,
+                  borderRadius: 1.5,
+                  backgroundColor: "#fff",
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                })}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  Cédula
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {props.partnerData.dni}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={4}>
+              <Box
+                sx={() => {
+                  const palette = getStatusPalette(
+                    props.partnerData?.loanStatus
+                  );
+
+                  return {
+                    p: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: alpha(palette.main, 0.12),
+                    border: `1px solid ${alpha(palette.main, 0.45)}`,
+                  };
+                }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  Estado
+                </Typography>
+                <Box
+                  mt={0.25}
+                  display="flex"
+                  alignItems="center"
+                  gap={0.5}
+                  sx={{ minHeight: 20 }}
+                >
+                  <Box
+                    sx={() => ({
+                      color: getStatusPalette(props.partnerData?.loanStatus)
+                        .main,
+                      display: "flex",
+                      alignItems: "center",
+                    })}
+                  >
+                    {getStatusIcon(props.partnerData.loanStatus)}
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 700,
+                      color: getStatusPalette(props.partnerData?.loanStatus)
+                        .main,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {getChipLabel(props.partnerData.loanStatus)}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid size={4}>
+              <Box
+                sx={(theme) => ({
+                  p: 0.75,
+                  borderRadius: 1.5,
+                  backgroundColor: "#fff",
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                })}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  Créditos realizados
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {loanList.length}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={4}>
+              <Box
+                sx={(theme) => ({
+                  p: 0.75,
+                  borderRadius: 1.5,
+                  backgroundColor: "#fff",
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                })}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  Desembolsado
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  ${loanList.reduce((sum, loan) => loan.value + sum, 0)}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={4}>
+              <Box
+                sx={(theme) => ({
+                  p: 0.75,
+                  borderRadius: 1.5,
+                  backgroundColor: "#fff",
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                })}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  Pendiente
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                  ${loanList.reduce((sum, loan) => loan.debt + sum, 0)}
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        )}
+        <TableContainer
+          sx={(theme) => ({
+            borderRadius: 2,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+            overflow: "hidden",
+          })}
+        >
+          <Table size="small">
             <TableHead>
-              <TableRow>
-                <TableCell>{ComponentsLabels.TH_ACCOUNT_DATE}</TableCell>
-                <TableCell align="center">
+              <TableRow
+                sx={(theme) => ({
+                  backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                })}
+              >
+                <TableCell sx={{ fontWeight: 700, fontSize: 12 }}>
+                  {ComponentsLabels.TH_ACCOUNT_DATE}
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{ fontWeight: 700, fontSize: 12 }}
+                >
                   {ComponentsLabels.TH_STATUS}
                 </TableCell>
-                <TableCell>{ComponentsLabels.TH_ENTRY_VALUE}</TableCell>
-                <TableCell>{ComponentsLabels.TH_DEBT}</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: 12 }}>
+                  {ComponentsLabels.TH_ENTRY_VALUE}
+                </TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: 12 }}>
+                  {ComponentsLabels.TH_DEBT}
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -150,7 +336,12 @@ export const PartnerLoanListModal = (props: PartnerLoanListModalProps) => {
         </TableContainer>
       </DialogContent>
       <DialogActions>
-        <Grid container pl={2} pr={2} justifyContent={"space-between"}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ width: "100%", px: 2, py: 1 }}
+        >
           <Button onClick={onCloseModal} variant={"outlined"} color={"inherit"}>
             {ComponentsLabels.CLOSE}
           </Button>
@@ -164,7 +355,7 @@ export const PartnerLoanListModal = (props: PartnerLoanListModalProps) => {
           >
             {ComponentsLabels.PRINT}
           </Button>
-        </Grid>
+        </Box>
       </DialogActions>
     </Dialog>
   );

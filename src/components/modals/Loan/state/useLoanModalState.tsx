@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Loan,
   LoanDetail,
@@ -44,15 +44,14 @@ export const useLoanModalState = (
   const navigate = useNavigate();
 
   const [detailSelected, setDetailSelected] = useState<LoanDetail[]>([]);
-  const [finalLoanDetail, setFinalLoanDetail] = useState<LoanDetail[]>([]);
 
   const loanDetailFromDB = useAppSelector(selectLoanDetail);
   const loanDetailStatus = useAppSelector(selectLoanDetailStatus);
 
-  useMemo(() => {
-    if (props.loanDetail) setFinalLoanDetail(props.loanDetail);
-    else if (props.loan) dispatch(getLoanDetail(props.loan!.number!));
-  }, [props.loan]);
+  useEffect(() => {
+    if (!props.loanDetail && props.loan)
+      dispatch(getLoanDetail(props.loan.number!));
+  }, [dispatch, props.loan, props.loanDetail]);
 
   const entryNumber = useAppSelector(selectEntryCount);
   const { onUpdateAmounts, onUpdateLoanDetailsToPay } =
@@ -64,7 +63,6 @@ export const useLoanModalState = (
   };
 
   const onClose = () => {
-    if (!props.loanDetail) setFinalLoanDetail([]);
     dispatch(setLoanDetail([]));
     dispatch(setGetLoanDetailStatus(RequestStatusEnum.PENDING));
     setDetailSelected([]);
@@ -140,10 +138,9 @@ export const useLoanModalState = (
     navigate(RoutesEnum.LOAN_UPDATE, { state: { loan, loanDetail } });
   };
 
-  useEffect(() => {
-    if (loanDetailStatus === RequestStatusEnum.SUCCESS)
-      setFinalLoanDetail(loanDetailFromDB);
-  }, [loanDetailStatus]);
+  const finalLoanDetail =
+    props.loanDetail ??
+    (loanDetailStatus === RequestStatusEnum.SUCCESS ? loanDetailFromDB : []);
 
   return {
     finalLoanDetail,

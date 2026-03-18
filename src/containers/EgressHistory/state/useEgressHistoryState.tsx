@@ -50,7 +50,6 @@ export const useEgressHistoryState = () => {
 
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(25);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<EgressHeader>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [typeSelector, setTypeSelector] = useState<TypesSelector | null>(null);
@@ -64,18 +63,26 @@ export const useEgressHistoryState = () => {
 
   const onChangeDateRange = (from: string, to: string) => {
     setDateRange({ from, to });
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onChangePaymentType = (type: string | null) => {
     setPaymentType(type);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onSelectType = (selected: TypesSelector | null) => {
     setTypeSelector(selected);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onSelectPeriod = (selected: PeriodSelector | null) => {
     setPeriodSelector(selected);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onPageChange = (_: any, newPage: number) => {
@@ -98,17 +105,15 @@ export const useEgressHistoryState = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     dispatch(getPeriodList());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (getPeriodListStatus === RequestStatusEnum.SUCCESS && periodSelector)
       dispatch(getTypesMetrics({ period: periodSelector.id }));
-  }, [periodSelector]);
+  }, [dispatch, getPeriodListStatus, periodSelector]);
 
   useEffect(() => {
-    setIsLoading(true);
     if (
       isGetRequest(typeSelectorRef, typeSelector, page, rowsPerPage) &&
       periodSelector
@@ -126,13 +131,18 @@ export const useEgressHistoryState = () => {
       );
 
     typeSelectorRef.current = typeSelector;
-  }, [page, rowsPerPage, typeSelector, dateRange, paymentType, periodSelector]);
+  }, [
+    dateRange,
+    dispatch,
+    page,
+    paymentType,
+    periodSelector,
+    rowsPerPage,
+    typeSelector,
+  ]);
 
   useEffect(() => {
     if (periodSelector) {
-      setPage(DefaultPagination.page);
-      setRowsPerPage(DefaultPagination.rowsPerPage);
-
       dispatch(
         getEgressCount({
           type: typeSelector?.id,
@@ -143,19 +153,13 @@ export const useEgressHistoryState = () => {
         })
       );
     }
-  }, [typeSelector, dateRange, paymentType, periodSelector]);
-
-  useEffect(() => {
-    if (
-      egressCountStatus === RequestStatusEnum.SUCCESS &&
-      egressPaginatedStatus === RequestStatusEnum.SUCCESS
-    )
-      setIsLoading(false);
-  }, [egressCountStatus, egressPaginatedStatus]);
+  }, [dateRange, dispatch, paymentType, periodSelector, typeSelector]);
 
   return {
     egressPaginated,
-    isLoading,
+    isLoading:
+      egressCountStatus === RequestStatusEnum.PENDING ||
+      egressPaginatedStatus === RequestStatusEnum.PENDING,
     modal: {
       isModalOpen,
       onCloseModal,

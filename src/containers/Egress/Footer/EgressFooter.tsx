@@ -1,4 +1,5 @@
 import {
+  alpha,
   Box,
   Button,
   Dialog,
@@ -33,7 +34,7 @@ export const EgressFooter = () => {
   } = useContext(EgressContext);
 
   return (
-    <Box pl={2} pr={2}>
+    <Box p={1} pb={1.5}>
       <Dialog open={isOpenSaveDialog} onClose={onCloseSaveDialog}>
         <DialogTitle>{EgressLabels.SUCCESS_SAVE_MODAL_TITLE}</DialogTitle>
         <DialogContent>
@@ -52,38 +53,60 @@ export const EgressFooter = () => {
         totalAmount={totalDischarge}
         handleClose={onCloseBillDetailModal}
       />
-      <Box display={"flex"} justifyContent={"space-between"} pb={2}>
-        <Box display={"flex"}>
-          <Typography pr={2}>{EgressLabels.DATE}</Typography>
-          <DatePikerInput onChangeDate={onChangeEgressDate} />
-        </Box>
-        <Box display={"flex"}>
-          <Typography pr={2}>{EgressLabels.TOTAL}</Typography>
-          <TextField
-            type={"number"}
-            size={"small"}
-            disabled
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              ),
-            }}
-            value={totalDischarge}
-          />
-        </Box>
-      </Box>
-      <Box display={"flex"} justifyContent={"space-between"} pb={2}>
-        <Button variant={"outlined"} onClick={onCancelEgress}>
-          {EgressLabels.CANCEL}
-        </Button>
-        <Button
-          endIcon={<SaveIcon />}
-          variant="contained"
-          disabled={disableSave}
-          onClick={onOpenBillDetailModal}
+      <Box
+        sx={(theme) => ({
+          borderRadius: 1.5,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
+          backgroundColor: "#fff",
+          p: 1,
+        })}
+      >
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr auto auto",
+            alignItems: "center",
+            columnGap: 16,
+          }}
         >
-          {EgressLabels.SAVE}
-        </Button>
+          <Box display="flex" flexDirection="column" gap={0.5}>
+            <Typography variant="caption" color="text.secondary">
+              {EgressLabels.DATE}
+            </Typography>
+            <DatePikerInput onChangeDate={onChangeEgressDate} />
+          </Box>
+          <Box display="flex" justifyContent="flex-end" gap={1}>
+            <Button variant={"outlined"} onClick={onCancelEgress} size="small">
+              {EgressLabels.CANCEL}
+            </Button>
+            <Button
+              endIcon={<SaveIcon />}
+              variant="contained"
+              disabled={disableSave}
+              onClick={onOpenBillDetailModal}
+              size="small"
+            >
+              {EgressLabels.SAVE}
+            </Button>
+          </Box>
+          <Box display="flex" flexDirection="column" gap={0.5} alignItems="flex-end">
+            <Typography variant="caption" color="text.secondary">
+              {EgressLabels.TOTAL}
+            </Typography>
+            <TextField
+              type={"number"}
+              size={"small"}
+              disabled
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+              value={totalDischarge}
+              sx={{ width: 120 }}
+            />
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

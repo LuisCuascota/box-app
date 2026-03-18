@@ -1,4 +1,6 @@
 import {
+  alpha,
+  Box,
   Grid,
   IconButton,
   Skeleton,
@@ -11,6 +13,14 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import {
+  cardContainerSx,
+  subtitleSx,
+  tableContainerSx,
+  tableHeadCellSx,
+  tableHeadRowSx,
+  titleSx,
+} from "../../shared/styles/Ui.styles.ts";
 import {
   DATE_FORMAT,
   getFormattedDate,
@@ -41,51 +51,66 @@ export const EgressHistory = () => {
   return (
     <PaperBase>
       <Grid container p={1}>
-        <Grid item md={12} xs={12}>
-          <Typography textAlign={"center"} variant={"h6"}>
-            {EgressHistoryLabels.TITLE}
-          </Typography>
+        <Grid size={12}>
+          <Box sx={(theme) => cardContainerSx(theme)}>
+            <Grid container spacing={1} alignItems="center">
+              <Grid size={12}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Typography textAlign={"left"} variant={"h6"} sx={(theme) => titleSx(theme)}>
+                    {EgressHistoryLabels.TITLE}
+                  </Typography>
+                  <Typography variant="caption" sx={(theme) => subtitleSx(theme)}>
+                    {ComponentsLabels.FILTERS}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={2} pr={1}>
+                <PeriodSearch
+                  disableSearch={false}
+                  onChangeSelector={search.onSelectPeriod}
+                />
+              </Grid>
+              <Grid size={4} pr={1}>
+                <TypesSearch
+                  disableSearch={false}
+                  onChangeSelector={search.onSelectType}
+                />
+              </Grid>
+              <Grid size={2} pr={1}>
+                <OptionsSelect
+                  label={"Tipo"}
+                  options={egressTypeOptions}
+                  onSelect={search.onChangePaymentType}
+                />
+              </Grid>
+              <Grid size={4}>
+                <DateRangePikerInput
+                  defaultFrom={environment.startDate}
+                  defaultTo={moment().format(DATE_FORMAT)}
+                  onChangeDate={search.onChangeDateRange}
+                />
+              </Grid>
+            </Grid>
+          </Box>
         </Grid>
-        <Grid item md={2} xs={12} pr={1}>
-          <PeriodSearch
-            disableSearch={false}
-            onChangeSelector={search.onSelectPeriod}
-          />
-        </Grid>
-        <Grid item md={4} xs={12} pr={1}>
-          <TypesSearch
-            disableSearch={false}
-            onChangeSelector={search.onSelectType}
-          />{" "}
-        </Grid>
-        <Grid item md={2} pr={1}>
-          <OptionsSelect
-            label={"Tipo"}
-            options={egressTypeOptions}
-            onSelect={search.onChangePaymentType}
-          />
-        </Grid>
-        <Grid item md={4} xs={12}>
-          <DateRangePikerInput
-            defaultFrom={environment.startDate}
-            defaultTo={moment().format(DATE_FORMAT)}
-            onChangeDate={search.onChangeDateRange}
-          />
-        </Grid>
-        <Grid item md={12} xs={12}>
+        <Grid size={12}>
           <PieDataChart
             data={[
               {
                 id: 0,
                 value: +pagination.egressCount.cash.toFixed(2),
                 label: ComponentsLabels.TYPE_CASH,
-                color: "#1f3c55",
+                color: "#1B3A57",
               },
               {
                 id: 1,
                 value: +pagination.egressCount.transfer.toFixed(2),
                 label: ComponentsLabels.TYPE_TRANSFER,
-                color: "#d5a92b",
+                color: "#FFB347",
               },
             ]}
             totalValue={+pagination.egressCount.total.toFixed(2)}
@@ -93,29 +118,33 @@ export const EgressHistory = () => {
           />
         </Grid>
       </Grid>
-      <TableContainer>
+      <TableContainer sx={(theme) => tableContainerSx(theme)}>
         <EgressModal
           egressData={modal.rowSelected}
           open={modal.isModalOpen}
           handleClose={modal.onCloseModal}
         />
-        <Table>
+        <Table size="small">
           <TableHead>
-            <TableRow>
+            <TableRow sx={(theme) => tableHeadRowSx(theme)}>
               <TableCell align="left">
-                <Typography color={"red"}>
-                  <b>{"Nº"}</b>
+                <Typography sx={(theme) => ({ ...tableHeadCellSx, color: theme.palette.primary.main })}>
+                  {"Nº"}
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="left" sx={tableHeadCellSx}>
                 {EgressHistoryLabels.TH_BENEFICIARY}
               </TableCell>
-              <TableCell align="left">{EgressHistoryLabels.TH_DATE}</TableCell>
-              <TableCell align="left">
+              <TableCell align="left" sx={tableHeadCellSx}>
+                {EgressHistoryLabels.TH_DATE}
+              </TableCell>
+              <TableCell align="left" sx={tableHeadCellSx}>
                 {EgressHistoryLabels.TH_AMOUNT}
               </TableCell>
-              <TableCell align="left">{EgressHistoryLabels.TH_TYPE}</TableCell>
-              <TableCell>{}</TableCell>
+              <TableCell align="left" sx={tableHeadCellSx}>
+                {EgressHistoryLabels.TH_TYPE}
+              </TableCell>
+              <TableCell sx={tableHeadCellSx} />
             </TableRow>
           </TableHead>
           <TableBody>

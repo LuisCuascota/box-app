@@ -3,7 +3,7 @@ import {
   useAppSelector,
 } from "../../shared/hooks/Store.hook.ts";
 import { selectMetrics } from "../../store/selectors/selectors.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getMetrics } from "../../store/epics/MetricsEpics/getMetrics.epic.ts";
 import { getTypesMetrics } from "../../store/epics/MetricsEpics/getTypesMetrics.epic.ts";
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
@@ -17,14 +17,13 @@ export const useMetricsState = () => {
   const { metrics, getMetricsStatus, getTypesMetricsStatus, typesMetrics } =
     useAppSelector(selectMetrics);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [utilsMetrics, setUtilsMetrics] = useState<TypeMetric[]>([]);
   const [periodSelector, setPeriodSelector] = useState<PeriodSelector | null>(
     null
   );
 
-  const buildUtilsMetrics = () => {
-    const utilsMetrics: TypeMetric[] = [];
+  const utilsMetrics = useMemo(() => {
+    if (!metrics || typesMetrics.length === 0) return [];
+    const calculated: TypeMetric[] = [];
     const revenueValue = typesMetrics
       .filter((item) => [4, 5, 6].includes(item.id))
       .reduce((accumulator, currentItem) => accumulator + currentItem.sum, 0);
@@ -32,7 +31,7 @@ export const useMetricsState = () => {
       .filter((item) => [8, 3].includes(item.id))
       .reduce((accumulator, currentItem) => accumulator + currentItem.sum, 0);
 
-    utilsMetrics.push(
+    calculated.push(
       {
         id: 1,
         description: "Valor acumulado por intereses y multas",
@@ -46,12 +45,12 @@ export const useMetricsState = () => {
       {
         id: 1,
         description: "Valor actual despachado en créditos",
-        sum: metrics!.loanTotalDispatched,
+        sum: metrics.loanTotalDispatched,
       }
     );
 
-    setUtilsMetrics(utilsMetrics);
-  };
+    return calculated;
+  }, [metrics, typesMetrics]);
 
   const onSelectPeriod = (selected: PeriodSelector | null) => {
     setPeriodSelector(selected);
@@ -59,32 +58,22 @@ export const useMetricsState = () => {
 
   useEffect(() => {
     if (periodSelector) {
-      setIsLoading(true);
       dispatch(getMetrics({ period: periodSelector.id }));
       dispatch(getTypesMetrics({ period: periodSelector.id }));
     }
-  }, [periodSelector]);
+  }, [dispatch, periodSelector]);
 
   useEffect(() => {
-    setIsLoading(true);
     dispatch(getPeriodList());
-  }, []);
-
-  useEffect(() => {
-    if (
-      getMetricsStatus === RequestStatusEnum.SUCCESS &&
-      getTypesMetricsStatus === RequestStatusEnum.SUCCESS
-    ) {
-      buildUtilsMetrics();
-      setIsLoading(false);
-    }
-  }, [getMetricsStatus, getTypesMetricsStatus]);
+  }, [dispatch]);
 
   return {
     metrics,
     typesMetrics,
     utilsMetrics,
-    isLoading,
+    isLoading:
+      getMetricsStatus === RequestStatusEnum.PENDING ||
+      getTypesMetricsStatus === RequestStatusEnum.PENDING,
     search: {
       onSelectPeriod,
     },

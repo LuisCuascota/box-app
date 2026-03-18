@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { ModulesEnum, RoutesEnum } from "../../shared/enums/Routes.enum.ts";
 import React, { useState } from "react";
 import {
+  alpha,
   Collapse,
   Link,
   List,
@@ -129,9 +130,10 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const authenticator = useAuthenticator((context) => [context.authStatus]);
   const { authStatus, signOut } = props.isOffLine
     ? { authStatus: "authenticated", signOut: () => {} }
-    : useAuthenticator((context) => [context.authStatus]);
+    : authenticator;
 
   const [anchorElEntry, setAnchorElEntry] = useState<null | HTMLElement>(null);
   const [anchorElLoan, setAnchorElLoan] = useState<null | HTMLElement>(null);
@@ -221,9 +223,16 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      sx={(theme) => ({
+        backgroundColor: theme.palette.primary.main,
+        boxShadow: "none",
+        borderBottom: `1px solid ${alpha("#ffffff", 0.12)}`,
+      })}
+    >
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters sx={{ minHeight: 56, px: 1.5, gap: 1.5 }}>
           {!isMdScreen && authStatus === "authenticated" && (
             <Box sx={{ display: "flex", flexGrow: 1 }}>
               <IconButton
@@ -284,7 +293,15 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
               </SwipeableDrawer>
             </Box>
           )}
-          <img src={Logo} style={{ display: "flex", width: "60px" }} />
+          <img
+            src={Logo}
+            style={{
+              display: "flex",
+              width: "48px",
+              height: "48px",
+              objectFit: "contain",
+            }}
+          />
           <Link
             variant="h6"
             href="/"
@@ -292,8 +309,10 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
             color={"white"}
             display={"flex"}
             flexGrow={1}
-            fontWeight={600}
-            m={2}
+            fontWeight={700}
+            ml={1}
+            letterSpacing={0.4}
+            sx={{ textTransform: "none" }}
           >
             {"Kaja TFM"}
           </Link>
@@ -303,7 +322,20 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
                 <Box key={page.title}>
                   <Button
                     onClick={(event) => handleActionMenu(page.title, event)}
-                    sx={{ color: "white" }}
+                    sx={{
+                      color: "rgba(255,255,255,0.9)",
+                      fontSize: "12.75px",
+                      fontWeight: 600,
+                      letterSpacing: "0.3px",
+                      textTransform: "none",
+                      px: 1.5,
+                      py: 0.5,
+                      borderRadius: 1,
+                      "&:hover": {
+                        backgroundColor: (theme) =>
+                          alpha(theme.palette.secondary.main, 0.22),
+                      },
+                    }}
                   >
                     {page.title}
                   </Button>
@@ -311,6 +343,14 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
                     anchorEl={getAnchorEl(page.title)}
                     open={getAnchorEl(page.title) ? true : false}
                     onClose={() => handleActionMenu(page.title)}
+                    PaperProps={{
+                      sx: {
+                        mt: 1,
+                        borderRadius: 1.5,
+                        minWidth: 160,
+                        boxShadow: "0 12px 28px rgba(17,43,64,0.22)",
+                      },
+                    }}
                   >
                     {page.child.map((child) => (
                       <MenuItem
@@ -337,6 +377,13 @@ export const NavigationBar = (props: { isOffLine: boolean }) => {
                   handleActionMenu(ModulesEnum.LOGIN, event);
                 }}
                 color="inherit"
+                sx={{
+                  ml: 0.5,
+                  border: "1px solid rgba(255,255,255,0.22)",
+                  borderRadius: 1.5,
+                  width: 38,
+                  height: 38,
+                }}
               >
                 <AccountCircle />
               </IconButton>

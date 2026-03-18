@@ -46,7 +46,6 @@ export const useLoanHistoryState = () => {
   const loanCountStatus = useAppSelector(selectLoanCountStatus);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(25);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<Loan>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [accountSelector, setAccountSelector] =
@@ -58,10 +57,14 @@ export const useLoanHistoryState = () => {
 
   const onChangeDateRange = (from: string, to: string) => {
     setDateRange({ from, to });
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onChangePaymentStatus = (type: string | null) => {
     setPaymentStatus(type);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onPageChange = (_: any, newPage: number) => {
@@ -85,16 +88,15 @@ export const useLoanHistoryState = () => {
 
   const onSelectPartner = (selected: PartnerSelector | null) => {
     setAccountSelector(selected);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   useEffect(() => {
-    setIsLoading(true);
     dispatch(getPartners({ mode: ModePagination.SIMPLE }));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    setIsLoading(true);
-
     if (isGetRequest(accountSelectorRef, accountSelector, page, rowsPerPage))
       dispatch(
         getLoansPaginated({
@@ -108,12 +110,9 @@ export const useLoanHistoryState = () => {
       );
 
     accountSelectorRef.current = accountSelector;
-  }, [page, rowsPerPage, accountSelector, dateRange, paymentStatus]);
+  }, [accountSelector, dateRange, dispatch, page, paymentStatus, rowsPerPage]);
 
   useEffect(() => {
-    setPage(DefaultPagination.page);
-    setRowsPerPage(DefaultPagination.rowsPerPage);
-
     dispatch(
       getLoanCount({
         account: accountSelector?.id,
@@ -122,19 +121,13 @@ export const useLoanHistoryState = () => {
         paymentType: paymentStatus,
       })
     );
-  }, [accountSelector, dateRange, paymentStatus]);
-
-  useEffect(() => {
-    if (
-      loanCountStatus === RequestStatusEnum.SUCCESS &&
-      loansPaginatedStatus === RequestStatusEnum.SUCCESS
-    )
-      setIsLoading(false);
-  }, [loanCountStatus, loansPaginatedStatus]);
+  }, [accountSelector, dateRange, dispatch, paymentStatus]);
 
   return {
     loansPaginated,
-    isLoading,
+    isLoading:
+      loanCountStatus === RequestStatusEnum.PENDING ||
+      loansPaginatedStatus === RequestStatusEnum.PENDING,
     modal: {
       isModalOpen,
       onCloseModal,

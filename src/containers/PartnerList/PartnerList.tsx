@@ -1,4 +1,5 @@
 import {
+  alpha,
   Box,
   Button,
   Dialog,
@@ -18,6 +19,13 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import {
+  cardContainerSx,
+  tableContainerSx,
+  tableHeadCellSx,
+  tableHeadRowSx,
+  titleSx,
+} from "../../shared/styles/Ui.styles.ts";
 import { PaperBase } from "../../components/surfaces/PaperBase.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { PartnerListLabels } from "../../shared/labels/PartnerList.labels.ts";
@@ -39,12 +47,21 @@ export const PartnerList = () => {
 
   return (
     <PaperBase>
-      <Box p={2}>
-        <Typography textAlign={"center"} variant={"h6"}>
-          {PartnerListLabels.TITLE}
-        </Typography>
+      <Box p={2} sx={(theme) => ({ ...cardContainerSx(theme), mb: 1 })}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Typography variant={"h6"} sx={(theme) => titleSx(theme)}>
+            {PartnerListLabels.TITLE}
+          </Typography>
+          <Button
+            variant={"contained"}
+            endIcon={<AddCircleIcon />}
+            onClick={() => modal.onOpenModal()}
+          >
+            {PartnerListLabels.ADD_PARTNER}
+          </Button>
+        </Box>
       </Box>
-      <TableContainer>
+      <TableContainer sx={(theme) => tableContainerSx(theme)}>
         <PartnerModal
           partnerData={modal.rowSelected}
           open={modal.isModalOpen}
@@ -92,32 +109,31 @@ export const PartnerList = () => {
             </Button>
           </DialogActions>
         </Dialog>
-        <Box display={"flex"} justifyContent={"end"}>
-          <Button
-            variant={"contained"}
-            endIcon={<AddCircleIcon />}
-            onClick={() => modal.onOpenModal()}
-          >
-            {PartnerListLabels.ADD_PARTNER}
-          </Button>
-        </Box>
-        <Table>
+        <Table size="small">
           <TableHead>
-            <TableRow>
+            <TableRow sx={(theme) => tableHeadRowSx(theme)}>
               <TableCell align="center">
-                <Typography color={"red"}>
+                <Typography sx={(theme) => ({ ...tableHeadCellSx, color: theme.palette.primary.main })}>
                   {PartnerListLabels.TH_ACCOUNT}
                 </Typography>
               </TableCell>
-              <TableCell align="left">{PartnerListLabels.TH_NAMES}</TableCell>
+              <TableCell align="left" sx={tableHeadCellSx}>
+                {PartnerListLabels.TH_NAMES}
+              </TableCell>
               <TableCell align="left">
-                {PartnerListLabels.TH_DOCUMENT}
+                <Typography sx={tableHeadCellSx}>
+                  {PartnerListLabels.TH_DOCUMENT}
+                </Typography>
               </TableCell>
               <TableCell align="center">
-                {PartnerListLabels.TH_SAVING}
+                <Typography sx={tableHeadCellSx}>
+                  {PartnerListLabels.TH_SAVING}
+                </Typography>
               </TableCell>
-              <TableCell align="center">{PartnerListLabels.TH_LOAN}</TableCell>
-              <TableCell></TableCell>
+              <TableCell align="center" sx={tableHeadCellSx}>
+                {PartnerListLabels.TH_LOAN}
+              </TableCell>
+              <TableCell sx={tableHeadCellSx} />
             </TableRow>
           </TableHead>
           <TableBody>

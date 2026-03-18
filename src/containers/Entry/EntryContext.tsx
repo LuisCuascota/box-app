@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -27,7 +27,6 @@ import {
 } from "../../store/selectors/selectors.ts";
 import {
   EntryLoanData,
-  LoanDefinition,
   LoanDetailToPay,
 } from "../../store/interfaces/LoanState.interfaces.ts";
 import { EntryTypesIdEnum } from "../../shared/enums/EntryTypes.enum.ts";
@@ -98,25 +97,27 @@ const EntryContextProvider = ({ children }: any) => {
   const amountsCalculated = useAppSelector(selectAmounts);
   const amountsCalculatedStatus = useAppSelector(selectAmountsStatus);
   const postEntryStatus = useAppSelector(selectPostEntryStatus);
-  const { periodList, getPeriodListStatus } =
-    useAppSelector(selectGetPeriodList);
+  const { periodList } = useAppSelector(selectGetPeriodList);
 
   const [disableSearch, setDisableSearch] = useState<boolean>(false);
-  const [disableSave, setDisableSave] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasRequestedAmounts, setHasRequestedAmounts] =
+    useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isOpenLoanModal, setIsOpenLoanModal] = useState<boolean>(false);
-  const [isOpenSaveDialog, setIsOpenSaveDialog] = useState<boolean>(false);
-  const [loanDefinition, setloanDefinition] = useState<LoanDefinition>();
 
   const [partnerSelected, setPartnerSelected] =
     useState<PartnerSelector | null>(null);
   const [entryDate, setEntryDate] = useState<string>();
-  const [amountsToPay, setAmountsToPay] = useState<EntryAmount[]>([]);
+  const [amountOverrides, setAmountOverrides] = useState<
+    Record<number, number>
+  >({});
   const [loanDetailToPay, setLoanDetailToPay] = useState<LoanDetailToPay[]>();
-  const [totalToPay, setTotalToPay] = useState<number>(0);
   const [isOpenBillDetailModal, setOpenBillDetailModal] = useState(false);
   const [billDetail, setBillDetail] = useState<EntryBillDetail>();
-  const [periodId, setPeriodId] = useState<number>();
+  const periodId = useMemo(
+    () => periodList.find((period) => period.enabled)?.id,
+    [periodList]
+  );
 
   const onOpenBillDetailModal = () => {
     setOpenBillDetailModal(true);
@@ -128,9 +129,10 @@ const EntryContextProvider = ({ children }: any) => {
 
   const onChangePartnerSelector = (partnerSelected: PartnerSelector | null) => {
     if (partnerSelected) {
+      setHasRequestedAmounts(true);
+      setAmountOverrides({});
       setPartnerSelected(partnerSelected);
       setDisableSearch(true);
-      setIsLoading(true);
 
       dispatch(getEntryAmounts(partnerSelected.id));
     }
@@ -141,19 +143,15 @@ const EntryContextProvider = ({ children }: any) => {
   };
 
   const onUpdateAmounts = (id: number, newValue: number) => {
-    const updatedAMounts = amountsToPay.map((amount) => {
-      if (amount.id === id) amount.value = newValue;
-
-      return amount;
-    });
-
-    setAmountsToPay(updatedAMounts);
+    setAmountOverrides((current) => ({
+      ...current,
+      [id]: newValue,
+    }));
   };
 
   const onActionLoanModal = (value: boolean) => setIsOpenLoanModal(value);
 
   const onCloseSaveDialog = () => {
-    setIsOpenSaveDialog(false);
     clearStateForNew();
     dispatch(getEntryCount());
   };
@@ -163,7 +161,7 @@ const EntryContextProvider = ({ children }: any) => {
   };
 
   const validationWhenAmountDefinitionExist = () => {
-    if (loanDefinition) {
+    if (loanDefinitionFromAmounts) {
       if (loanDetailToPay) return true;
       else return false;
     }
@@ -171,32 +169,59 @@ const EntryContextProvider = ({ children }: any) => {
     return true;
   };
 
-  const cleanEntryAmounts = () => {
-    const newAmounts: EntryAmount[] = entryTypes.map((type: EntryType) => ({
-      id: type.id,
-      description: type.description,
-      value: 0,
-    }));
+  const baseAmounts = useMemo(() => {
+    if (entryTypesStatus !== RequestStatusEnum.SUCCESS) return [];
 
-    setAmountsToPay(newAmounts);
-  };
+    return entryTypes.map((type: EntryType) => {
+      const existingAmount =
+        amountsCalculatedStatus === RequestStatusEnum.SUCCESS
+          ? amountsCalculated.find((amount) => amount.id === type.id)
+          : undefined;
+
+      return {
+        id: type.id,
+        description: type.description,
+        value: existingAmount?.value ?? 0,
+        amountDefinition: existingAmount?.amountDefinition,
+      };
+    });
+  }, [
+    amountsCalculated,
+    amountsCalculatedStatus,
+    entryTypes,
+    entryTypesStatus,
+  ]);
+
+  const amountsToPay = useMemo(
+    () =>
+      baseAmounts.map((amount) => {
+        const override = amountOverrides[amount.id];
+
+        return override === undefined ? amount : { ...amount, value: override };
+      }),
+    [amountOverrides, baseAmounts]
+  );
 
   const buildLoanToPay = () => {
-    if (loanDefinition && loanDetailToPay && loanDetailToPay.length > 0) {
-      const paidDetails = loanDefinition.loanDetails!.filter(
+    if (
+      loanDefinitionFromAmounts &&
+      loanDetailToPay &&
+      loanDetailToPay.length > 0
+    ) {
+      const paidDetails = loanDefinitionFromAmounts.loanDetails!.filter(
         (detail) => detail.is_paid
       ).length;
 
       const entryLoanData: EntryLoanData = {
-        currentDebt: loanDefinition.loan.debt,
-        loanNumber: loanDefinition.loan.number!,
+        currentDebt: loanDefinitionFromAmounts.loan.debt,
+        loanNumber: loanDefinitionFromAmounts.loan.number!,
         isFinishLoan: false,
         loanDetailToPay,
       };
 
       if (
         paidDetails + loanDetailToPay.length ===
-        loanDefinition.loanDetails!.length
+        loanDefinitionFromAmounts.loanDetails!.length
       )
         entryLoanData.isFinishLoan = true;
 
@@ -242,13 +267,17 @@ const EntryContextProvider = ({ children }: any) => {
   };
 
   const buildEntryLoanDetail = (): EntryLoanDetail | undefined => {
-    if (loanDefinition && loanDetailToPay && loanDetailToPay.length > 0) {
+    if (
+      loanDefinitionFromAmounts &&
+      loanDetailToPay &&
+      loanDetailToPay.length > 0
+    ) {
       loanDetailToPay.sort((a, b) => b.fee_number - a.fee_number);
       const topFee = loanDetailToPay[0];
 
       return {
-        term: loanDefinition.loan.term,
-        value: loanDefinition.loan.value,
+        term: loanDefinitionFromAmounts.loan.term,
+        value: loanDefinitionFromAmounts.loan.value,
         fee_number: topFee.fee_number,
         fee_total: topFee.fee_total,
         balance_after_pay: topFee.balance_after_pay,
@@ -261,13 +290,12 @@ const EntryContextProvider = ({ children }: any) => {
   const clearStateForNew = () => {
     dispatch(setPostEntryStatus(RequestStatusEnum.PENDING));
     dispatch(setEntryAmounts([]));
-    setIsLoading(false);
     setDisableSearch(false);
-    setDisableSave(true);
-    setloanDefinition(undefined);
     setLoanDetailToPay(undefined);
     setPartnerSelected(null);
-    cleanEntryAmounts();
+    setAmountOverrides({});
+    setHasRequestedAmounts(false);
+    setIsSaving(false);
   };
 
   const onPrintEntry = () => {
@@ -276,7 +304,7 @@ const EntryContextProvider = ({ children }: any) => {
   };
 
   const onSaveEntry = (billDetail: EntryBillDetail) => {
-    setIsLoading(true);
+    setIsSaving(true);
     setOpenBillDetailModal(false);
     setBillDetail(billDetail);
 
@@ -292,84 +320,36 @@ const EntryContextProvider = ({ children }: any) => {
     dispatch(getEntryCount());
     dispatch(getEntryTypes());
     dispatch(getPeriodList());
-  }, []);
+  }, [dispatch]);
 
-  useEffect(() => {
-    if (postEntryStatus === RequestStatusEnum.SUCCESS)
-      setIsOpenSaveDialog(true);
-  }, [postEntryStatus]);
+  const loanDefinitionFromAmounts =
+    amountsCalculatedStatus === RequestStatusEnum.SUCCESS
+      ? amountsCalculated.find(
+          (amount) =>
+            amount.id === EntryTypesIdEnum.LOAN_CONTRIBUTION &&
+            amount.amountDefinition
+        )?.amountDefinition
+      : undefined;
 
-  useEffect(() => {
-    if (entryTypesStatus === RequestStatusEnum.SUCCESS) cleanEntryAmounts();
-  }, [entryTypesStatus]);
+  const totalToPay = amountsToPay.reduce(
+    (total, amount) => +(total + amount.value).toFixed(2),
+    0
+  );
 
-  useEffect(() => {
-    if (getPeriodListStatus === RequestStatusEnum.SUCCESS) {
-      const currentPeriod = periodList.find((period) => period.enabled);
+  const disableSave = !(
+    partnerSelected &&
+    entryDate &&
+    entryNumber.count > 0 &&
+    totalToPay > 0 &&
+    validationWhenAmountDefinitionExist() &&
+    periodId
+  );
 
-      if (currentPeriod) {
-        setPeriodId(currentPeriod.id);
-      }
-    }
-  }, [getPeriodListStatus]);
-
-  useEffect(() => {
-    if (amountsCalculatedStatus === RequestStatusEnum.SUCCESS) {
-      setAmountsToPay((currentAmountsToPay) =>
-        currentAmountsToPay.map((type) => {
-          const existingAmount = amountsCalculated.find(
-            (amount) => amount.id === type.id
-          );
-
-          if (existingAmount) {
-            if (
-              existingAmount.amountDefinition &&
-              type.id === EntryTypesIdEnum.LOAN_CONTRIBUTION
-            )
-              setloanDefinition(existingAmount.amountDefinition);
-
-            return {
-              ...type,
-              value: existingAmount.value,
-              amountDefinition: existingAmount.amountDefinition,
-            };
-          }
-
-          return type;
-        })
-      );
-      setIsLoading(false);
-    }
-  }, [amountsCalculatedStatus]);
-
-  useEffect(() => {
-    if (
-      partnerSelected &&
-      entryDate &&
-      entryNumber.count > 0 &&
-      totalToPay > 0 &&
-      validationWhenAmountDefinitionExist() &&
-      periodId
-    )
-      setDisableSave(false);
-    else setDisableSave(true);
-  }, [
-    partnerSelected,
-    entryDate,
-    loanDetailToPay,
-    entryNumber,
-    totalToPay,
-    periodId,
-  ]);
-
-  useEffect(() => {
-    setTotalToPay(
-      amountsToPay.reduce(
-        (total, amount) => +(total + amount.value).toFixed(2),
-        0
-      )
-    );
-  }, [amountsToPay]);
+  const isOpenSaveDialog = postEntryStatus === RequestStatusEnum.SUCCESS;
+  const isLoading =
+    (hasRequestedAmounts &&
+      amountsCalculatedStatus === RequestStatusEnum.PENDING) ||
+    (isSaving && postEntryStatus === RequestStatusEnum.PENDING);
 
   return (
     <EntryContext.Provider

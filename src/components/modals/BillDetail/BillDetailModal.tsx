@@ -8,6 +8,8 @@ import {
   FormControlLabel,
   TextField,
   Button,
+  Divider,
+  Stack,
 } from "@mui/material";
 import { EntryBillDetail } from "../../../store/interfaces/EntryState.interfaces.ts";
 import { ComponentsLabels } from "../../../shared/labels/Components.labels.ts";
@@ -101,16 +103,28 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
           transform: "translate(-50%, -50%)",
           width: 400,
           bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
+          borderRadius: 2,
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+          boxShadow: "none",
+          p: 3,
         }}
       >
         <Typography id="modal-title" variant="h6" component="h2">
           Seleccione el método de pago
         </Typography>
-        <Typography id="modal-description" sx={{ mt: 2 }}>
+        <Typography
+          id="modal-description"
+          sx={(theme) => ({
+            mt: 0.5,
+            color: theme.palette.primary.main,
+            fontWeight: 700,
+            fontSize: 18,
+            letterSpacing: 0.2,
+          })}
+        >
           Total a pagar: ${totalAmount}
         </Typography>
+        <Divider sx={{ my: 1.5 }} />
         <RadioGroup
           aria-label="payment-method"
           name="payment-method"
@@ -141,7 +155,7 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
               value={cash}
               onChange={handleCashChange}
               fullWidth
-              margin="normal"
+              margin="dense"
               inputProps={{ min: 0, max: totalAmount }}
             />
             <TextField
@@ -150,22 +164,24 @@ export const BillDetailModal: React.FC<PaymentModalProps> = ({
               value={transfer}
               onChange={handleTransferChange}
               fullWidth
-              margin="normal"
+              margin="dense"
               inputProps={{ min: 0, max: totalAmount }}
             />
           </Box>
         )}
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          fullWidth
-          disabled={isSubmitDisabled}
-        >
-          OK
-        </Button>
-        <Button variant="outlined" onClick={handleCancel} fullWidth>
-          Cancelar
-        </Button>
+        <Stack spacing={1} sx={{ mt: 1.5 }}>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            fullWidth
+            disabled={isSubmitDisabled}
+          >
+            OK
+          </Button>
+          <Button variant="outlined" onClick={handleCancel} fullWidth>
+            Cancelar
+          </Button>
+        </Stack>
       </Box>
     </Modal>
   );

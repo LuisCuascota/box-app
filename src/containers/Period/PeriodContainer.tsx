@@ -162,18 +162,18 @@ export const PeriodContainer = () => {
         <CircularProgress />
       </Backdrop>
       <Grid container spacing={1}>
-        <Grid item md={12} xs={12}>
+        <Grid size={12}>
           <Typography textAlign={"center"} variant={"h5"}>
             {"Balances del Periodo"}
           </Typography>
         </Grid>
-        <Grid item md={12} xs={12} pr={1}>
+        <Grid size={12} pr={1}>
           <PeriodSearch
             disableSearch={false}
             onChangeSelector={search.onSelectPeriod}
           />
         </Grid>
-        <Grid item md={12} xs={12}>
+        <Grid size={12}>
           <PieDataChart
             colors={["#d5a92b", "#1f3c55", "#808080"]}
             data={revenueValues.map((item, index) => ({

@@ -1,4 +1,5 @@
 import {
+  alpha,
   Skeleton,
   Table,
   TableBody,
@@ -37,27 +38,45 @@ export const LoanTable = (props: LoanTableProps) => {
       .toFixed(2);
 
   return (
-    <TableContainer>
-      <Table>
+    <TableContainer
+      sx={(theme) => ({
+        borderRadius: 2,
+        border: `1px solid ${alpha(theme.palette.primary.main, 0.08)}`,
+        overflow: "hidden",
+      })}
+    >
+      <Table size="small">
         <TableHead>
-          <TableRow>
-            <TableCell align="center">{ComponentsLabels.TH_LOAN_FEE}</TableCell>
-            <TableCell align="left">{ComponentsLabels.TH_LOAN_DATE}</TableCell>
-            <TableCell align="left">
+          <TableRow
+            sx={(theme) => ({
+              backgroundColor: alpha(theme.palette.primary.main, 0.04),
+            })}
+          >
+            <TableCell align="center" sx={{ fontWeight: 700, fontSize: 12 }}>
+              {ComponentsLabels.TH_LOAN_FEE}
+            </TableCell>
+            <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
+              {ComponentsLabels.TH_LOAN_DATE}
+            </TableCell>
+            <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
               {ComponentsLabels.TH_LOAN_FEE_VALUE}
             </TableCell>
-            <TableCell align="left">
+            <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
               {ComponentsLabels.TH_LOAN_INTEREST}
             </TableCell>
-            <TableCell align="left">{ComponentsLabels.TH_LOAN_TOTAL}</TableCell>
-            <TableCell align="left">
+            <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
+              {ComponentsLabels.TH_LOAN_TOTAL}
+            </TableCell>
+            <TableCell align="left" sx={{ fontWeight: 700, fontSize: 12 }}>
               {ComponentsLabels.TH_LOAN_BALANCE}
             </TableCell>
             {props.withStatus && (
-              <TableCell align="center">{ComponentsLabels.TH_STATUS}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 700, fontSize: 12 }}>
+                {ComponentsLabels.TH_STATUS}
+              </TableCell>
             )}
             {props.withActions && (
-              <TableCell align="right">
+              <TableCell align="right" sx={{ fontWeight: 700, fontSize: 12 }}>
                 {ComponentsLabels.TH_LOAN_ACTION}
               </TableCell>
             )}

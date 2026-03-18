@@ -23,25 +23,48 @@ export const CardItem = (props: CardItemProps) => {
   const navigate = useNavigate();
 
   return (
-    <Grid item xs={12} sm={6} md={4} p={2}>
-      <Card>
+    <Grid size={4}>
+      <Card
+        sx={(theme) => ({
+          borderRadius: 2,
+          border: `1px solid ${theme.palette.divider}`,
+          boxShadow: "none",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          transition: "transform 0.15s ease, box-shadow 0.15s ease",
+          "&:hover": {
+            transform: "translateY(-2px)",
+            boxShadow: "0 10px 24px rgba(17,43,64,0.12)",
+          },
+        })}
+      >
         <CardMedia
           component="img"
           alt="green iguana"
-          height="220"
+          height="160"
           image={props.image}
+          sx={{ objectFit: "cover" }}
         />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography
+            gutterBottom
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: 700 }}
+          >
             {props.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {props.description}
           </Typography>
         </CardContent>
-        <CardActions>
+        <CardActions
+          sx={{ px: 2, pb: 2, pt: 0, justifyContent: "space-between" }}
+        >
           <Button
             size="small"
+            variant="contained"
             onClick={() => navigate(props.primaryButtonLink)}
           >
             {props.primaryButton}
@@ -49,6 +72,7 @@ export const CardItem = (props: CardItemProps) => {
           {props.secondaryButton && props.secondaryButtonLink && (
             <Button
               size="small"
+              variant="outlined"
               onClick={() => navigate(props.secondaryButtonLink!)}
             >
               {props.secondaryButton}

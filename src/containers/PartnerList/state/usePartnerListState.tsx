@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -24,13 +24,13 @@ export const usePartnerListState = () => {
   } = useAppSelector(selectPartners);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(30);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<PartnerData>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [rowToDelete, setRowToDelete] = useState<PartnerData>();
-  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [rowToDeleteState, setRowToDeleteState] = useState<PartnerData>();
+  const [isAlertOpenState, setIsAlertOpenState] = useState<boolean>(false);
   const [isSavingModalOpen, setIsSavingModalOpen] = useState<boolean>(false);
   const [isLoanModalOpen, setIsLoanModalOpen] = useState<boolean>(false);
+  const prevDeleteStatusRef = useRef<RequestStatusEnum>(deletePartnerStatus);
 
   const onPageChange = (_: any, newPage: number) => {
     setPage(newPage);
@@ -42,18 +42,19 @@ export const usePartnerListState = () => {
   };
 
   const onOpenAlert = (row?: PartnerData) => {
-    setRowToDelete(row);
-    setIsAlertOpen(true);
+    setRowToDeleteState(row);
+    setIsAlertOpenState(true);
   };
 
   const onCloseAlert = () => {
-    setRowToDelete(undefined);
-    setIsAlertOpen(false);
+    setRowToDeleteState(undefined);
+    setIsAlertOpenState(false);
   };
 
   const onAcceptDelete = () => {
-    setIsLoading(true);
-    dispatch(deletePartner(rowToDelete!.number!));
+    setRowToDeleteState(undefined);
+    setIsAlertOpenState(false);
+    dispatch(deletePartner(rowToDeleteState!.number!));
   };
 
   const onOpenModal = (row?: PartnerData) => {
@@ -71,7 +72,7 @@ export const usePartnerListState = () => {
     setIsLoanModalOpen(true);
   };
 
-  const searchPartners = () => {
+  const searchPartners = useCallback(() => {
     dispatch(
       getPartners({
         limit: rowsPerPage,
@@ -79,12 +80,11 @@ export const usePartnerListState = () => {
         mode: ModePagination.FULL,
       })
     );
-  };
+  }, [dispatch, page, rowsPerPage]);
 
   const onCloseModal = () => {
     setRowSelected(undefined);
     setIsModalOpen(false);
-    setIsLoading(true);
     searchPartners();
   };
 
@@ -99,38 +99,33 @@ export const usePartnerListState = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     dispatch(getPartnersCount());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    setIsLoading(true);
     searchPartners();
-  }, [page, rowsPerPage]);
+  }, [searchPartners]);
 
   useEffect(() => {
     if (
-      getPartnersCountStatus === RequestStatusEnum.SUCCESS &&
-      getPartnersStatus === RequestStatusEnum.SUCCESS
-    )
-      setIsLoading(false);
-  }, [getPartnersCountStatus, getPartnersStatus]);
-
-  useEffect(() => {
-    if (deletePartnerStatus === RequestStatusEnum.SUCCESS) {
+      prevDeleteStatusRef.current !== RequestStatusEnum.SUCCESS &&
+      deletePartnerStatus === RequestStatusEnum.SUCCESS
+    ) {
       dispatch(getPartnersCount());
-      setRowToDelete(undefined);
-      setIsAlertOpen(false);
       searchPartners();
     }
-  }, [deletePartnerStatus]);
+    prevDeleteStatusRef.current = deletePartnerStatus;
+  }, [deletePartnerStatus, dispatch, searchPartners]);
 
   return {
     partners,
-    isLoading,
+    isLoading:
+      getPartnersStatus === RequestStatusEnum.PENDING ||
+      getPartnersCountStatus === RequestStatusEnum.PENDING,
+    isDeleting: deletePartnerStatus === RequestStatusEnum.PENDING,
     alert: {
-      rowToDelete,
-      isAlertOpen,
+      rowToDelete: rowToDeleteState,
+      isAlertOpen: isAlertOpenState,
       onOpenAlert,
       onCloseAlert,
       onAcceptDelete,

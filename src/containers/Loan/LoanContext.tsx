@@ -77,9 +77,6 @@ const LoanContextProvider = ({ children }: any) => {
   const loanCount = useAppSelector(selectLoanCount);
   const postLoanStatus = useAppSelector(selectPostLoanStatus);
 
-  const [disableCalculate, setDisableCalculate] = useState<boolean>(true);
-  const [disableSave, setDisableSave] = useState<boolean>(true);
-  const [isOpenSaveDialog, setIsOpenSaveDialog] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [partner, setPartner] = useState<PartnerSelector | null>(null);
@@ -149,7 +146,6 @@ const LoanContextProvider = ({ children }: any) => {
   };
 
   const onCloseSaveDialog = () => {
-    setIsOpenSaveDialog(false);
     clearStateForNew();
     dispatch(getLoanCount());
   };
@@ -171,29 +167,18 @@ const LoanContextProvider = ({ children }: any) => {
   useEffect(() => {
     dispatch(getPartners({ mode: ModePagination.ACTIVE_ONLY }));
     dispatch(getLoanCount());
-  }, []);
+  }, [dispatch]);
 
-  useEffect(() => {
-    if (
-      partner &&
-      loanType &&
-      date &&
-      isValidValue(amount) &&
-      isValidValue(months) &&
-      isValidValue(interest)
-    )
-      setDisableCalculate(false);
-    else setDisableCalculate(true);
-  }, [partner, loanType, date, amount, months, interest]);
-
-  useEffect(() => {
-    if (disableCalculate) setDisableSave(true);
-    else if (loanFees.length > 0) setDisableSave(false);
-  }, [disableCalculate, loanFees]);
-
-  useEffect(() => {
-    if (postLoanStatus === RequestStatusEnum.SUCCESS) setIsOpenSaveDialog(true);
-  }, [postLoanStatus]);
+  const disableCalculate = !(
+    partner &&
+    loanType &&
+    date &&
+    isValidValue(amount) &&
+    isValidValue(months) &&
+    isValidValue(interest)
+  );
+  const disableSave = disableCalculate || loanFees.length === 0;
+  const isOpenSaveDialog = postLoanStatus === RequestStatusEnum.SUCCESS;
 
   return (
     <LoanContext.Provider

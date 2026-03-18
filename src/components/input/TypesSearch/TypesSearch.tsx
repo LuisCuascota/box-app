@@ -1,5 +1,5 @@
 import { Autocomplete, Skeleton, TextField } from "@mui/material";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useMemo, useState } from "react";
 import { useAppSelector } from "../../../shared/hooks/Store.hook.ts";
 import { selectMetrics } from "../../../store/selectors/selectors.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
@@ -16,19 +16,18 @@ export interface TypesSearchParams {
   onChangeSelector: (selected: TypesSelector | null) => void;
 }
 export const TypesSearch = (props: TypesSearchParams) => {
-  const [typesList, setTypesList] = useState<TypesSelector[]>([]);
   const [value, setValue] = useState<TypesSelector | null>(null);
 
   const { getTypesMetricsStatus, typesMetrics } = useAppSelector(selectMetrics);
 
-  const buildSelector = () => {
-    setTypesList(
+  const typesList = useMemo(
+    () =>
       typesMetrics.map((type: TypeMetric) => ({
         id: type.id,
         label: `${type.description}-($${type.sum})`,
-      }))
-    );
-  };
+      })),
+    [typesMetrics]
+  );
 
   const onChangeSelector = (
     _event: SyntheticEvent,
@@ -37,10 +36,6 @@ export const TypesSearch = (props: TypesSearchParams) => {
     props.onChangeSelector(value);
     setValue(value);
   };
-
-  useEffect(() => {
-    if (getTypesMetricsStatus === RequestStatusEnum.SUCCESS) buildSelector();
-  }, [getTypesMetricsStatus]);
 
   return (
     <>

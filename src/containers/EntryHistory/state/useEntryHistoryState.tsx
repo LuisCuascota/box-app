@@ -51,7 +51,6 @@ export const useEntryHistoryState = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(
     DefaultPagination.rowsPerPage
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rowSelected, setRowSelected] = useState<EntryHeader>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [accountSelector, setAccountSelector] =
@@ -66,10 +65,14 @@ export const useEntryHistoryState = () => {
 
   const onChangeDateRange = (from: string, to: string) => {
     setDateRange({ from, to });
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onChangePaymentType = (type: string | null) => {
     setPaymentType(type);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onPageChange = (_: any, newPage: number) => {
@@ -93,21 +96,22 @@ export const useEntryHistoryState = () => {
 
   const onSelectPartner = (selected: PartnerSelector | null) => {
     setAccountSelector(selected);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   const onSelectPeriod = (selected: PeriodSelector | null) => {
     setPeriodSelector(selected);
+    setPage(DefaultPagination.page);
+    setRowsPerPage(DefaultPagination.rowsPerPage);
   };
 
   useEffect(() => {
-    setIsLoading(true);
     dispatch(getPartners({ mode: ModePagination.SIMPLE }));
     dispatch(getPeriodList());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    setIsLoading(true);
-
     if (
       isGetRequest(accountSelectorRef, accountSelector, page, rowsPerPage) &&
       periodSelector
@@ -126,19 +130,17 @@ export const useEntryHistoryState = () => {
 
     accountSelectorRef.current = accountSelector;
   }, [
-    page,
-    rowsPerPage,
     accountSelector,
     dateRange,
+    dispatch,
+    page,
     paymentType,
     periodSelector,
+    rowsPerPage,
   ]);
 
   useEffect(() => {
     if (periodSelector) {
-      setPage(DefaultPagination.page);
-      setRowsPerPage(DefaultPagination.rowsPerPage);
-
       dispatch(
         getEntryCount({
           account: accountSelector?.id,
@@ -149,19 +151,13 @@ export const useEntryHistoryState = () => {
         })
       );
     }
-  }, [accountSelector, dateRange, paymentType, periodSelector]);
-
-  useEffect(() => {
-    if (
-      entryCountStatus === RequestStatusEnum.SUCCESS &&
-      entriesPaginatedStatus === RequestStatusEnum.SUCCESS
-    )
-      setIsLoading(false);
-  }, [entryCountStatus, entriesPaginatedStatus]);
+  }, [accountSelector, dateRange, dispatch, paymentType, periodSelector]);
 
   return {
     entriesPaginated,
-    isLoading,
+    isLoading:
+      entryCountStatus === RequestStatusEnum.PENDING ||
+      entriesPaginatedStatus === RequestStatusEnum.PENDING,
     modal: {
       isModalOpen,
       onCloseModal,

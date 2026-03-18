@@ -1,14 +1,16 @@
 import {
+  alpha,
+  Box,
   Button,
   Divider,
   FormControlLabel,
-  Grid,
   InputAdornment,
   Radio,
   RadioGroup,
   TextField,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { LoanUpdateLabels } from "../../../shared/labels/LoanUpdate.labels.ts";
 import { LoanTable } from "../../../components/loan/loanTable/LoanTable.tsx";
 import {
@@ -22,7 +24,7 @@ import {
   Loan,
   LoanDetail,
 } from "../../../store/interfaces/LoanState.interfaces.ts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { calculateFeeList } from "../../../shared/utils/Loan.utils.ts";
 import moment from "moment";
 
@@ -37,11 +39,11 @@ export const UpdateLoanDetail = ({
   loanDetail,
   onUpdateLoan,
 }: UpdateLoanDetailProps) => {
-  const [disableCalc, setDisableCalc] = useState<boolean>(true);
-  const [disableUpdate, setDisableUpdate] = useState<boolean>(true);
   const [amount, setAmount] = useState<number>(0);
   const [calcType, setCalcType] = useState<UpdateLoanType | null>(null);
   const [updatedFees, setUpdatedFees] = useState<LoanDetail[]>([]);
+  const disableCalc = amount <= 0 || !calcType;
+  const disableUpdate = disableCalc || updatedFees.length === 0;
 
   const getFeeNumber = (pendingAmount: number): number => {
     if (calcType === UpdateLoanType.EQA_LF)
@@ -95,98 +97,149 @@ export const UpdateLoanDetail = ({
     onUpdateLoan(updatedFees, amount);
   };
 
-  useEffect(() => {
-    if (amount > 0 && calcType) setDisableCalc(false);
-    else setDisableCalc(true);
-  }, [amount, calcType]);
-
-  useEffect(() => {
-    if (!disableCalc && updatedFees.length > 0) setDisableUpdate(false);
-    else setDisableUpdate(true);
-  }, [updatedFees, disableCalc]);
-
   return (
     <>
       <Divider>
         <Typography variant={"h6"}>{LoanUpdateLabels.SUB_TITLE_2}</Typography>
       </Divider>
-      <Grid container p={2}>
-        <Grid item md={1} display={"flex"} alignItems={"center"}>
-          <Typography>{LoanUpdateLabels.AMOUNT}</Typography>
-        </Grid>
-        <Grid item md={3} display={"flex"} alignItems={"center"}>
-          <TextField
-            type={"number"}
-            size={"small"}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              ),
-            }}
-            value={amount}
-            onChange={(e) => setAmount(+e.target.value)}
-          />
-        </Grid>
-        <Grid item md={1} display={"flex"} alignItems={"center"}>
-          <Typography>{LoanUpdateLabels.CALC_TYPE}</Typography>
-        </Grid>
-        <Grid item md={3}>
-          <RadioGroup
-            row
-            value={calcType}
-            onChange={(e) => setCalcType(e.target.value as UpdateLoanType)}
+      <Box
+        sx={(theme) => ({
+          p: 1,
+          borderRadius: 1.5,
+          backgroundColor: "#fff",
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
+          mb: 1,
+        })}
+      >
+        <Grid container spacing={1} alignItems="flex-end">
+          <Grid size={3}>
+            <Box display="flex" flexDirection="column" gap={0.5}>
+              <Typography variant="caption" color="text.secondary">
+                {LoanUpdateLabels.AMOUNT}
+              </Typography>
+              <TextField
+                type={"number"}
+                size={"small"}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+                value={amount}
+                onChange={(e) => setAmount(+e.target.value)}
+              />
+            </Box>
+          </Grid>
+          <Grid size={6}>
+            <Box display="flex" flexDirection="column" gap={0.5}>
+              <Typography variant="caption" color="text.secondary">
+                {LoanUpdateLabels.CALC_TYPE}
+              </Typography>
+              <Box
+                sx={(theme) => ({
+                  borderRadius: 1,
+                  border: `1px solid ${alpha(
+                    theme.palette.primary.main,
+                    0.35
+                  )}`,
+                  px: 1,
+                  py: 0.25,
+                })}
+              >
+                <RadioGroup
+                  row
+                  value={calcType}
+                  onChange={(e) => setCalcType(e.target.value as UpdateLoanType)}
+                >
+                  <FormControlLabel
+                    value={UpdateLoanType.EQA_LF}
+                    control={
+                      <Radio
+                        size={"small"}
+                        sx={(theme) => ({
+                          color: alpha(theme.palette.primary.main, 0.6),
+                          "&.Mui-checked": {
+                            color: theme.palette.primary.main,
+                          },
+                        })}
+                      />
+                    }
+                    label={LoanUpdateLabels.CALC_TYPE_1}
+                    sx={{ "& .MuiTypography-root": { fontSize: 12 } }}
+                  />
+                  <FormControlLabel
+                    value={UpdateLoanType.LA_EQF}
+                    control={
+                      <Radio
+                        size={"small"}
+                        sx={(theme) => ({
+                          color: alpha(theme.palette.primary.main, 0.6),
+                          "&.Mui-checked": {
+                            color: theme.palette.primary.main,
+                          },
+                        })}
+                      />
+                    }
+                    label={LoanUpdateLabels.CALC_TYPE_2}
+                    sx={{ "& .MuiTypography-root": { fontSize: 12 } }}
+                  />
+                </RadioGroup>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid size={3}>
+            <Box display="flex" flexDirection="column" gap={0.5}>
+              <Typography variant="caption" color="text.secondary">
+                {LoanUpdateLabels.NEW_AMOUNT}
+              </Typography>
+              <TextField
+                type={"number"}
+                size={"small"}
+                disabled
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+                value={(loan.debt - amount).toFixed(2)}
+              />
+            </Box>
+          </Grid>
+          <Grid
+            size={12}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"flex-end"}
+            gap={1}
+            pt={0.5}
           >
-            <FormControlLabel
-              value={UpdateLoanType.EQA_LF}
-              control={<Radio size={"small"} />}
-              label={LoanUpdateLabels.CALC_TYPE_1}
-            />
-            <FormControlLabel
-              value={UpdateLoanType.LA_EQF}
-              control={<Radio size={"small"} />}
-              label={LoanUpdateLabels.CALC_TYPE_2}
-            />
-          </RadioGroup>
+            <Button
+              endIcon={<ListIcon />}
+              variant="outlined"
+              onClick={calculateNewLoan}
+              disabled={disableCalc}
+            >
+              {LoanLabels.CALCULATE}
+            </Button>
+            <Button
+              endIcon={<SaveIcon />}
+              variant="contained"
+              disabled={disableUpdate}
+              onClick={handleUpdateLoan}
+            >
+              {LoanLabels.SAVE}
+            </Button>
+          </Grid>
         </Grid>
-        <Grid
-          item
-          md={4}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"space-evenly"}
-        >
-          <Button
-            endIcon={<ListIcon />}
-            variant="outlined"
-            onClick={calculateNewLoan}
-            disabled={disableCalc}
-          >
-            {LoanLabels.CALCULATE}
-          </Button>
-          <Button
-            endIcon={<SaveIcon />}
-            variant="contained"
-            disabled={disableUpdate}
-            onClick={handleUpdateLoan}
-          >
-            {LoanLabels.SAVE}
-          </Button>
-        </Grid>
-        <Grid item md={1} display={"flex"} alignItems={"center"}>
-          <Typography>{LoanUpdateLabels.NEW_AMOUNT}</Typography>
-        </Grid>
-        <Grid item md={3} display={"flex"} alignItems={"center"}>
-          <Typography>{`$${(loan.debt - amount).toFixed(2)}`}</Typography>
-        </Grid>
-        {updatedFees.length > 0 && (
-          <LoanTable
-            isLoading={false}
-            loanDetail={updatedFees}
-            loanBottom={true}
-            withStatus={true}
-          />
-        )}
-      </Grid>
+      </Box>
+      {updatedFees.length > 0 && (
+        <LoanTable
+          isLoading={false}
+          loanDetail={updatedFees}
+          loanBottom={true}
+          withStatus={true}
+        />
+      )}
     </>
   );
 };

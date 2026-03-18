@@ -7,8 +7,14 @@ interface PaperBaseProps {
 
 export const PaperBase: FC<PaperBaseProps> = ({ children }) => {
   return (
-    <Container fixed>
-      <Paper elevation={2}>
+    <Container fixed sx={{ mt: 2 }}>
+      <Paper
+        elevation={0}
+        sx={(theme) => ({
+          border: `1px solid ${theme.palette.divider}`,
+          boxShadow: "none",
+        })}
+      >
         <Box m={2}>{children}</Box>
       </Paper>
     </Container>

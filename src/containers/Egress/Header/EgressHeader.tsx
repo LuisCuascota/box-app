@@ -1,4 +1,6 @@
 import {
+  alpha,
+  Box,
   Backdrop,
   CircularProgress,
   Grid,
@@ -6,6 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { cardContainerSx, subtitleSx, titleSx } from "../../../shared/styles/Ui.styles.ts";
 import { EgressLabels } from "../../../shared/labels/Egress.labels.ts";
 import { RequestStatusEnum } from "../../../shared/enums/RequestStatus.enum.ts";
 import { useContext } from "react";
@@ -29,44 +32,78 @@ export const EgressHeader = () => {
   const countStatus = useAppSelector(selectEgressCountStatus);
 
   return (
-    <Grid container p={2}>
+    <Grid container p={1}>
       <Backdrop
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading}
       >
         <CircularProgress />
       </Backdrop>
-      <Grid item md={12} xs={12}>
-        <Typography textAlign={"center"} variant={"h5"}>
-          {EgressLabels.TITLE}
-        </Typography>
-      </Grid>
-      <Grid item md={6} xs={12}>
-        <Typography>{EgressLabels.SUBTITLE}</Typography>
-      </Grid>
-      <Grid item md={2} xs={4}>
-        <Typography textAlign={"right"} color={"red"}>
-          {countStatus === RequestStatusEnum.SUCCESS ? (
-            <b>{`Nº${count.count + 1}`}</b>
-          ) : (
-            <Skeleton height={40} />
-          )}
-        </Typography>
-      </Grid>
-      <Grid item md={12} xs={12} pt={2}>
-        <TextField
-          fullWidth
-          label={EgressLabels.INPUT_BENEFICIARY}
-          size={"small"}
-          value={beneficiary}
-          onChange={onChangeBeneficiary}
-        />
-      </Grid>
-      <Grid item md={12} xs={12} pt={2}>
-        <TypesSearch
-          disableSearch={false}
-          onChangeSelector={onChangeCategorySelector}
-        />
+      <Grid size={12}>
+        <Box sx={(theme) => ({ ...cardContainerSx(theme), mb: 1 })}>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid size={12}>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Typography variant={"h6"} sx={(theme) => titleSx(theme)}>
+                  {EgressLabels.TITLE}
+                </Typography>
+                {countStatus === RequestStatusEnum.SUCCESS ? (
+                  <Box
+                    sx={(theme) => ({
+                      border: `1px solid ${alpha(
+                        theme.palette.primary.main,
+                        0.5
+                      )}`,
+                      color: theme.palette.primary.main,
+                      borderRadius: 999,
+                      px: 1.25,
+                      py: 0.25,
+                      fontWeight: 700,
+                      fontSize: 12,
+                    })}
+                  >
+                    {`Nº${count.count + 1}`}
+                  </Box>
+                ) : (
+                  <Skeleton height={26} width={70} />
+                )}
+              </Box>
+            </Grid>
+            <Grid size={12}>
+              <Typography variant="caption" sx={(theme) => subtitleSx(theme)}>
+                {EgressLabels.SUBTITLE}
+              </Typography>
+            </Grid>
+            <Grid size={6}>
+              <Box display="flex" flexDirection="column" gap={0.5} sx={{ width: "100%" }}>
+                <Typography variant="caption" color="text.secondary">
+                  {EgressLabels.INPUT_BENEFICIARY}
+                </Typography>
+                <TextField
+                  fullWidth
+                  size={"small"}
+                  value={beneficiary}
+                  onChange={onChangeBeneficiary}
+                />
+              </Box>
+            </Grid>
+            <Grid size={6}>
+              <Box display="flex" flexDirection="column" gap={0.5} sx={{ width: "100%" }}>
+                <Typography variant="caption" color="text.secondary">
+                  {EgressLabels.INPUT_CATEGORY}
+                </Typography>
+                <TypesSearch
+                  disableSearch={false}
+                  onChangeSelector={onChangeCategorySelector}
+                />
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
       </Grid>
     </Grid>
   );

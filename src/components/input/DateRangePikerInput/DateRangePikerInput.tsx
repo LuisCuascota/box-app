@@ -5,10 +5,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Box, IconButton } from "@mui/material";
 import { DATE_FORMAT } from "../../../shared/utils/Date.utils.ts";
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  DatePicker,
-  DatePickerSlotsComponentsProps,
-} from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 import CloseIcon from "@mui/icons-material/Close";
 
 export interface DatePikerInputProps {
@@ -17,7 +14,7 @@ export interface DatePikerInputProps {
   defaultTo: string;
 }
 
-const rangeSlotProps: DatePickerSlotsComponentsProps<Moment> = {
+const rangeSlotProps = {
   textField: {
     size: "small",
     sx: {
@@ -35,7 +32,7 @@ const rangeSlotProps: DatePickerSlotsComponentsProps<Moment> = {
   openPickerIcon: {
     fontSize: "small",
   },
-};
+} as const;
 
 export const DateRangePikerInput = (props: DatePikerInputProps) => {
   const [fromDate, setFromDate] = useState<Moment | null>(

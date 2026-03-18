@@ -1,4 +1,5 @@
 import {
+  alpha,
   Box,
   Button,
   Dialog,
@@ -6,6 +7,9 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  Stack,
+  Chip,
+  Divider,
   Typography,
 } from "@mui/material";
 import {
@@ -43,55 +47,212 @@ export const LoanModal = (props: LoanModalProps) => {
   } = useLoanModalState(props);
 
   return (
-    <Dialog maxWidth={"xl"} open={props.open} onClose={onClose}>
+    <Dialog
+      maxWidth={"xl"}
+      open={props.open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+          overflow: "hidden",
+        },
+      }}
+    >
       <DialogTitle
-        textAlign={"center"}
         sx={{
           backgroundColor: (theme) => theme.palette.primary.main,
           color: (theme) => theme.palette.primary.contrastText,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 1,
+          py: 1.25,
         }}
       >
-        {ComponentsLabels.LOAN_MODAL_TITLE}
+        <Box display="flex" alignItems="center" gap={1}>
+          <CreditScoreIcon fontSize="small" />
+          {ComponentsLabels.LOAN_MODAL_TITLE}
+        </Box>
+        {props.loan && (
+          <Chip
+            size="small"
+            label={`Crédito Nº${props.loan.number}`}
+            color="secondary"
+            variant="outlined"
+            sx={{ fontWeight: 700 }}
+          />
+        )}
       </DialogTitle>
       <DialogContent>
         {props.loan && (
-          <Grid container spacing={0} pb={2} pt={2}>
-            <Grid item md={4} xs={12}>
-              <Typography color={"red"}>
-                <b>{`Nº${props.loan.number}`}</b>
-              </Typography>
+          <>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ pt: 1.25, pb: 0.75 }}
+            >
+              <Box />
+            </Stack>
+            <Grid container spacing={0.75} pb={0.75}>
+              <Grid size={4}>
+                <Box
+                  sx={(theme) => ({
+                    p: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: "#fff",
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.35
+                    )}`,
+                  })}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={(theme) => ({
+                      color: alpha(theme.palette.primary.main, 0.75),
+                    })}
+                  >
+                    {ComponentsLabels.DATE}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={(theme) => ({
+                      fontWeight: 600,
+                      color: theme.palette.primary.main,
+                    })}
+                  >
+                    {getFormattedDate(props.loan.date)}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={4}>
+                <Box
+                  sx={(theme) => ({
+                    p: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: "#fff",
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.35
+                    )}`,
+                  })}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={(theme) => ({
+                      color: alpha(theme.palette.primary.main, 0.75),
+                    })}
+                  >
+                    {ComponentsLabels.AMOUNT}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={(theme) => ({
+                      fontWeight: 600,
+                      color: theme.palette.primary.main,
+                    })}
+                  >
+                    {`$${props.loan.value}`}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={4}>
+                <Box
+                  sx={(theme) => ({
+                    p: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: "#fff",
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.35
+                    )}`,
+                  })}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={(theme) => ({
+                      color: alpha(theme.palette.primary.main, 0.75),
+                    })}
+                  >
+                    {ComponentsLabels.INTEREST}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={(theme) => ({
+                      fontWeight: 600,
+                      color: theme.palette.primary.main,
+                    })}
+                  >
+                    {`${props.loan.rate}%`}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={4}>
+                <Box
+                  sx={(theme) => ({
+                    p: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: "#fff",
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.45
+                    )}`,
+                  })}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={(theme) => ({
+                      color: alpha(theme.palette.primary.main, 0.75),
+                    })}
+                  >
+                    {ComponentsLabels.DEBT}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={(theme) => ({
+                      fontWeight: 700,
+                      color: theme.palette.primary.main,
+                    })}
+                  >
+                    {`$${props.loan.debt}`}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={4}>
+                <Box
+                  sx={(theme) => ({
+                    p: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: "#fff",
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.35
+                    )}`,
+                  })}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={(theme) => ({
+                      color: alpha(theme.palette.primary.main, 0.75),
+                    })}
+                  >
+                    {ComponentsLabels.MONTHS}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={(theme) => ({
+                      fontWeight: 600,
+                      color: theme.palette.primary.main,
+                    })}
+                  >
+                    {props.loan.term}
+                  </Typography>
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item md={4} xs={6}>
-              <Typography>
-                <b>{ComponentsLabels.AMOUNT}</b>
-                {` $${props.loan.value}`}
-              </Typography>
-            </Grid>
-            <Grid item md={4} xs={6}>
-              <Typography>
-                <b>{ComponentsLabels.INTEREST}</b>
-                {` ${props.loan.rate}%`}
-              </Typography>
-            </Grid>
-            <Grid item md={4} xs={6}>
-              <Typography>
-                <b>{ComponentsLabels.DATE}</b>
-                {` ${getFormattedDate(props.loan.date)}`}
-              </Typography>
-            </Grid>
-            <Grid item md={4} xs={6}>
-              <Typography>
-                <b>{ComponentsLabels.DEBT}</b>
-                {` $${props.loan.debt}`}
-              </Typography>
-            </Grid>
-            <Grid item md={4} xs={6}>
-              <Typography>
-                <b>{ComponentsLabels.MONTHS}</b>
-                {` ${props.loan.term}`}
-              </Typography>
-            </Grid>
-          </Grid>
+            <Divider sx={{ mb: 1 }} />
+          </>
         )}
         <LoanTable
           isLoading={finalLoanDetail.length == 0}
@@ -103,31 +264,32 @@ export const LoanModal = (props: LoanModalProps) => {
         />
       </DialogContent>
       <DialogActions>
-        <Grid container spacing={0} pl={2} pr={2}>
-          <Grid item xs={4}>
-            <Button onClick={onClose} variant={"outlined"} color={"inherit"}>
-              {ComponentsLabels.CLOSE}
-            </Button>
-          </Grid>
-          <Grid item xs={8} display={"flex"} justifyContent={"end"}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ width: "100%", px: 2, py: 1 }}
+        >
+          <Button onClick={onClose} variant={"outlined"} color={"inherit"}>
+            {ComponentsLabels.CLOSE}
+          </Button>
+          <Box display="flex" gap={1} alignItems="center">
             {props.viewMode ? (
               <>
                 {props.loan &&
                   finalLoanDetail &&
                   props.loan.status === LoanStatusEnum.CURRENT &&
                   props.loan.value > props.loan.debt && (
-                    <Box pr={1}>
-                      <Button
-                        onClick={() =>
-                          goToLoanUpdate(props.loan!, finalLoanDetail)
-                        }
-                        variant={"contained"}
-                        color={"secondary"}
-                        endIcon={<RequestQuoteIcon />}
-                      >
-                        {ComponentsLabels.LOAN_PAYMENT}
-                      </Button>
-                    </Box>
+                    <Button
+                      onClick={() =>
+                        goToLoanUpdate(props.loan!, finalLoanDetail)
+                      }
+                      variant={"contained"}
+                      color={"secondary"}
+                      endIcon={<RequestQuoteIcon />}
+                    >
+                      {ComponentsLabels.LOAN_PAYMENT}
+                    </Button>
                   )}
                 <Button
                   onClick={onPrintLoan}
@@ -140,16 +302,14 @@ export const LoanModal = (props: LoanModalProps) => {
               </>
             ) : (
               <>
-                <Box pr={1}>
-                  <Button
-                    onClick={onPreCancel}
-                    variant={"contained"}
-                    color={"success"}
-                    endIcon={<CreditScoreIcon />}
-                  >
-                    {ComponentsLabels.PRE_CANCEL}
-                  </Button>
-                </Box>
+                <Button
+                  onClick={onPreCancel}
+                  variant={"contained"}
+                  color={"success"}
+                  endIcon={<CreditScoreIcon />}
+                >
+                  {ComponentsLabels.PRE_CANCEL}
+                </Button>
                 <Button
                   onClick={onSave}
                   variant={"contained"}
@@ -160,8 +320,8 @@ export const LoanModal = (props: LoanModalProps) => {
                 </Button>
               </>
             )}
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </DialogActions>
     </Dialog>
   );
