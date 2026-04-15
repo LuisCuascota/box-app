@@ -149,7 +149,9 @@ export const UpdateLoanDetail = ({
                 <RadioGroup
                   row
                   value={calcType}
-                  onChange={(e) => setCalcType(e.target.value as UpdateLoanType)}
+                  onChange={(e) =>
+                    setCalcType(e.target.value as UpdateLoanType)
+                  }
                 >
                   <FormControlLabel
                     value={UpdateLoanType.EQA_LF}
