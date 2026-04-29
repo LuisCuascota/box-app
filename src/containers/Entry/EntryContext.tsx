@@ -362,6 +362,7 @@ const EntryContextProvider = ({ children }: any) => {
         isOpenBillDetailModal,
         amountsToPay,
         totalToPay,
+        partnerSelected,
         onChangePartnerSelector,
         onChangeEntryDate,
         onUpdateAmounts,

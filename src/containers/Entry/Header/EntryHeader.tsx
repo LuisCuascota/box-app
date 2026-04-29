@@ -2,14 +2,12 @@ import {
   alpha,
   Backdrop,
   Box,
-  Chip,
   CircularProgress,
   Grid,
   Stack,
   Skeleton,
   Typography,
 } from "@mui/material";
-import { cardContainerSx, titleSx } from "../../../shared/styles/Ui.styles.ts";
 import { PartnerSearch } from "../../../components/input/PersonSearch/PartnerSearch.tsx";
 import { useContext } from "react";
 import { EntryContext } from "../EntryContext.tsx";
@@ -28,56 +26,86 @@ export const EntryHeader = () => {
   const countStatus = useAppSelector(selectEntryCountStatus);
 
   return (
-    <Grid container p={1} spacing={1}>
+    <>
       <Backdrop
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading}
       >
         <CircularProgress />
       </Backdrop>
-      <Grid size={12}>
-        <Box sx={(theme) => cardContainerSx(theme)}>
-          <Stack spacing={0.5}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Typography variant="h6" sx={(theme) => titleSx(theme)}>
-                {EntryLabels.TITLE}
-              </Typography>
-              {countStatus === RequestStatusEnum.SUCCESS ? (
-                <Chip
-                  color="secondary"
-                  variant="outlined"
-                  label={`Nº${count.count + 1}`}
-                  size="small"
+      <Box
+        sx={(theme) => ({
+          px: 3,
+          py: 2,
+          background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.light} 100%)`,
+          color: theme.palette.primary.contrastText,
+        })}
+      >
+        <Stack spacing={1.5}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography variant="h6" fontWeight={700} color="inherit">
+              {EntryLabels.TITLE}
+            </Typography>
+            {countStatus === RequestStatusEnum.SUCCESS ? (
+              <Box
+                sx={(theme) => ({
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: 0.5,
+                  backgroundColor: "#fff",
+                  borderRadius: 1.5,
+                  px: 1.5,
+                  py: 0.5,
+                  boxShadow: `0 2px 8px ${alpha(theme.palette.primary.dark, 0.3)}`,
+                })}
+              >
+                <Typography
+                  variant="body2"
                   sx={(theme) => ({
-                    fontWeight: 600,
                     color: theme.palette.primary.main,
-                    borderColor: alpha(theme.palette.primary.main, 0.5),
+                    fontWeight: 600,
                   })}
-                />
-              ) : (
-                <Skeleton height={26} width={70} />
-              )}
-            </Stack>
-            <Grid container spacing={1} alignItems="center">
-              <Grid size={5}>
-                <Typography variant="caption" color="text.secondary">
-                  {EntryLabels.PARTNER_INPUT}
+                >
+                  Nº
                 </Typography>
-              </Grid>
-              <Grid size={7}>
-                <PartnerSearch
-                  disableSearch={disableSearch}
-                  onChangeSelector={onChangePartnerSelector}
-                />
-              </Grid>
-            </Grid>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 800,
+                    color: "#D32F2F",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {count.count + 1}
+                </Typography>
+              </Box>
+            ) : (
+              <Skeleton
+                height={36}
+                width={90}
+                sx={{ bgcolor: alpha("#fff", 0.2), borderRadius: 1.5 }}
+              />
+            )}
           </Stack>
-        </Box>
-      </Grid>
-    </Grid>
+          <Grid container spacing={1} alignItems="center">
+            <Grid size={{ xs: 12, sm: 3 }}>
+              <Typography variant="body2" color="inherit" sx={{ opacity: 0.85 }}>
+                {EntryLabels.PARTNER_INPUT}
+              </Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 9 }}>
+              <PartnerSearch
+                disableSearch={disableSearch}
+                onChangeSelector={onChangePartnerSelector}
+              />
+            </Grid>
+          </Grid>
+        </Stack>
+      </Box>
+    </>
   );
 };
