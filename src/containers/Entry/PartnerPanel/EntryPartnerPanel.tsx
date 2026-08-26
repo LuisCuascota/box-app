@@ -1,17 +1,23 @@
-import {
-  alpha,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Skeleton,
-  Stack,
-} from "@mui/material";
-import { useContext } from "react";
+import { alpha, Box, Stack } from "@mui/material";
+import { useContext, useMemo } from "react";
 import { EntryContext } from "../EntryContext.tsx";
+import { LoanPanel } from "./components/LoanPanel.tsx";
+import { PartnerInfoPanel } from "./components/PartnerInfoPanel.tsx";
+import { useEntryLoanPanel } from "./state/useEntryLoanPanel.ts";
+import { EntryTypesIdEnum } from "../../../shared/enums/EntryTypes.enum.ts";
+import { PartnerDefinition } from "../../../store/interfaces/EntryState.interfaces.ts";
 
 export const EntryPartnerPanel = () => {
-  const { partnerSelected } = useContext(EntryContext);
+  const { partnerSelected, amountsToPay } = useContext(EntryContext);
+  const loanPanelState = useEntryLoanPanel();
+
+  const partnerDefinition = useMemo(() => {
+    const contributionAmount = amountsToPay.find(
+      (a) => a.id === EntryTypesIdEnum.CONTRIBUTION && a.amountDefinition
+    );
+
+    return contributionAmount?.amountDefinition as PartnerDefinition | undefined;
+  }, [amountsToPay]);
 
   if (!partnerSelected) {
     return (
@@ -35,50 +41,8 @@ export const EntryPartnerPanel = () => {
 
   return (
     <Stack spacing={1.5}>
-      <Card variant="outlined">
-        <CardHeader
-          title="Últimos aportes"
-          titleTypographyProps={{ variant: "subtitle2", fontSize: 13 }}
-          sx={{ pb: 0, pt: 1.5, px: 2 }}
-        />
-        <CardContent sx={{ pt: 1 }}>
-          <Skeleton
-            variant="rectangular"
-            height={100}
-            sx={{ borderRadius: 1 }}
-          />
-        </CardContent>
-      </Card>
-
-      <Card variant="outlined">
-        <CardHeader
-          title="Estado de crédito"
-          titleTypographyProps={{ variant: "subtitle2", fontSize: 13 }}
-          sx={{ pb: 0, pt: 1.5, px: 2 }}
-        />
-        <CardContent sx={{ pt: 1 }}>
-          <Skeleton
-            variant="rectangular"
-            height={60}
-            sx={{ borderRadius: 1 }}
-          />
-        </CardContent>
-      </Card>
-
-      <Card variant="outlined">
-        <CardHeader
-          title="Tabla de amortización"
-          titleTypographyProps={{ variant: "subtitle2", fontSize: 13 }}
-          sx={{ pb: 0, pt: 1.5, px: 2 }}
-        />
-        <CardContent sx={{ pt: 1 }}>
-          <Skeleton
-            variant="rectangular"
-            height={120}
-            sx={{ borderRadius: 1 }}
-          />
-        </CardContent>
-      </Card>
+      {partnerDefinition && <PartnerInfoPanel partner={partnerDefinition} />}
+      {loanPanelState.loanDefinition && <LoanPanel {...loanPanelState} />}
     </Stack>
   );
 };

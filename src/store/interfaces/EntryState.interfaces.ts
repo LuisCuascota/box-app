@@ -1,6 +1,16 @@
 import { RequestStatusEnum } from "../../shared/enums/RequestStatus.enum.ts";
 import { EntryLoanData, LoanDefinition } from "./LoanState.interfaces.ts";
 
+export interface PartnerDefinition {
+  names: string;
+  surnames: string;
+  accountNumber: number;
+  creationDate: string;
+  currentSaving: number;
+  savingStatus: string;
+  pendingContributions: number;
+}
+
 export interface IEntryState {
   getEntryCountStatus: RequestStatusEnum;
   getEntryTypesStatus: RequestStatusEnum;
@@ -26,7 +36,7 @@ export interface EntryAmount {
   id: number;
   description: string;
   value: number;
-  amountDefinition?: LoanDefinition;
+  amountDefinition?: LoanDefinition | PartnerDefinition;
 }
 
 export interface NewEntry {

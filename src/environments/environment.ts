@@ -7,6 +7,7 @@ export const environment: {
   cognitoPoolId: string;
   cognitoPoolClientId: string;
   contributionAmount: number;
+  loanPenaltyRate: number;
   startDate: string;
 } = {
   apiBoxUrl: "http://localhost:3000/local",
@@ -16,5 +17,6 @@ export const environment: {
   cognitoPoolId: "us-east-1_ikjEs7iIA",
   cognitoPoolClientId: "3mvj4vkukmiu27i8e1smp3eauc",
   contributionAmount: 20,
+  loanPenaltyRate: 0.1,
   startDate: "2022-07-02",
 };

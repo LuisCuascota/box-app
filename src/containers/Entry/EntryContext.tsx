@@ -27,6 +27,7 @@ import {
 } from "../../store/selectors/selectors.ts";
 import {
   EntryLoanData,
+  LoanDefinition,
   LoanDetailToPay,
 } from "../../store/interfaces/LoanState.interfaces.ts";
 import { EntryTypesIdEnum } from "../../shared/enums/EntryTypes.enum.ts";
@@ -160,14 +161,6 @@ const EntryContextProvider = ({ children }: any) => {
     setLoanDetailToPay(detailsToPay);
   };
 
-  const validationWhenAmountDefinitionExist = () => {
-    if (loanDefinitionFromAmounts) {
-      if (loanDetailToPay) return true;
-      else return false;
-    }
-
-    return true;
-  };
 
   const baseAmounts = useMemo(() => {
     if (entryTypesStatus !== RequestStatusEnum.SUCCESS) return [];
@@ -322,14 +315,15 @@ const EntryContextProvider = ({ children }: any) => {
     dispatch(getPeriodList());
   }, [dispatch]);
 
-  const loanDefinitionFromAmounts =
+  const loanDefinitionFromAmounts = (
     amountsCalculatedStatus === RequestStatusEnum.SUCCESS
       ? amountsCalculated.find(
           (amount) =>
             amount.id === EntryTypesIdEnum.LOAN_CONTRIBUTION &&
             amount.amountDefinition
         )?.amountDefinition
-      : undefined;
+      : undefined
+  ) as LoanDefinition | undefined;
 
   const totalToPay = amountsToPay.reduce(
     (total, amount) => +(total + amount.value).toFixed(2),
@@ -341,7 +335,6 @@ const EntryContextProvider = ({ children }: any) => {
     entryDate &&
     entryNumber.count > 0 &&
     totalToPay > 0 &&
-    validationWhenAmountDefinitionExist() &&
     periodId
   );
 

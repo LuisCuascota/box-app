@@ -44,6 +44,7 @@ src/
 │   ├── hooks/           # Store.hook: useAppDispatch, useAppSelector tipados
 │   ├── labels/          # Strings de UI por módulo (centralización de textos)
 │   ├── styles/          # Estilos globales (Ui.styles)
+│   ├── theme/           # Sistema de theming multi-tenant (brand.config, createAppTheme)
 │   └── utils/           # Utilidades: PDF, fechas, cálculos de crédito, axios
 └── store/
     ├── actions/         # Redux Toolkit createAction (una por módulo)
@@ -99,24 +100,26 @@ export const getDataEpic: EpicCustom = ({ action$, dispatch }) =>
 Los containers usan React Context para compartir estado local entre sub-componentes, sin propagarlo al store de Redux:
 
 ```typescript
-// Container envuelve con Provider
+// Container con layout rediseñado (Entry como referencia)
 export const EntryContainer = () => (
-  <PaperBase>
-    <EntryContextProvider>
-      <EntryHeader />
-      <EntryDetail />
-      <EntryFooter />
-    </EntryContextProvider>
-  </PaperBase>
+  <Container fixed>
+    <Paper sx={{ overflow: "hidden" }}>
+      <EntryContextProvider>
+        <EntryHeader />
+        <Box p={2}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 7 }}><EntryDetail /></Grid>
+            <Grid size={{ xs: 12, md: 5 }}><EntryPartnerPanel /></Grid>
+          </Grid>
+        </Box>
+        <EntryFooter />
+      </EntryContextProvider>
+    </Paper>
+  </Container>
 );
-
-// Custom hooks en state/ combinan Redux + Context
-export const useEntryState = () => {
-  const dispatch = useAppDispatch();
-  const data = useAppSelector(selectEntryDetail);
-  // ...
-};
 ```
+
+Los containers legacy todavía usan `PaperBase` como wrapper (migración progresiva).
 
 ## API y Autenticación
 
@@ -141,9 +144,39 @@ Cada módulo tiene su propio util de PDF en `shared/utils/`:
 - **Hooks tipados**: Usar `useAppDispatch()` y `useAppSelector` de `shared/hooks/Store.hook.ts`
 - **Estilo**: Prettier con double quotes, semicolons, trailing commas ES5, tab width 2
 
-## Tema Material-UI
+## Sistema de Theming Multi-Tenant
 
-- **Color primario**: `#1B3A57` (azul oscuro) — light: `#3F6B8A`, dark: `#112B40`
-- **Color secundario**: `#FFB347` (naranja)
+El tema se configura en `src/shared/theme/`:
+- `brand.config.ts` — Define `BrandConfig` (paleta, tipografía, shape) e incluye `kajaBrand` como configuración actual
+- `createAppTheme.ts` — Genera el MUI theme a partir de cualquier `BrandConfig`
+- `index.ts` — Barrel exports
+
+Para dar servicio a otra caja: crear un nuevo `BrandConfig` y pasarlo a `createAppTheme()` en `main.tsx`.
+
+**Paleta Kaja actual:**
+- **Primario**: `#1B3A57` (azul oscuro) — light: `#3F6B8A`, dark: `#112B40`
+- **Secundario**: `#FFB347` (naranja)
 - **Fuente**: Libre Franklin
 - **Radios**: botones 10px, inputs 8px, papers 12px
+
+## Patrón de Layout de Pantallas (nuevo)
+
+Las pantallas rediseñadas siguen este patrón:
+- **Header**: Gradiente primary fusionado con el borde superior del Paper (sin separación, sin borderRadius propio)
+- **Contenido**: Grid de 2 columnas (md:7 detalle + md:5 panel lateral)
+- **Footer**: Gradiente primary fusionado con el borde inferior, mismo grid de 2 columnas
+- **Container propio** en vez de PaperBase, con `overflow: hidden` en el Paper
+
+```typescript
+// Estructura de un container rediseñado
+<Paper sx={{ overflow: "hidden" }}>
+  <Header />         {/* gradiente pegado arriba */}
+  <Box p={2}>
+    <Grid container>
+      <Grid md={7}><Detail /></Grid>
+      <Grid md={5}><SidePanel /></Grid>
+    </Grid>
+  </Box>
+  <Footer />         {/* gradiente pegado abajo */}
+</Paper>
+```

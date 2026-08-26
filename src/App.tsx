@@ -22,7 +22,7 @@ import { UpdateLoan } from "./containers/UpdateLoan/UpdateLoan.tsx";
 Amplify.configure(AwsConfig);
 
 function App() {
-  const [isOffline] = useState(true);
+  const [isOffline] = useState(false);
   const { authStatus } = useAuthenticator((context) => [context.authStatus]);
   const setJwt = async () => {
     const jwt = await fetchAuthSession();
